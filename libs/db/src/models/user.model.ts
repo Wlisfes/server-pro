@@ -2,7 +2,7 @@
  * @Date: 2020-04-03 16:13:21
  * @Author: 情雨随风
  * @LastEditors: 情雨随风
- * @LastEditTime: 2020-04-03 16:21:14
+ * @LastEditTime: 2020-04-03 17:28:57
  * @Description: 用户表
  */
 
@@ -17,7 +17,15 @@ export type UserDocument = DocumentType<User>
 	}
 })
 export class User {
-	@ApiProperty({ description: '用户名', example: 'user1' })
-	@prop()
+	@ApiProperty({ description: '用户名' })
+	@prop({
+		required: true
+	})
 	userName: string
+
+	@ApiProperty({ description: '密码' })
+	@prop({
+		required: true
+	})
+	password: string
 }

@@ -1,6 +1,7 @@
-import { Controller, Post, Get } from '@nestjs/common'
+import { Controller, Post, Get, Body } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { UserService } from './user.service'
+import { UserloginDto } from './user.dto'
 
 @Controller('user')
 @ApiTags('用户')
@@ -11,18 +12,16 @@ export class UserController {
 	@ApiOperation({
 		summary: '用户登陆'
 	})
-	async login() {
-		return {
-			success: true
-		}
+	async login(@Body() body: UserloginDto) {
+		return body
 	}
 
 	@Post('create')
 	@ApiOperation({
 		summary: '创建用户'
 	})
-	async create() {
-		return ''
+	async create(@Body() body: UserloginDto) {
+		return this.userService.create(body)
 	}
 
 	@Get('all')
@@ -32,4 +31,10 @@ export class UserController {
 	async findAll() {
 		return this.userService.findAll()
 	}
+
+	@Get('one')
+	@ApiOperation({
+		summary: '获取用户详情信息'
+	})
+	async findOne() {}
 }

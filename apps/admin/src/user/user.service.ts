@@ -11,4 +11,10 @@ export class UserService {
 	async findAll(): Promise<User[] | null> {
 		return await this.userModel.find()
 	}
+
+	//新增用户
+	async create(user): Promise<User> {
+		const createUser = new this.userModel(user)
+		return await createUser.save()
+	}
 }
