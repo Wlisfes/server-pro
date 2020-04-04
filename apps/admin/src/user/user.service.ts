@@ -12,9 +12,19 @@ export class UserService {
 		return await this.userModel.find()
 	}
 
+	//获取用户详情
+	async findOne(id: string): Promise<User | null> {
+		return this.userModel.findById(id)
+	}
+
 	//新增用户
 	async create(user): Promise<User> {
 		const createUser = new this.userModel(user)
 		return await createUser.save()
+	}
+
+	//删除用户
+	async remove(id: string) {
+		await this.userModel.deleteOne({ _id: id })
 	}
 }
