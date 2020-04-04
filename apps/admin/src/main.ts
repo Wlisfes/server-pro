@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { ValidationPipe } from '@nestjs/common'
 import { HttpExceptionFilter } from './filters/http-exception.filter'
+import { TransformInterceptor } from './interceptor/transform.interceptor'
 
 //swagger文档
 async function createSwagger(app) {
@@ -29,6 +30,9 @@ async function bootstrap() {
 
 	//全局注册错误的过滤器
 	app.useGlobalFilters(new HttpExceptionFilter())
+
+	//全局注册拦截器
+	app.useGlobalInterceptors(new TransformInterceptor())
 
 	await app.listen(3000)
 	console.log('http://localhost:3000/api-docs')
