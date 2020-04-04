@@ -8,6 +8,7 @@
 
 import { prop, modelOptions, DocumentType } from '@typegoose/typegoose'
 import { ApiProperty } from '@nestjs/swagger'
+import { hashSync } from 'bcryptjs'
 
 export type UserDocument = DocumentType<User>
 
@@ -33,7 +34,15 @@ export class User {
 	name: string
 
 	@ApiProperty({ description: '密码' })
-	@prop({ required: true })
+	@prop({
+		required: true,
+		get(val) {
+			return val
+		},
+		set(val) {
+			return hashSync(val)
+		}
+	})
 	password: string
 
 	@ApiProperty({ description: '昵称' })
