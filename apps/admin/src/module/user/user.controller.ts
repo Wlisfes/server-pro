@@ -1,18 +1,27 @@
-import { Controller, Post, Get, Body, UsePipes, ValidationPipe, Put, Delete, Query } from '@nestjs/common'
+import { Controller, UsePipes, ValidationPipe } from '@nestjs/common'
+import { Post, Get, Body, Put, Delete, Query, Request } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { UserService } from './user.service'
+import { AuthService } from '../auth/auth.service'
 import { LoginDto, CreateDto, UpdateDto } from './user.dto'
+import { AuthUser, AuthRoles } from '../../guard/auth.guard'
 
 @Controller('api/user')
 @ApiTags('用户')
 export class UserController {
-	constructor(private readonly userService: UserService) {}
+	constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
 
 	@Post('login')
 	@UsePipes(new ValidationPipe({ transform: true }))
 	@ApiOperation({ summary: '用户登陆' })
 	async login(@Body() body: LoginDto) {
-		return await this.userService.login(body)
+		const response = await this.userService.login(body)
+		const token = await this.authService.sign({
+			username: response.username,
+			id: (response as any).id
+		})
+
+		return token
 	}
 
 	@Post('create')
@@ -22,12 +31,15 @@ export class UserController {
 	}
 
 	@Get('all')
+	@AuthUser(true)
+	@AuthRoles('admin', 'edit')
 	@ApiOperation({ summary: '获取所有用户列表' })
 	async findAll() {
 		return await this.userService.findAll()
 	}
 
 	@Get('one')
+	@AuthRoles('admin', 'edit')
 	@ApiOperation({ summary: '获取用户详情信息' })
 	async findOne(@Query('id') id: string) {
 		return await this.userService.findOne(id)

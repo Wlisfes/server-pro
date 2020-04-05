@@ -5,6 +5,9 @@ import { DbModule } from 'libs/db/src'
 import { UserModule } from './module/user/user.module'
 import { MulterModule } from '@nestjs/platform-express'
 import { AuthModule } from './module/auth/auth.module'
+import { APP_GUARD } from '@nestjs/core'
+import { AuthGuard } from './guard/auth.guard'
+
 import * as MAO from 'multer-aliyun-oss'
 
 @Module({
@@ -28,6 +31,12 @@ import * as MAO from 'multer-aliyun-oss'
 		AuthModule
 	],
 	controllers: [AppController],
-	providers: [AppService]
+	providers: [
+		AppService,
+		{
+			provide: APP_GUARD,
+			useClass: AuthGuard
+		}
+	]
 })
 export class AppModule {}

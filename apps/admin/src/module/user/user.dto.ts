@@ -3,8 +3,8 @@ import { IsNotEmpty } from 'class-validator'
 
 export class LoginDto {
 	@ApiProperty({ description: '用户名', example: 'admin' })
-	@IsNotEmpty({ message: 'name 必填' })
-	name: string
+	@IsNotEmpty({ message: 'username 必填' })
+	username: string
 
 	@ApiProperty({ description: '密码', example: 'password' })
 	@IsNotEmpty({ message: 'password 必填' })

@@ -7,17 +7,17 @@ import { compareSync } from 'bcryptjs'
 
 @Injectable()
 export class UserService {
-	constructor(@InjectModel(User) private readonly userModel: ReturnModelType<typeof User>) {}
+	constructor(@InjectModel(User) public readonly userModel: ReturnModelType<typeof User>) {}
 
 	//用户登录
 	async login(user: LoginDto): Promise<User | null> {
-		const response = await this.userModel.findOne({ name: user.name })
+		const response = await this.userModel.findOne({ username: user.username })
 		if (response === null || response === undefined) {
-			throw new HttpException('name 不存在', HttpStatus.BAD_REQUEST)
+			throw new HttpException('username 不存在', HttpStatus.BAD_REQUEST)
 		}
 
 		if (response.disable) {
-			throw new HttpException('账户已被禁用，请联系超级管理员解禁', HttpStatus.BAD_REQUEST)
+			throw new HttpException('账户已被禁用，请联系超级管理员解禁', HttpStatus.UNAUTHORIZED)
 		}
 
 		if (!compareSync(user.password, response.password)) {
@@ -30,7 +30,7 @@ export class UserService {
 	//创建用户
 	async create(user: CreateDto): Promise<User> {
 		try {
-			if (await this.userModel.findOne({ name: user.name })) {
+			if (await this.userModel.findOne({ username: user.username })) {
 				throw new HttpException('该用户名已注册', HttpStatus.BAD_REQUEST)
 			}
 

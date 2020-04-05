@@ -31,7 +31,7 @@ export type UserDocument = DocumentType<User>
 export class User {
 	@ApiProperty({ description: '用户名' })
 	@prop({ required: true })
-	name: string
+	username: string
 
 	@ApiProperty({ description: '密码' })
 	@prop({
