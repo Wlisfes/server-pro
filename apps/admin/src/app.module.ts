@@ -7,6 +7,8 @@ import { MulterModule } from '@nestjs/platform-express'
 import { AuthModule } from './module/auth/auth.module'
 import { APP_GUARD } from '@nestjs/core'
 import { AuthGuard } from './guard/auth.guard'
+import { RoleModule } from './module/role/role.module'
+import { PermissionModule } from './module/permission/permission.module'
 
 import * as MAO from 'multer-aliyun-oss'
 
@@ -28,7 +30,9 @@ import * as MAO from 'multer-aliyun-oss'
 		}),
 		DbModule,
 		UserModule,
-		AuthModule
+		AuthModule,
+		RoleModule,
+		PermissionModule
 	],
 	controllers: [AppController],
 	providers: [

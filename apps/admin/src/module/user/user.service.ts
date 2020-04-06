@@ -1,8 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectModel } from 'nestjs-typegoose'
 import { ReturnModelType } from '@typegoose/typegoose'
-import { User } from 'libs/db/src/models/user.model'
-import { LoginDto, CreateDto, UpdateDto } from './user.dto'
+import { User } from '@libs/db/models/user.model'
+import { UserLoginDto, UserCreateDto, UserUpdateDto } from './user.dto'
 import { compareSync } from 'bcryptjs'
 
 @Injectable()
@@ -10,25 +10,25 @@ export class UserService {
 	constructor(@InjectModel(User) public readonly userModel: ReturnModelType<typeof User>) {}
 
 	//用户登录
-	async login(user: LoginDto): Promise<User | null> {
+	async login(user: UserLoginDto): Promise<User | null> {
 		const response = await this.userModel.findOne({ username: user.username })
 		if (response === null || response === undefined) {
 			throw new HttpException('username 不存在', HttpStatus.BAD_REQUEST)
 		}
 
 		if (response.disable) {
-			throw new HttpException('账户已被禁用，请联系超级管理员解禁', HttpStatus.UNAUTHORIZED)
+			throw new HttpException('账户已被禁用，请联系超级管理员解禁', HttpStatus.FORBIDDEN)
 		}
 
 		if (!compareSync(user.password, response.password)) {
 			throw new HttpException('password 错误', HttpStatus.BAD_REQUEST)
 		}
 
-		return await this.userModel.findById(response.id, { password: 0, disable: 0 })
+		return await (await this.userModel.findById(response.id, { password: 0, disable: 0 })).toJSON()
 	}
 
 	//创建用户
-	async create(user: CreateDto): Promise<User> {
+	async create(user: UserCreateDto): Promise<User> {
 		try {
 			if (await this.userModel.findOne({ username: user.username })) {
 				throw new HttpException('该用户名已注册', HttpStatus.BAD_REQUEST)
@@ -61,7 +61,7 @@ export class UserService {
 	}
 
 	//修改用户信息
-	async update(user: UpdateDto): Promise<any> {
+	async update(user: UserUpdateDto): Promise<any> {
 		try {
 			const response = await this.userModel.updateOne({ _id: user.id }, user)
 			if (response.nModified === 0) {

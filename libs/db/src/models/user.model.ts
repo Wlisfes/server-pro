@@ -9,24 +9,12 @@
 import { prop, modelOptions, DocumentType } from '@typegoose/typegoose'
 import { ApiProperty } from '@nestjs/swagger'
 import { hashSync } from 'bcryptjs'
+import { modelsOptions } from '../utils'
 
 export type UserDocument = DocumentType<User>
 
 @modelOptions({
-	schemaOptions: {
-		timestamps: {
-			createdAt: 'create_time', //重命名创建时间
-			updatedAt: 'update_time' //重命名更新时间
-		},
-		versionKey: false,
-		toJSON: {
-			transform(doc, ret, options) {
-				ret.id = doc.id
-				delete ret._id
-				return ret
-			}
-		}
-	}
+	schemaOptions: { ...modelsOptions }
 })
 export class User {
 	@ApiProperty({ description: '用户名' })

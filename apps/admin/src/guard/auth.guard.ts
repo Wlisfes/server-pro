@@ -20,19 +20,15 @@ export class AuthGuard implements CanActivate {
 			const user = await this.authService.verify(request.headers['token'])
 			if (user.disable) {
 				//验证账号是否被禁用
-				throw new HttpException('账户已被禁用，请联系超级管理员解禁', HttpStatus.UNAUTHORIZED)
+				throw new HttpException('账户已被禁用，请联系超级管理员解禁', HttpStatus.FORBIDDEN)
 			}
 			request.user = user
 		}
 
 		if (roles) {
 			//验证权限
+			console.log(roles.includes('admin'))
 		}
-
-		//没有 roles字段表示不需要权限
-		// if (roles) return true
-		// console.log(roles)
-		// console.log(await this.authService.sign())
 
 		return true
 	}
