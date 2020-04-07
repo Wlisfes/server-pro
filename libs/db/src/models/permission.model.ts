@@ -2,13 +2,13 @@
  * @Author: 情雨随风
  * @Date: 2020-04-06 11:38:24
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2020-04-06 22:55:26
+ * @Last Modified time: 2020-04-08 00:18:06
  * @Description: 权限表
  */
 
 import { prop, arrayProp, Ref, modelOptions, DocumentType } from '@typegoose/typegoose'
 import { ApiProperty } from '@nestjs/swagger'
-import { Apply } from './apply.model'
+import { Actions } from './actions.model'
 import { modelsOptions } from '../utils'
 
 export type UserDocument = DocumentType<Permission>
@@ -35,7 +35,9 @@ export class Permission {
 
 	@ApiProperty({ description: '权限模块拥有的操作列表' })
 	@arrayProp({
-		ref: 'Apply'
+		ref: 'Actions',
+		localField: '_id',
+		foreignField: 'apply_id'
 	})
-	permission: Ref<Apply>[]
+	permission: Ref<Actions>[]
 }

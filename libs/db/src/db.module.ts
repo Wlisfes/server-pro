@@ -5,8 +5,11 @@ import { User } from './models/user.model'
 import { Role } from './models/role.model'
 import { Permission } from './models/permission.model'
 import { Apply } from './models/apply.model'
+import { School } from './models/school.model'
+import { Student } from './models/student.model'
+import { Actions } from './models/actions.model'
 
-const models = TypegooseModule.forFeature([User, Role, Apply, Permission])
+const models = TypegooseModule.forFeature([User, Role, Apply, Permission, Actions, School, Student])
 
 @Global()
 @Module({

@@ -15,11 +15,13 @@ export class CreateDto {
 	@IsNotEmpty({ message: 'description 必填' })
 	description: string
 
+	@ApiProperty({ description: '权限模块是否禁用', example: false })
+	disable: boolean
+
 	@ApiProperty({
 		description: '权限模块拥有的操作列表',
 		example: [
 			{
-				id: 'xxxxxxxxxxxxxxxxx',
 				name: '新增',
 				action: 'create',
 				check: true,

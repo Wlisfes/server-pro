@@ -8,9 +8,15 @@ import { CreateDto } from './permission.dto'
 export class PermissionController {
 	constructor(private readonly permissionService: PermissionService) {}
 
+	@Get('apply/all')
+	@ApiOperation({ summary: '获取所有操作类型' })
+	async applyfindAll() {
+		return await this.permissionService.applyFindAll()
+	}
+
 	@Post('create')
 	@ApiOperation({ summary: '创建权限模块' })
-	async create(@Body() body: CreateDto) {
+	async create(@Body() body) {
 		return this.permissionService.create(body)
 	}
 
