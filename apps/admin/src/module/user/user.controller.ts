@@ -30,8 +30,7 @@ export class UserController {
 	}
 
 	@Get('all')
-	@AuthUser(true)
-	@AuthRoles('admin', 'edit')
+	@AuthUser(true) //需要验证登录
 	@ApiOperation({ summary: '获取所有用户列表' })
 	async findAll() {
 		return await this.userService.findAll()
