@@ -56,7 +56,10 @@ export class PermissionService {
 
 	//获取所有权限模块列表
 	async findAll(): Promise<any> {
-		return await this.permissionModel.find().populate('permission')
+		return await this.permissionModel
+			.find()
+			.sort({ _id: -1 })
+			.populate('permission')
 		// return await this.permissionModel.remove({ permission_name: '用户管理' }).populate('permission')
 		// const school = await this.schoolModel.findOne({ name: '清华大学' })
 		// return await new this.studentModel({

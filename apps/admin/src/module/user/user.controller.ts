@@ -15,12 +15,12 @@ export class UserController {
 	@ApiOperation({ summary: '用户登陆' })
 	async login(@Body() body: UserLoginDto) {
 		const response = await this.userService.login(body)
-		const token = await this.authService.sign({
+		const access_token = await this.authService.sign({
 			username: response.username,
 			id: (response as any).id
 		})
 
-		return { ...response, token }
+		return { ...response, access_token }
 	}
 
 	@Post('create')

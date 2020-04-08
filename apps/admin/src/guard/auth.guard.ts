@@ -12,12 +12,12 @@ export class AuthGuard implements CanActivate {
 		const auth = this.reflector.get<string[]>('auth', context.getHandler())
 
 		if (auth) {
-			//验证token登录
-			if (!request.headers['token']) {
-				throw new HttpException('缺少 token', HttpStatus.UNAUTHORIZED)
+			//验证access_token登录
+			if (!request.headers['access_token']) {
+				throw new HttpException('缺少 access_token', HttpStatus.UNAUTHORIZED)
 			}
 
-			const user = await this.authService.verify(request.headers['token'])
+			const user = await this.authService.verify(request.headers['access_token'])
 			if (user.disable) {
 				//验证账号是否被禁用
 				throw new HttpException('账户已被禁用，请联系超级管理员解禁', HttpStatus.FORBIDDEN)

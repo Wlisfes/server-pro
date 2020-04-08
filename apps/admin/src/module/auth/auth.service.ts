@@ -11,21 +11,21 @@ interface SignUser {
 export class AuthService {
 	constructor(private readonly jwtService: JwtService, private readonly userService: UserService) {}
 
-	//token加密
+	//access_token加密
 	async sign(user: SignUser) {
 		return this.jwtService.sign(user)
 	}
 
-	//token解密
-	async verify(token: string) {
+	//access_token解密
+	async verify(access_token: string) {
 		try {
 			//token解密
-			const { id } = await this.jwtService.verify(token)
+			const { id } = await this.jwtService.verify(access_token)
 
 			//从用户表读取用户数据
 			return await this.userService.userModel.findById(id, { password: 0 })
 		} catch (error) {
-			throw new HttpException('token 错误或已过期', HttpStatus.UNAUTHORIZED)
+			throw new HttpException('access_token 错误或已过期', HttpStatus.UNAUTHORIZED)
 		}
 	}
 }
