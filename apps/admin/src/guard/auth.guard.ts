@@ -18,10 +18,7 @@ export class AuthGuard implements CanActivate {
 			}
 
 			const user = await this.authService.verify(request.headers['access_token'])
-			if (user.disable) {
-				//验证账号是否被禁用
-				throw new HttpException('账户已被禁用，请联系超级管理员解禁', HttpStatus.FORBIDDEN)
-			}
+
 			request.user = user
 		}
 

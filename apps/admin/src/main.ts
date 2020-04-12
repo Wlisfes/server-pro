@@ -26,7 +26,11 @@ async function bootstrap() {
 	await createSwagger(app)
 
 	//全局注册验证管道
-	app.useGlobalPipes(new ValidationPipe())
+	app.useGlobalPipes(
+		new ValidationPipe({
+			skipMissingProperties: true
+		})
+	)
 
 	//全局注册错误的过滤器
 	app.useGlobalFilters(new HttpExceptionFilter())

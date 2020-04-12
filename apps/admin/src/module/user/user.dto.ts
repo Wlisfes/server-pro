@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, IsString, IsBoolean, IsOptional } from 'class-validator'
 
 export class UserLoginDto {
 	@ApiProperty({ description: '用户名', example: 'admin' })
@@ -17,14 +17,24 @@ export class UserCreateDto extends UserLoginDto {
 	nick_name: string
 }
 
-export class UserUpdateDto extends UserCreateDto {
+export class UserUpdateDto {
 	@ApiProperty({ description: '用户id', example: '5e88aab08f5c3936cc73e32a' })
 	@IsNotEmpty({ message: 'id 必填' })
 	id: string
 
+	@ApiProperty({ description: '用户名', example: 'admin' })
+	@IsString()
+	username?: string
+
+	@ApiProperty({ description: '昵称', example: '情雨随风' })
+	@IsString()
+	nick_name?: string
+
 	@ApiProperty({ description: '头像', example: '图片url' })
+	@IsString()
 	avatar?: string
 
 	@ApiProperty({ description: '账户是否禁用', example: false })
+	@IsBoolean()
 	disable?: boolean
 }

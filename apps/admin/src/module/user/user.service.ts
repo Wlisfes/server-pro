@@ -4,10 +4,14 @@ import { ReturnModelType } from '@typegoose/typegoose'
 import { User } from '@libs/db/models/user.model'
 import { UserLoginDto, UserCreateDto, UserUpdateDto } from './user.dto'
 import { compareSync } from 'bcryptjs'
+import { StoreService } from '../../service/store/store.service'
 
 @Injectable()
 export class UserService {
-	constructor(@InjectModel(User) public readonly userModel: ReturnModelType<typeof User>) {}
+	constructor(
+		@InjectModel(User) public readonly userModel: ReturnModelType<typeof User>,
+		private readonly storeService: StoreService
+	) {}
 
 	//用户登录
 	async login(user: UserLoginDto): Promise<User | null> {
@@ -67,6 +71,9 @@ export class UserService {
 			if (response.nModified === 0) {
 				throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
 			}
+			//更新用户信息之后需要把用户的缓存删除
+			// await this.storeService.delStore(user.id)
+
 			return await this.userModel.findById(user.id, { password: 0 })
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)

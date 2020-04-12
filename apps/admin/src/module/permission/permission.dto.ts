@@ -31,3 +31,9 @@ export class CreateDto {
 	})
 	permission: Apply[]
 }
+
+export class DeletePermissionDto {
+	@ApiProperty({ description: '权限模块id', example: '5e88aab08f5c3936cc73e32a' })
+	@IsNotEmpty({ message: 'id 必填' })
+	id: string
+}

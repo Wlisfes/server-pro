@@ -5,20 +5,22 @@ import { UserService } from './user.service'
 import { AuthService } from '../auth/auth.service'
 import { UserLoginDto, UserCreateDto, UserUpdateDto } from './user.dto'
 import { AuthUser, AuthRoles } from '../../guard/auth.guard'
+import { ToolService } from '../../service/tool/tool.service'
 
 @Controller('api/user')
 @ApiTags('用户模块')
 export class UserController {
-	constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
+	constructor(
+		private readonly userService: UserService,
+		private readonly authService: AuthService,
+		private readonly toolService: ToolService
+	) {}
 
 	@Post('login')
 	@ApiOperation({ summary: '用户登陆' })
 	async login(@Body() body: UserLoginDto) {
 		const response = await this.userService.login(body)
-		const access_token = await this.authService.sign({
-			username: response.username,
-			id: (response as any).id
-		})
+		const access_token = await this.authService.sign((response as any).id)
 
 		return { ...response, access_token }
 	}
@@ -46,7 +48,7 @@ export class UserController {
 	@Put('update')
 	@ApiOperation({ summary: '修改用户信息' })
 	async update(@Body() body: UserUpdateDto) {
-		return await this.userService.update(body)
+		return await this.userService.update(this.toolService.filter<UserUpdateDto>(body))
 	}
 
 	@Delete('remove')

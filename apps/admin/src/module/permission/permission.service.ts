@@ -21,6 +21,25 @@ export class PermissionService {
 	//获取所有操作类型
 	async applyFindAll(): Promise<Apply[]> {
 		return await this.applyModel.find()
+		// return await this.applyModel.insertMany([
+		// 	{
+		// 		name: '修改',
+		// 		action: 'update'
+		// 	},
+		// 	{
+		// 		name: '查询',
+		// 		action: 'find'
+		// 	},
+		// 	{
+		// 		name: '导入',
+		// 		action: 'import'
+		// 	},
+		// 	{
+		// 		name: '导出',
+		// 		action: 'export'
+		// 	}
+		// ])
+		// return await this.applyModel.deleteOne({ name: '修改' })
 	}
 
 	//创建权限模块
@@ -74,5 +93,14 @@ export class PermissionService {
 		// 	}
 		// )
 		// return await this.studentModel.findById('5e8c9ceba08ea727ec944133').populate('school')
+	}
+
+	//删除权限模块
+	async delete(id: string) {
+		console.log(id)
+		const response = await this.permissionModel.deleteOne({ _id: id })
+		await this.actionsModel.remove({ apply_id: id })
+		console.log(await this.actionsModel.find({ apply_id: id }))
+		return response
 	}
 }
