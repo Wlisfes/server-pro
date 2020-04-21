@@ -6,11 +6,12 @@
  * @Description: 用户表
  */
 
-import { prop, modelOptions, DocumentType } from '@typegoose/typegoose'
+import { prop, arrayProp, modelOptions, DocumentType, Ref } from '@typegoose/typegoose'
 import { IsNotEmpty, IsString, IsNumber } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { hashSync } from 'bcryptjs'
 import { modelsOptions } from '../utils'
+import { Role } from './role'
 
 export type UserDocument = DocumentType<User>
 
@@ -58,4 +59,12 @@ export class User {
 	@IsNumber()
 	@prop({ default: 1 })
 	status: number
+
+	@ApiProperty({ description: '账户所属角色' })
+	@arrayProp({
+		ref: 'Role',
+		localField: '_id',
+		foreignField: 'role_user'
+	})
+	roles: Ref<Role>
 }

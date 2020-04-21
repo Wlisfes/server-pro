@@ -9,9 +9,14 @@ import { AuthGuard } from './guard/auth.guard'
 import * as MAO from 'multer-aliyun-oss'
 
 import { UserModule } from './module/user/user.module'
+import { StoreModule } from './module/store/store.module'
+import { SignModule } from './module/sign/sign.module';
 
 @Module({
 	imports: [
+		DbModule,
+		UserModule,
+		StoreModule,
 		MulterModule.registerAsync({
 			useFactory() {
 				return {
@@ -26,8 +31,7 @@ import { UserModule } from './module/user/user.module'
 				}
 			}
 		}),
-		DbModule,
-		UserModule
+		SignModule
 	],
 	controllers: [AppController],
 	providers: [

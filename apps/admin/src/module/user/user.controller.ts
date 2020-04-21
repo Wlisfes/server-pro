@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Body, Delete, Query } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { AuthUser, AuthRoles } from '../../guard/auth.guard'
 import { UserService } from './user.service'
-import { loginUserDto, createUserDto } from './user.dto'
+import { loginUserDto, createUserDto, deleteUserDto } from './user.dto'
 
 @Controller('api/user')
 @ApiTags('用户模块')
@@ -22,15 +22,18 @@ export class UserController {
 	}
 
 	@Get('all')
-	// @AuthUser(true) //需要验证登录
 	@ApiOperation({ summary: '获取所有用户列表' })
+	@AuthUser(true) //需要验证登录
+	@AuthRoles({ role: 'admin', apply: ['find'] })
 	async findUserAll() {
 		return await this.userService.findUserAll()
 	}
 
 	@Delete('delete')
-	// @AuthUser(true) //需要验证登录
 	@ApiOperation({ summary: '删除用户' })
-	@AuthRoles('admin', 'delete')
-	async deleteUser() {}
+	@AuthUser(true) //需要验证登录
+	@AuthRoles({ role: 'admin', apply: ['delete'] })
+	async deleteUser(@Query() query: deleteUserDto) {
+		return await this.userService.deleteUser(query.id)
+	}
 }

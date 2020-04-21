@@ -27,3 +27,10 @@ export class createUserDto extends loginUserDto {
 	@IsString()
 	nickname: string
 }
+
+export class deleteUserDto {
+	@ApiProperty({ description: '用户id', example: '5e9eab973268ca04bcb3285b' })
+	@IsNotEmpty({ message: 'id 必填' })
+	@IsString()
+	id: string
+}
