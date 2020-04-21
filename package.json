@@ -35,7 +35,6 @@
 		"dayjs": "^1.8.23",
 		"mongoose": "^5.9.7",
 		"multer-aliyun-oss": "^1.0.4",
-		"nestjs-redis": "^1.2.7",
 		"nestjs-typegoose": "^7.1.14",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.2",

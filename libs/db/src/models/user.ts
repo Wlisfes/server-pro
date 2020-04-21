@@ -1,8 +1,8 @@
 /*
- * @Date: 2020-04-03 16:13:21
+ * @Date: 2020-04-21 13:45:40
  * @Author: 情雨随风
  * @LastEditors: 情雨随风
- * @LastEditTime: 2020-04-03 17:28:57
+ * @LastEditTime: 2020-04-21 13:50:12
  * @Description: 用户表
  */
 
@@ -19,17 +19,13 @@ export type UserDocument = DocumentType<User>
 export class User {
 	@ApiProperty({ description: '用户名' })
 	@prop({ required: true })
-	username: string
+	user_name: string
 
 	@ApiProperty({ description: '密码' })
 	@prop({
 		required: true,
-		get(val) {
-			return val
-		},
-		set(val) {
-			return hashSync(val)
-		}
+		get: val => val,
+		set: val => hashSync(val)
 	})
 	password: string
 
@@ -41,7 +37,7 @@ export class User {
 	@prop({ default: '' })
 	avatar: string
 
-	@ApiProperty({ description: '账户是否禁用' })
-	@prop({ default: false })
-	disable: boolean
+	@ApiProperty({ description: '账户状态' })
+	@prop({ default: 1 })
+	status: number
 }
