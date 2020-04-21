@@ -13,12 +13,13 @@ export class AuthGuard implements CanActivate {
 		if (auth) {
 			//验证access_token登录
 			if (!request.headers['access_token']) {
-				throw new HttpException('缺少 access_token', HttpStatus.UNAUTHORIZED)
+				throw new HttpException('未登陆', HttpStatus.UNAUTHORIZED)
 			}
 
 			// request.user = user
 		}
 
+		console.log(roles)
 		if (roles) {
 			//验证权限
 			console.log(roles.includes('admin'))
