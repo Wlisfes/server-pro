@@ -7,11 +7,12 @@
  */
 
 import { prop, modelOptions, DocumentType, Ref } from '@typegoose/typegoose'
+import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, IsNumber } from 'class-validator'
 import { modelsOptions } from '../utils'
 import { User } from './user'
 
-export type UserDocument = DocumentType<Role>
+export type RoleDocument = DocumentType<Role>
 
 export class Apply {
 	@prop()
@@ -44,11 +45,20 @@ export class Auth {
 	schemaOptions: { ...modelsOptions }
 })
 export class Role {
+	@ApiProperty({ description: '角色昵称' })
 	@prop()
+	@IsNotEmpty()
+	@IsString()
 	role_name: string
 
-	@prop({ ref: 'User' })
-	role_user: Ref<User>
+	// @prop({ ref: 'User' })
+	// role_user: Ref<User>
+
+	@ApiProperty({ description: '用户id' })
+	@prop()
+	@IsNotEmpty()
+	@IsString()
+	role_uid: string
 
 	@prop()
 	auth: Array<Auth>

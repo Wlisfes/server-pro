@@ -23,7 +23,7 @@ export class UserController {
 
 	@Get('all')
 	@ApiOperation({ summary: '获取所有用户列表' })
-	@AuthUser(true) //需要验证登录
+	// @AuthUser(true) //需要验证登录
 	@AuthRoles({ role: 'admin', apply: ['find'] })
 	async findUserAll() {
 		return await this.userService.findUserAll()
@@ -31,7 +31,7 @@ export class UserController {
 
 	@Delete('delete')
 	@ApiOperation({ summary: '删除用户' })
-	@AuthUser(true) //需要验证登录
+	// @AuthUser(true) //需要验证登录
 	@AuthRoles({ role: 'admin', apply: ['delete'] })
 	async deleteUser(@Query() query: deleteUserDto) {
 		return await this.userService.deleteUser(query.id)

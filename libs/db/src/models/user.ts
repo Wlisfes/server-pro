@@ -2,7 +2,7 @@
  * @Date: 2020-04-21 13:45:40
  * @Author: 情雨随风
  * @LastEditors: 情雨随风
- * @LastEditTime: 2020-04-21 16:14:56
+ * @LastEditTime: 2020-04-22 13:01:22
  * @Description: 用户表
  */
 
@@ -26,45 +26,47 @@ export class User {
 	username: string
 
 	@ApiProperty({ description: '密码' })
-	@IsNotEmpty()
-	@IsString()
 	@prop({
 		get: val => val,
 		set: val => hashSync(val)
 	})
+	@IsNotEmpty()
+	@IsString()
 	password: string
 
 	@ApiProperty({ description: '昵称' })
+	@prop()
 	@IsNotEmpty()
 	@IsString()
-	@prop()
 	nickname: string
 
 	@ApiProperty({ description: '邮箱' })
-	@IsString()
 	@prop({ default: null })
+	@IsString()
 	email: string
 
 	@ApiProperty({ description: '手机号' })
-	@IsNumber()
 	@prop({ default: null })
+	@IsNumber()
 	mobile: number
 
 	@ApiProperty({ description: '头像' })
-	@IsString()
 	@prop({ default: null })
+	@IsString()
 	avatar: string
 
 	@ApiProperty({ description: '账户状态' })
-	@IsNumber()
 	@prop({ default: 1 })
+	@IsNumber()
 	status: number
 
 	@ApiProperty({ description: '账户所属角色' })
-	@arrayProp({
-		ref: 'Role',
-		localField: '_id',
-		foreignField: 'role_user'
-	})
+	// @prop({
+	// 	ref: 'Role',
+	// 	localField: '_id',
+	// 	foreignField: 'role_user'
+	// })
+	// roles: Ref<Role>
+	@prop({ ref: 'Role', default: null })
 	roles: Ref<Role>
 }
