@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Delete, Query, Put } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { deleteAuthDto, changeAuthDto } from './auth.dto'
+import { deleteAuthDto, changeAuthDto, updateAuthDto } from './auth.dto'
 
 @Controller('api/auth')
 @ApiTags('权限模块')
@@ -30,5 +30,11 @@ export class AuthController {
 	@ApiOperation({ summary: '切换权限模块状态' })
 	async changeAuth(@Body() body: changeAuthDto) {
 		return await this.authService.changeAuth(body)
+	}
+
+	@Put('update')
+	@ApiOperation({ summary: '修改权限模块' })
+	async updateAuth(@Body() body: updateAuthDto) {
+		return await this.authService.updateAuth(body)
 	}
 }
