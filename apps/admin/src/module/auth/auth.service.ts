@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectModel } from 'nestjs-typegoose'
 import { ReturnModelType } from '@typegoose/typegoose'
 import { Auth } from '@libs/db/models/auth'
@@ -28,5 +28,33 @@ export class AuthService {
 				{ apply_name: '导出', apply_key: 'export' }
 			]
 		}).save()
+	}
+
+	//删除权限模块
+	async deleteAuth(id: string) {
+		try {
+			const response = await this.authModel.deleteOne({ _id: id })
+
+			if (response.deletedCount === 1) {
+				return response
+			}
+			throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+		} catch (error) {
+			throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+		}
+	}
+
+	//切换权限模块状态
+	async changeAuth(params: { id: string; status: number }) {
+		try {
+			const response = await this.authModel.updateOne({ _id: params.id }, { status: params.status })
+
+			if (response.nModified === 1) {
+				return response
+			}
+			throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+		} catch (error) {
+			throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+		}
 	}
 }

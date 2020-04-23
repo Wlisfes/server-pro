@@ -38,7 +38,7 @@ async function bootstrap() {
 	//全局注册拦截器
 	app.useGlobalInterceptors(new TransformInterceptor())
 
-	await app.listen(3000)
-	console.log('http://localhost:3000/api-docs')
+	await app.listen(3003)
+	console.log('http://localhost:3003/api-docs')
 }
 bootstrap()
