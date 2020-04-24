@@ -2,13 +2,13 @@
  * @Date: 2020-04-22 13:25:31
  * @Author: 情雨随风
  * @LastEditors: 情雨随风
- * @LastEditTime: 2020-04-22 15:28:34
+ * @LastEditTime: 2020-04-24 10:29:39
  * @Description: 权限模块表
  */
 
-import { prop, modelOptions, DocumentType, Ref } from '@typegoose/typegoose'
+import { prop, modelOptions, DocumentType } from '@typegoose/typegoose'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator'
+import { IsNotEmpty, IsString, IsIn, IsBoolean, IsArray } from 'class-validator'
 import { modelsOptions } from '../utils'
 
 export type AuthDocument = DocumentType<Auth>
@@ -28,8 +28,7 @@ export class Apply {
 
 	@ApiProperty({ description: '操作状态' })
 	@prop({ default: 1 })
-	@IsString()
-	@IsNumber()
+	@IsIn([0, 1], { message: 'status 参数不合法' })
 	status: number
 }
 
@@ -39,28 +38,29 @@ export class Apply {
 export class Auth {
 	@ApiProperty({ description: '模块名称' })
 	@prop()
-	@IsNotEmpty()
-	@IsString()
+	@IsNotEmpty({ message: 'auth_name 必填' })
+	@IsString({ message: 'auth_name 必须为string' })
 	auth_name: string
 
 	@ApiProperty({ description: '模块key' })
 	@prop()
-	@IsNotEmpty()
-	@IsString()
+	@IsNotEmpty({ message: 'auth_key 必填' })
+	@IsString({ message: 'auth_key 必须为string' })
 	auth_key: string
 
 	@ApiProperty({ description: '模块状态' })
 	@prop({ default: 1 })
-	@IsNotEmpty()
-	@IsNumber()
+	@IsNotEmpty({ message: 'status 必填' })
+	@IsIn([0, 1], { message: 'status 参数不合法' })
 	status: number
 
 	@ApiProperty({ description: '是否全选' })
 	@prop({ default: false })
-	@IsNotEmpty()
-	@IsString()
+	@IsNotEmpty({ message: 'all 必填' })
+	@IsBoolean({ message: 'all 必须为boolean' })
 	all: boolean
 
 	@prop()
+	@IsArray({ message: 'apply 格式错误' })
 	apply: Array<Apply>
 }
