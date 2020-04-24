@@ -10,15 +10,20 @@ const models = TypegooseModule.forFeature([User, Role, Auth])
 @Global()
 @Module({
 	imports: [
-		TypegooseModule.forRoot('mongodb://120.25.123.165:27017/server-pro', {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-			useCreateIndex: true,
-			useFindAndModify: false
+		TypegooseModule.forRootAsync({
+			useFactory() {
+				return {
+					uri: process.env.DB,
+					useNewUrlParser: true,
+					useUnifiedTopology: true,
+					useCreateIndex: true,
+					useFindAndModify: false
+				}
+			}
 		}),
 		models
 	],
 	providers: [DbService],
-	exports: [DbService]
+	exports: [DbService, models]
 })
 export class DbModule {}

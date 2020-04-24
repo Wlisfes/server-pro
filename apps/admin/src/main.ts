@@ -31,6 +31,7 @@ async function bootstrap() {
 			skipMissingProperties: true
 		})
 	)
+	console.log(process.env.ADMIN_PORT)
 
 	//全局注册错误的过滤器
 	app.useGlobalFilters(new HttpExceptionFilter())
@@ -38,7 +39,8 @@ async function bootstrap() {
 	//全局注册拦截器
 	app.useGlobalInterceptors(new TransformInterceptor())
 
-	await app.listen(3003)
-	console.log('http://localhost:3003/api-docs')
+	const port = process.env.ADMIN_PORT || 3003
+	await app.listen(port)
+	console.log(`http://localhost:${port}/api-docs`)
 }
 bootstrap()

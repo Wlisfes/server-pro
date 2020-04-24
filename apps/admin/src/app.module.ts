@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { DbModule } from 'libs/db/src'
 import { MulterModule } from '@nestjs/platform-express'
 import { APP_GUARD } from '@nestjs/core'
 import { AuthGuard } from './guard/auth.guard'
@@ -12,10 +11,11 @@ import { UserModule } from './module/user/user.module'
 import { StoreModule } from './module/store/store.module'
 import { SignModule } from './module/sign/sign.module'
 import { AuthModule } from './module/auth/auth.module'
+import { CommonModule } from '@libs/common'
 
 @Module({
 	imports: [
-		DbModule, //数据库模块
+		CommonModule, //公共模块
 		UserModule, //用户模块
 		StoreModule, //缓存模块
 		SignModule, //jwt加密模块
@@ -25,10 +25,10 @@ import { AuthModule } from './module/auth/auth.module'
 				return {
 					storage: MAO({
 						config: {
-							region: 'oss-cn-shenzhen',
-							accessKeyId: 'LTAI4FpJrHziJMFaTxr6Th4J',
-							accessKeySecret: 'CIQ5iYktzWSbjnWZ92KXW7BoBAZI6O',
-							bucket: 'linvc'
+							region: process.env.OSS_REGION,
+							accessKeyId: process.env.OSS_ACCESS_KEY_ID,
+							accessKeySecret: process.env.OSS_ACCESS_KEY_SECRET,
+							bucket: process.env.OSS_BUCKET
 						}
 					})
 				}
