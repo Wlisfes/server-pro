@@ -31,7 +31,6 @@ async function bootstrap() {
 			skipMissingProperties: true
 		})
 	)
-	console.log(process.env.ADMIN_PORT)
 
 	//全局注册错误的过滤器
 	app.useGlobalFilters(new HttpExceptionFilter())

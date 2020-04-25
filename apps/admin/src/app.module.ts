@@ -12,6 +12,7 @@ import { StoreModule } from './module/store/store.module'
 import { SignModule } from './module/sign/sign.module'
 import { AuthModule } from './module/auth/auth.module'
 import { CommonModule } from '@libs/common'
+import { RoleModule } from './module/role/role.module';
 
 @Module({
 	imports: [
@@ -33,7 +34,7 @@ import { CommonModule } from '@libs/common'
 					})
 				}
 			}
-		})
+		}), RoleModule
 	],
 	controllers: [AppController],
 	providers: [

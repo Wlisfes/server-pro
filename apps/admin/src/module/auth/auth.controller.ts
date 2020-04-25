@@ -10,8 +10,8 @@ export class AuthController {
 
 	@Get('all')
 	@ApiOperation({ summary: '获取所有权限列表' })
-	async findAuthAll() {
-		return await this.authService.findAuthAll()
+	async findAuthAll(@Query() query) {
+		return await this.authService.findAuthAll(query)
 	}
 
 	@Post('create')

@@ -19,9 +19,9 @@ export class AuthService {
 	}
 
 	//获取所有权限列表
-	async findAuthAll(): Promise<Auth[]> {
+	async findAuthAll(params?: any): Promise<Auth[]> {
 		return await this.authModel
-			.find()
+			.find(params)
 			.sort({ create_time: -1 })
 			.exec()
 	}
@@ -30,7 +30,7 @@ export class AuthService {
 	async createAuth(params: Auth) {
 		try {
 			if (await this.authModel.findOne({ auth_key: params.auth_key })) {
-				throw new HttpException('auth_key 已存在', HttpStatus.BAD_REQUEST)
+				throw new HttpException(`${params.auth_key} 已存在`, HttpStatus.BAD_REQUEST)
 			}
 
 			if (!this.everyApply(params.apply)) {
