@@ -2,8 +2,8 @@
  * @Author: 情雨随风
  * @Date: 2020-04-21 20:59:19
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2020-04-25 23:15:36
- * @Description: 角色权限表
+ * @Last Modified time: 2020-04-25 23:17:40
+ * @Description: 用户所属权限表
  */
 
 import { prop, modelOptions, DocumentType } from '@typegoose/typegoose'
@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, IsNumber, IsIn, IsBoolean } from 'class-validator'
 import { modelsOptions } from '../utils'
 
-export type RoleDocument = DocumentType<Role>
+export type RoleDocument = DocumentType<UserRole>
 
 export class Apply {
 	@prop()
@@ -56,7 +56,7 @@ export class Auth {
 @modelOptions({
 	schemaOptions: { ...modelsOptions }
 })
-export class Role {
+export class UserRole {
 	@ApiProperty({ description: '角色模块key' })
 	@prop()
 	@IsNotEmpty()
@@ -68,6 +68,12 @@ export class Role {
 	@IsNotEmpty()
 	@IsString()
 	role_name: string
+
+	@ApiProperty({ description: '用户id' })
+	@prop()
+	@IsNotEmpty()
+	@IsString()
+	role_uid: string
 
 	@ApiProperty({ description: '角色状态' })
 	@prop({ default: 1 })

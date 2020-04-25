@@ -7,6 +7,7 @@ import { SignService } from '../sign/sign.service'
 import { loginUserDto, createUserDto } from './user.dto'
 import { compareSync } from 'bcryptjs'
 import { Role } from '@libs/db/models/role'
+import { UserRole } from '@libs/db/models/userRole'
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,8 @@ export class UserService {
 		private readonly storeService: StoreService,
 		private readonly signService: SignService,
 		@InjectModel(User) private readonly userModel: ReturnModelType<typeof User>,
-		@InjectModel(Role) private readonly roleModel: ReturnModelType<typeof Role>
+		@InjectModel(Role) private readonly roleModel: ReturnModelType<typeof Role>,
+		@InjectModel(UserRole) private readonly userRoleModel: ReturnModelType<typeof Role>
 	) {}
 
 	//用户登陆
@@ -50,53 +52,23 @@ export class UserService {
 			if (await this.userModel.findOne({ username: user.username })) {
 				throw new HttpException('该用户名已注册', HttpStatus.BAD_REQUEST)
 			}
+			//查找游客角色
+			const role = await this.roleModel.findOne(
+				{ role_key: 'visitor' },
+				{ _id: 0, update_time: 0, create_time: 0 }
+			)
+			//存储用户信息
 			const response = await new this.userModel(user).save()
-
-			// const auth = [
-			// 	{
-			// 		auth_name: '用户管理',
-			// 		apply: [
-			// 			{
-			// 				apply_name: '新增',
-			// 				apply: 'add',
-			// 				status: 1
-			// 			},
-			// 			{
-			// 				apply_name: '删除',
-			// 				apply: 'delete',
-			// 				status: 1
-			// 			}
-			// 		]
-			// 	},
-			// 	{
-			// 		auth_name: '文章管理',
-			// 		apply: [
-			// 			{
-			// 				apply_name: '修改',
-			// 				apply: 'update',
-			// 				status: 1
-			// 			},
-			// 			{
-			// 				apply_name: '删除',
-			// 				apply: 'delete',
-			// 				status: 1
-			// 			}
-			// 		]
-			// 	}
-			// ]
-			// const role = await new this.roleModel({
-			// 	role_name: '项目管理员',
-			// 	role_uid: response.id,
-			// 	auth: auth
-			// }).save()
-
-			// await this.userModel.updateOne(
-			// 	{ _id: response.id },
-			// 	{
-			// 		...user,
-			// 		roles: role
-			// 	}
-			// )
+			//存储一个对应此用户的游客信息
+			const roles = await new this.userRoleModel({
+				auth: role.auth,
+				role_key: role.role_key,
+				role_name: role.role_name,
+				status: role.status,
+				role_uid: response.id
+			}).save()
+			//把存储好的游客信息关联到此用户
+			await this.userModel.updateOne({ _id: response.id }, { ...user, roles })
 
 			return await this.findUserOneRoles(response.id, { status: 0, password: 0 })
 		} catch (error) {
@@ -106,13 +78,14 @@ export class UserService {
 
 	//根据id获取用户信息以及用户角色权限
 	async findUserOneRoles(id: string, condition?: { status?: number; password?: number; [key: string]: number }) {
-		return await (await this.userModel.findById(id, condition).populate('roles')).toJSON()
+		return await this.userModel.findById(id, condition).populate('roles')
 	}
 
 	//获取所有用户列表以及用户角色权限
 	async findUserAll(): Promise<User[]> {
 		return await this.userModel
 			.find({}, { password: 0 })
+			.sort({ create_time: -1 })
 			.populate('roles', { create_time: 0, update_time: 0 })
 			.exec()
 	}

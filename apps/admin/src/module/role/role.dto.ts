@@ -2,7 +2,7 @@
  * @Author: 情雨随风
  * @Date: 2020-04-25 00:00:47
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2020-04-25 18:13:38
+ * @Last Modified time: 2020-04-25 23:15:55
  * @Description: RoleDto
  */
 
@@ -72,8 +72,4 @@ export class updateRoleDto extends createRoleDto {
 	@IsNotEmpty({ message: 'id 必填' })
 	@IsString({ message: 'id 必须为string' })
 	id: string
-
-	@ApiProperty({ description: '用户id', example: '5e9eab973268ca04bcb3285b' })
-	@IsString({ message: 'id 必须为string' })
-	role_uid?: string
 }

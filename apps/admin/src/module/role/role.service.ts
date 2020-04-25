@@ -32,7 +32,7 @@ export class RoleService {
 			.exec()
 	}
 
-	//新增权限模块
+	//新增角色
 	async createRole(params: createRoleDto) {
 		try {
 			if (await this.roleModel.findOne({ role_key: params.role_key })) {

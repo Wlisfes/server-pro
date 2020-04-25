@@ -4,8 +4,9 @@ import { TypegooseModule } from 'nestjs-typegoose'
 import { User } from './models/user'
 import { Role } from './models/role'
 import { Auth } from './models/auth'
+import { UserRole } from './models/userRole'
 
-const models = TypegooseModule.forFeature([User, Role, Auth])
+const models = TypegooseModule.forFeature([User, UserRole, Role, Auth])
 
 @Global()
 @Module({

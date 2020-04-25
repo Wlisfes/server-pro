@@ -24,7 +24,7 @@ export class UserController {
 	@Get('all')
 	@ApiOperation({ summary: '获取所有用户列表' })
 	// @AuthUser(true) //需要验证登录
-	@AuthRoles({ role: 'admin', apply: ['find'] })
+	// @AuthRoles({ role: 'admin', apply: ['find'] })
 	async findUserAll() {
 		return await this.userService.findUserAll()
 	}
