@@ -7,7 +7,7 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsString, IsNumber, IsIn, IsEmail, ValidateIf } from 'class-validator'
 
 export class loginUserDto {
 	@ApiProperty({ description: '用户名', example: 'admin' })
@@ -33,4 +33,29 @@ export class deleteUserDto {
 	@IsNotEmpty({ message: 'id 必填' })
 	@IsString()
 	id: string
+}
+
+export class changeUserDto extends deleteUserDto {
+	@ApiProperty({ description: '用户状态', example: 1 })
+	@IsNotEmpty({ message: 'status 必填' })
+	@IsIn([0, 1], { message: 'status 参数不合法' })
+	status: number
+}
+
+export class updateUserDto extends deleteUserDto {
+	@ApiProperty({ description: '昵称', example: '猪头' })
+	@IsString({ message: 'is string' })
+	nickname: string
+
+	@ApiProperty({ description: '手机号', example: 18888888888 })
+	mobile: number | string
+
+	@ApiProperty({ description: '邮箱', example: '猪头' })
+	@IsString({ message: 'is string' })
+	@IsEmail({}, { message: 'email 错误' })
+	email: string
+
+	@ApiProperty({ description: '头像', example: '猪头' })
+	@IsString({ message: 'is string' })
+	avatar: string
 }

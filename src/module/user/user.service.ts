@@ -3,11 +3,12 @@ import { InjectModel } from 'nestjs-typegoose'
 import { ReturnModelType } from '@typegoose/typegoose'
 import { StoreService } from '../store/store.service'
 import { SignService } from '../sign/sign.service'
-import { loginUserDto, createUserDto } from './user.dto'
+import { loginUserDto, createUserDto, changeUserDto, updateUserDto } from './user.dto'
 import { compareSync } from 'bcryptjs'
 import { User } from '../db/models/user'
 import { Role } from '../db/models/role'
 import { UserRole } from '../db/models/userRole'
+import * as _ from 'lodash'
 
 @Injectable()
 export class UserService {
@@ -16,7 +17,7 @@ export class UserService {
 		private readonly signService: SignService,
 		@InjectModel(User) private readonly userModel: ReturnModelType<typeof User>,
 		@InjectModel(Role) private readonly roleModel: ReturnModelType<typeof Role>,
-		@InjectModel(UserRole) private readonly userRoleModel: ReturnModelType<typeof Role>
+		@InjectModel(UserRole) private readonly userRoleModel: ReturnModelType<typeof UserRole>
 	) {}
 
 	//用户登陆
@@ -59,18 +60,22 @@ export class UserService {
 			)
 			//存储用户信息
 			const response = await new this.userModel(user).save()
-			//存储一个对应此用户的游客信息
-			const roles = await new this.userRoleModel({
-				auth: role.auth,
-				role_key: role.role_key,
-				role_name: role.role_name,
-				status: role.status,
-				role_uid: response.id
-			}).save()
-			//把存储好的游客信息关联到此用户
-			// await this.userModel.updateOne({ _id: response.id }, { ...user, roles })
 
-			return await this.findUserOneRoles(response.id, { status: 0, password: 0 })
+			if (role) {
+				//若存在游客角色、则存储一个对应此用户的游客信息
+				const roles = await new this.userRoleModel({
+					auth: role.auth,
+					role_key: role.role_key,
+					role_name: role.role_name,
+					status: role.status,
+					role_uid: response.id
+				}).save()
+
+				//把存储好的游客信息关联到此用户
+				await this.userModel.updateOne({ _id: response.id }, { ...user, roles })
+			}
+
+			return await this.findUserOneRoles(response.id, { password: 0 })
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
@@ -88,6 +93,39 @@ export class UserService {
 			.sort({ create_time: -1 })
 			.populate('roles', { create_time: 0, update_time: 0 })
 			.exec()
+	}
+
+	//切换用户状态
+	async changeUser(params: changeUserDto) {
+		try {
+			const response = await this.userModel.updateOne({ _id: params.id }, { status: params.status })
+
+			if (response.nModified === 1) {
+				return await this.findUserOneRoles(params.id, { password: 0 })
+			}
+			throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+		} catch (error) {
+			throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+		}
+	}
+
+	//修改用户信息
+	async updateUser(params: updateUserDto) {
+		try {
+			const filter = _.pickBy(_.pick(params, ['nickname', 'email', 'mobile', 'avatar']))
+			if (filter.mobile && !/^(?:(?:\+|00)86)?1[3-9]\d{9}$/.test(filter.mobile as string)) {
+				throw new HttpException('mobile 错误', HttpStatus.BAD_REQUEST)
+			}
+
+			const response = await this.userModel.updateOne({ _id: params.id }, filter)
+
+			if (response.nModified === 1) {
+				return await this.findUserOneRoles(params.id, { password: 0 })
+			}
+			throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+		} catch (error) {
+			throw new HttpException(error.message || 'id 错误', HttpStatus.BAD_REQUEST)
+		}
 	}
 
 	//删除用户

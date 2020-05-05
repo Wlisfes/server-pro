@@ -1,6 +1,7 @@
 import { Module, Global } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { DbModule } from '../db/db.module'
+import { CommonService } from './common.service';
 
 @Global()
 @Module({
@@ -9,6 +10,7 @@ import { DbModule } from '../db/db.module'
 			isGlobal: true
 		}),
 		DbModule
-	]
+	],
+	providers: [CommonService]
 })
 export class CommonModule {}

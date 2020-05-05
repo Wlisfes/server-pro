@@ -7,7 +7,7 @@
  */
 
 import { prop, modelOptions, DocumentType, Ref } from '@typegoose/typegoose'
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator'
+import { IsNotEmpty, IsString, IsNumber, IsEmail } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { hashSync } from 'bcryptjs'
 import { modelsOptions } from '../utils'
@@ -43,6 +43,7 @@ export class User {
 	@ApiProperty({ description: '邮箱' })
 	@prop({ default: null })
 	@IsString()
+	@IsEmail()
 	email: string
 
 	@ApiProperty({ description: '手机号' })
