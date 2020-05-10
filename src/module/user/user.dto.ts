@@ -42,6 +42,12 @@ export class changeUserDto extends deleteUserDto {
 	status: number
 }
 
+export class updateUserAvatarDto extends deleteUserDto {
+	@ApiProperty({ description: '头像', example: 'http://xxx.cn/xxx.png' })
+	@IsString({ message: 'is string' })
+	avatar: string
+}
+
 export class updateUserDto extends deleteUserDto {
 	@ApiProperty({ description: '昵称', example: '猪头' })
 	@IsString({ message: 'is string' })
@@ -55,7 +61,21 @@ export class updateUserDto extends deleteUserDto {
 	@IsEmail({}, { message: 'email 错误' })
 	email: string
 
-	@ApiProperty({ description: '头像', example: '猪头' })
-	@IsString({ message: 'is string' })
-	avatar: string
+	@ApiProperty({ description: '用户状态', example: 1 })
+	@IsNotEmpty({ message: 'status 必填' })
+	@IsIn([0, 1], { message: 'status 参数不合法' })
+	status: number
+
+	@ApiProperty({
+		description: '用户权限',
+		example: {
+			id: '',
+			auth: [],
+			status: 0,
+			role_name: '',
+			role_key: ''
+		}
+	})
+	@IsNotEmpty({ message: 'roles 必填' })
+	roles: any
 }

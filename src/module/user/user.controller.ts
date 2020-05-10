@@ -2,7 +2,14 @@ import { Controller, Get, Post, Body, Delete, Query, Put } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { AuthUser, AuthRoles } from '../../guard/auth.guard'
 import { UserService } from './user.service'
-import { loginUserDto, createUserDto, deleteUserDto, updateUserDto, changeUserDto } from './user.dto'
+import {
+	loginUserDto,
+	createUserDto,
+	deleteUserDto,
+	updateUserDto,
+	changeUserDto,
+	updateUserAvatarDto
+} from './user.dto'
 
 @Controller('api/user')
 @ApiTags('用户模块')
@@ -29,6 +36,12 @@ export class UserController {
 		return await this.userService.findUserAll()
 	}
 
+	@Get('info')
+	@ApiOperation({ summary: '获取所有用户信息' })
+	async findUserInfo(@Query() query: deleteUserDto) {
+		return await this.userService.findUserOneRoles(query.id, { password: 0 })
+	}
+
 	@Put('change')
 	@ApiOperation({ summary: '切换用户状态' })
 	async changeUser(@Body() body: changeUserDto) {
@@ -41,9 +54,11 @@ export class UserController {
 		return await this.userService.updateUser(body)
 	}
 
-	@Put('update/roles')
-	@ApiOperation({ summary: '修改用户权限' })
-	async updateUserRoles() {}
+	@Put('update/avatar')
+	@ApiOperation({ summary: '修改用户头像' })
+	async updateUserAvatar(@Body() body: updateUserAvatarDto) {
+		return await this.userService.updateUserAvatar(body)
+	}
 
 	@Delete('delete')
 	@ApiOperation({ summary: '删除用户' })

@@ -3,7 +3,7 @@ import { InjectModel } from 'nestjs-typegoose'
 import { ReturnModelType } from '@typegoose/typegoose'
 import { StoreService } from '../store/store.service'
 import { SignService } from '../sign/sign.service'
-import { loginUserDto, createUserDto, changeUserDto, updateUserDto } from './user.dto'
+import { loginUserDto, createUserDto, changeUserDto, updateUserDto, updateUserAvatarDto } from './user.dto'
 import { compareSync } from 'bcryptjs'
 import { User } from '../db/models/user'
 import { Role } from '../db/models/role'
@@ -112,12 +112,37 @@ export class UserService {
 	//修改用户信息
 	async updateUser(params: updateUserDto) {
 		try {
-			const filter = _.pickBy(_.pick(params, ['nickname', 'email', 'mobile', 'avatar']))
-			if (filter.mobile && !/^(?:(?:\+|00)86)?1[3-9]\d{9}$/.test(filter.mobile as string)) {
+			if (params.mobile && !/^(?:(?:\+|00)86)?1[3-9]\d{9}$/.test(params.mobile as string)) {
 				throw new HttpException('mobile 错误', HttpStatus.BAD_REQUEST)
 			}
 
-			const response = await this.userModel.updateOne({ _id: params.id }, filter)
+			const response = await this.userModel.updateOne(
+				{ _id: params.id },
+				{
+					nickname: params.nickname,
+					email: params.email || null,
+					mobile: (params.mobile as number) || null,
+					status: params.status || 0
+				}
+			)
+
+			if (response.nModified === 1) {
+				await this.userRoleModel.updateOne({ role_uid: params.id }, { ...params.roles })
+				return await this.findUserOneRoles(params.id, { password: 0 })
+			}
+			throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+		} catch (error) {
+			throw new HttpException(error.message || 'id 错误', HttpStatus.BAD_REQUEST)
+		}
+	}
+
+	//修改用户头像
+	async updateUserAvatar(params: updateUserAvatarDto) {
+		try {
+			if (!(await this.userModel.findById(params.id))) {
+				throw new HttpException('id 错误', HttpStatus.BAD_REQUEST)
+			}
+			const response = await this.userModel.updateOne({ _id: params.id }, { avatar: params.avatar })
 
 			if (response.nModified === 1) {
 				return await this.findUserOneRoles(params.id, { password: 0 })

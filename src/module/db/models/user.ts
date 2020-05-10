@@ -49,7 +49,7 @@ export class User {
 	@ApiProperty({ description: '手机号' })
 	@prop({ default: null })
 	@IsNumber()
-	mobile: number
+	mobile: number | string | null
 
 	@ApiProperty({ description: '头像' })
 	@prop({ default: null })
