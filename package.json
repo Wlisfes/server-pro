@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "pro",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -18,32 +18,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/server/test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
-    "@nestjs/config": "^0.4.0",
     "@nestjs/core": "^7.0.0",
-    "@nestjs/jwt": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
-    "@nestjs/swagger": "^4.5.1",
-    "@typegoose/typegoose": "^6.4.0",
-    "@types/lodash": "^4.14.150",
-    "@types/memory-cache": "^0.2.1",
-    "@types/mongoose": "^5.7.8",
-    "bcryptjs": "^2.4.3",
-    "class-transformer": "^0.2.3",
-    "class-validator": "^0.11.1",
-    "dayjs": "^1.8.23",
-    "lodash": "^4.17.15",
-    "memory-cache": "^0.2.0",
-    "mongoose": "^5.9.7",
-    "multer-aliyun-oss": "^1.0.4",
-    "nestjs-typegoose": "^7.1.14",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.5.4",
-    "swagger-ui-express": "^4.1.4"
+    "rxjs": "^6.5.4"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
@@ -73,26 +56,12 @@
       "json",
       "ts"
     ],
-    "rootDir": ".",
+    "rootDir": "src",
     "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "coverageDirectory": "./coverage",
-    "testEnvironment": "node",
-    "roots": [
-      "<rootDir>/apps/",
-      "<rootDir>/libs/"
-    ],
-    "moduleNameMapper": {
-      "@libs/db/(.*)": "<rootDir>/libs/db/src/$1",
-      "@libs/db": "<rootDir>/libs/db/src",
-      "@app/common/(.*)": "<rootDir>/libs/common/src/$1",
-      "@app/common": "<rootDir>/libs/common/src",
-      "@lib/utils/(.*)": "<rootDir>/libs/utils/src/$1",
-      "@lib/utils": "<rootDir>/libs/utils/src",
-      "@libs/common/(.*)": "<rootDir>/libs/common/src/$1",
-      "@libs/common": "<rootDir>/libs/common/src"
-    }
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
   }
 }
