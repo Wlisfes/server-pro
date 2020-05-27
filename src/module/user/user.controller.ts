@@ -18,4 +18,20 @@ export class UserController {
 	async findUserAll() {
 		return await this.userService.findUserAll()
 	}
+
+	@Get('article/all')
+	@ApiOperation({ summary: '获取所有文章列表' })
+	async findArticleAll() {
+		return await this.userService.findArticleAll()
+	}
+
+	@Post('update/role')
+	async updateUserRole() {
+		return await this.userService.updateUserRole()
+	}
+
+	@Post('article/role')
+	async updateUserArticle() {
+		return await this.userService.updateUserArticle()
+	}
 }

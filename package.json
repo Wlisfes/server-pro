@@ -26,6 +26,7 @@
 		"@nestjs/platform-express": "^7.0.0",
 		"@nestjs/swagger": "^4.5.8",
 		"@nestjs/typeorm": "^7.1.0",
+		"bcryptjs": "^2.4.3",
 		"dayjs": "^1.8.27",
 		"mysql": "^2.18.1",
 		"reflect-metadata": "^0.1.13",

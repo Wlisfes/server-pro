@@ -16,7 +16,8 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 					password: '77243',
 					database: 'paker',
 					entities: [__dirname + '/**/*.entity{.ts,.js}'],
-					synchronize: true
+					synchronize: true,
+					dateStrings: true
 				}
 			}
 		}),
