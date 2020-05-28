@@ -6,13 +6,15 @@ import { ArticleEntity } from '@/entity/article.entity'
 import { RoleEntity } from '@/entity/role.entity'
 import { CreateUserDto, UpdateUserRoleDto } from './user.dto'
 import { User } from './user.interface'
+import { AuthEntity } from '@/entity/auth.entity'
 
 @Injectable()
 export class UserService {
 	constructor(
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>,
-		@InjectRepository(RoleEntity) private readonly roleModel: Repository<RoleEntity>
+		@InjectRepository(RoleEntity) private readonly roleModel: Repository<RoleEntity>,
+		@InjectRepository(AuthEntity) private readonly authModel: Repository<AuthEntity>
 	) {}
 
 	//验证用户信息是否已存在
@@ -59,7 +61,7 @@ export class UserService {
 
 	//获取所有用户列表
 	public async findUserAll() {
-		return await this.userModel.find({ relations: ['article', 'role'] })
+		return await this.userModel.find({ relations: ['article', 'role', 'auth'] })
 	}
 
 	//修改用户权限
@@ -70,8 +72,35 @@ export class UserService {
 				throw new HttpException('uid 错误', HttpStatus.BAD_REQUEST)
 			}
 
-			// const role = await this.roleModel.create()
-			return params
+			//修改role表数据
+			const role = await this.roleModel.findOne({ where: { id: 1 } })
+			if (role) {
+				await this.roleModel.update(role, { ...params.role })
+			} else {
+				const roles = await this.roleModel.create(params.role)
+				await this.roleModel.save({ ...roles, user })
+			}
+
+			//修改auth表数据
+			await new Promise(resolve => {
+				params.auth.forEach(async item => {
+					const props = {
+						auth_key: item.auth_key,
+						auth_name: item.auth_name,
+						apply: JSON.stringify(item.apply)
+					}
+					const auth = await this.authModel.findOne({ where: { user, auth_key: item.auth_key } })
+					if (auth) {
+						await this.authModel.update({ id: auth.id }, props)
+					} else {
+						const newAuth = await this.authModel.create(props)
+						await this.authModel.save({ ...newAuth, user })
+					}
+				})
+				resolve()
+			})
+
+			return await this.userModel.findOne({ where: { uid: params.uid }, relations: ['article', 'role', 'auth'] })
 		} catch (error) {
 			throw new HttpException(error.message || 'uid 错误', HttpStatus.BAD_REQUEST)
 		}
