@@ -27,6 +27,8 @@
 		"@nestjs/swagger": "^4.5.8",
 		"@nestjs/typeorm": "^7.1.0",
 		"bcryptjs": "^2.4.3",
+		"class-transformer": "^0.2.3",
+		"class-validator": "^0.12.2",
 		"dayjs": "^1.8.27",
 		"mysql": "^2.18.1",
 		"reflect-metadata": "^0.1.13",

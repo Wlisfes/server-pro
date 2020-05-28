@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, BeforeInsert } from 'typeorm'
-import * as day from 'dayjs'
 import { hashSync } from 'bcryptjs'
 import { ArticleEntity } from './article.entity'
 import { RoleEntity } from './role.entity'
@@ -27,7 +26,6 @@ export class UserEntity {
 	})
 	username: string
 
-	// @Exclude()
 	@Column({
 		comment: '密码',
 		nullable: false,

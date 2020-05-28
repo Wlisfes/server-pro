@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core'
+import { ValidationPipe } from '@nestjs/common'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { HttpExceptionFilter } from '@/filters/http-exception.filter'
@@ -22,6 +23,13 @@ async function bootstrap() {
 
 	//swagger文档挂载
 	await createSwagger(app)
+
+	//全局注册验证管道
+	app.useGlobalPipes(
+		new ValidationPipe({
+			transform: true
+		})
+	)
 
 	//全局注册错误的过滤器
 	app.useGlobalFilters(new HttpExceptionFilter())

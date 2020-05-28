@@ -4,6 +4,8 @@ import { Repository } from 'typeorm'
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import { RoleEntity } from '@/entity/role.entity'
+import { CreateUserDto, UpdateUserRoleDto } from './user.dto'
+import { User } from './user.interface'
 
 @Injectable()
 export class UserService {
@@ -13,45 +15,65 @@ export class UserService {
 		@InjectRepository(RoleEntity) private readonly roleModel: Repository<RoleEntity>
 	) {}
 
-	public async createUser() {
-		const user = await this.userModel.create({
-			username: 'admin',
-			password: '3633',
-			nickname: '情雨随风'
-		})
-		return await this.userModel.save(user)
+	//验证用户信息是否已存在
+	public async isUser(params: CreateUserDto) {
+		if (await this.userModel.findOne({ where: { username: params.username } })) {
+			throw new HttpException(`username: ${params.username} 已存在`, HttpStatus.BAD_REQUEST)
+		}
+
+		if (await this.userModel.findOne({ where: { nickname: params.nickname } })) {
+			throw new HttpException(`nickname: ${params.nickname} 已存在`, HttpStatus.BAD_REQUEST)
+		}
+
+		if (params.email && (await this.userModel.findOne({ where: { email: params.email } }))) {
+			throw new HttpException(`email: ${params.email} 已存在`, HttpStatus.BAD_REQUEST)
+		}
+
+		if (params.mobile) {
+			if (!/^(?:(?:\+|00)86)?1\d{10}$/.test(params.mobile)) {
+				throw new HttpException(`mobile: ${params.mobile} 错误`, HttpStatus.BAD_REQUEST)
+			}
+			if (await this.userModel.findOne({ where: { mobile: params.mobile } })) {
+				throw new HttpException(`mobile: ${params.mobile} 已存在`, HttpStatus.BAD_REQUEST)
+			}
+		}
 	}
 
+	//创建用户
+	public async createUser(params: CreateUserDto) {
+		try {
+			await this.isUser(params)
+			const user = await this.userModel.create({
+				username: params.username,
+				password: params.password,
+				nickname: params.nickname,
+				email: params.email || null,
+				mobile: params.mobile || null,
+				avatar: params.avatar || null
+			})
+			return await this.userModel.save(user)
+		} catch (error) {
+			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
+		}
+	}
+
+	//获取所有用户列表
 	public async findUserAll() {
 		return await this.userModel.find({ relations: ['article', 'role'] })
 	}
 
-	public async findArticleAll() {
-		return await this.articleModel.find()
-	}
-
-	public async updateUserRole() {
-		// const user = await this.userModel.findOne({ where: { id: 1 } })
-		// const role = await this.roleModel.create([{ name: '西莉卡' }, { name: '莉法' }])
-		// const saveRole = await this.roleModel.save({
-		// 	...role,
-		// 	user
-		// })
-
-		// return saveRole
-
-		//update修改
+	//修改用户权限
+	public async updateUserRole(params: UpdateUserRoleDto) {
 		try {
-			const role = await this.roleModel.findOne({ where: { id: 2 } })
-			if (!role) {
-				throw new HttpException('id 不存在', HttpStatus.BAD_REQUEST)
-			} else {
-				// await this.roleModel.update(role, { name: '亚丝娜' })
-				console.log(await this.roleModel.find())
-				return await this.roleModel.findOne(role.id)
+			const user = await this.userModel.findOne({ where: { uid: params.uid } })
+			if (!user) {
+				throw new HttpException('uid 错误', HttpStatus.BAD_REQUEST)
 			}
+
+			// const role = await this.roleModel.create()
+			return params
 		} catch (error) {
-			throw new HttpException(error.message || 'id 不存在', HttpStatus.BAD_REQUEST)
+			throw new HttpException(error.message || 'uid 错误', HttpStatus.BAD_REQUEST)
 		}
 	}
 
@@ -59,10 +81,6 @@ export class UserService {
 		const user = await this.userModel.findOne({ where: { id: 1 } })
 		const article = await this.articleModel.create([{ name: 'Angular' }, { name: 'Vue' }, { name: 'React' }])
 		const newArticle = await this.articleModel.save(article.map(k => ({ ...k, user })))
-
-		// user.article = user.article.concat(article)
-
-		// await this.userModel.update({ id: user.id }, user)
 
 		return newArticle
 	}

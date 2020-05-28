@@ -6,8 +6,22 @@ export class RoleEntity {
 	@PrimaryGeneratedColumn()
 	id: number
 
-	@Column()
-	name: string
+	@Column({ readonly: true, nullable: false })
+	role_key: string
+
+	@Column({ readonly: true, nullable: false })
+	role_name: string
+
+	@Column({ default: () => 1, nullable: false })
+	status: number
+
+	@Column({
+		type: 'timestamp',
+		comment: '创建时间',
+		default: () => 'CURRENT_TIMESTAMP',
+		nullable: false
+	})
+	createTime: string
 
 	@OneToOne(
 		type => UserEntity,
