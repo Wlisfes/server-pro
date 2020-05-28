@@ -1,7 +1,16 @@
+/*
+ * @Author: 情雨随风
+ * @Date: 2020-05-28 21:51:46
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2020-05-28 22:00:47
+ * @Description: 用户表
+ */
+
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, BeforeInsert } from 'typeorm'
 import { hashSync } from 'bcryptjs'
 import { ArticleEntity } from './article.entity'
 import { RoleEntity } from './role.entity'
+import { AuthEntity } from './auth.entity'
 
 @Entity('user')
 export class UserEntity {
@@ -84,7 +93,15 @@ export class UserEntity {
 
 	@OneToOne(
 		type => RoleEntity,
-		role => role.user
+		role => role.user,
+		{ cascade: true }
 	)
 	role: RoleEntity
+
+	@OneToMany(
+		type => AuthEntity,
+		auth => auth.user,
+		{ cascade: true }
+	)
+	auth: AuthEntity[]
 }
