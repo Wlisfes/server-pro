@@ -5,12 +5,13 @@ import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import { RoleEntity } from '@/entity/role.entity'
 import { CreateUserDto, UpdateUserRoleDto } from './user.dto'
-import { User } from './user.interface'
 import { AuthEntity } from '@/entity/auth.entity'
+import { SignService } from '@/module/sign/sign.service'
 
 @Injectable()
 export class UserService {
 	constructor(
+		private readonly signService: SignService,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>,
 		@InjectRepository(RoleEntity) private readonly roleModel: Repository<RoleEntity>,

@@ -8,20 +8,20 @@ import { CreateUserDto, UpdateUserRoleDto } from './user.dto'
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
-	@Post('create')
 	@ApiOperation({ summary: '创建用户' })
+	@Post('create')
 	async createUser(@Body() body: CreateUserDto) {
 		return await this.userService.createUser(body)
 	}
 
-	@Get('all')
 	@ApiOperation({ summary: '获取所有用户列表' })
+	@Get('all')
 	async findUserAll() {
 		return await this.userService.findUserAll()
 	}
 
-	@Post('update/role')
 	@ApiOperation({ summary: '修改用户角色权限' })
+	@Post('update/role')
 	async updateUserRole(@Body() body: UpdateUserRoleDto) {
 		return await this.userService.updateUserRole(body)
 	}

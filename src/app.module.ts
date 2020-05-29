@@ -4,6 +4,8 @@ import { AppController } from '@/app.controller'
 import { AppService } from '@/app.service'
 import { UserModule } from '@/module/user/user.module'
 import { RoleModule } from '@/module/role/role.module'
+import { OssModule } from '@/module/oss/oss.module'
+import { SignModule } from '@/module/sign/sign.module'
 
 @Module({
 	imports: [
@@ -22,8 +24,10 @@ import { RoleModule } from '@/module/role/role.module'
 				}
 			}
 		}),
+		OssModule,
 		UserModule,
-		RoleModule
+		RoleModule,
+		SignModule
 	],
 	controllers: [AppController],
 	providers: [AppService]
