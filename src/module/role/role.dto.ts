@@ -2,7 +2,7 @@
  * @Author: 情雨随风
  * @Date: 2020-05-30 16:34:26
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2020-05-30 19:15:28
+ * @Last Modified time: 2020-05-30 21:43:43
  * @Description: roleDto
  */
 
@@ -30,9 +30,7 @@ export class Role {
 	status: number
 }
 
-export class CreateRoleDto extends Role {}
-
-export class UpdateRoleDto extends Role {
+export class RoleId {
 	@Type(() => Number)
 	@ApiProperty({ description: '角色id', example: 1 })
 	@IsNotEmpty({ message: 'id 必填' })
@@ -40,7 +38,13 @@ export class UpdateRoleDto extends Role {
 	id: number
 }
 
-export class DeleteRoleDto {
+export class CreateRoleDto extends Role {}
+
+export class DeleteRoleDto extends RoleId {}
+
+export class CutoverRoleDto extends RoleId {}
+
+export class UpdateRoleDto extends Role {
 	@Type(() => Number)
 	@ApiProperty({ description: '角色id', example: 1 })
 	@IsNotEmpty({ message: 'id 必填' })

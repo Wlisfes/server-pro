@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { RoleEntity } from '@/entity/role.entity'
-import { CreateRoleDto, UpdateRoleDto, DeleteRoleDto } from './role.dto'
+import { CreateRoleDto, UpdateRoleDto, DeleteRoleDto, CutoverRoleDto } from './role.dto'
 
 @Injectable()
 export class RoleService {
@@ -51,6 +51,20 @@ export class RoleService {
 			await this.roleModel.update({ id: params.id }, params)
 
 			return await this.roleModel.findOne({ where: { id: params.id } })
+		} catch (error) {
+			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
+		}
+	}
+
+	//切换权限状态
+	async cutoverRole(params: CutoverRoleDto) {
+		try {
+			const role = await this.roleModel.findOne({ where: { id: params.id } })
+			if (role) {
+				await this.roleModel.update({ id: params.id }, { status: role.status ? 0 : 1 })
+				return await this.roleModel.findOne({ where: { id: params.id } })
+			}
+			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}

@@ -1,7 +1,7 @@
 import { Controller, Post, Put, Delete, Get, Body, Query } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { RoleService } from './role.service'
-import { CreateRoleDto, UpdateRoleDto, DeleteRoleDto } from './role.dto'
+import { CreateRoleDto, UpdateRoleDto, DeleteRoleDto, CutoverRoleDto } from './role.dto'
 
 @Controller('api/role')
 @ApiTags('角色模块')
@@ -24,6 +24,12 @@ export class RoleController {
 	@ApiOperation({ summary: '修改角色' })
 	async updateRole(@Body() body: UpdateRoleDto) {
 		return await this.roleService.updateRole(body)
+	}
+
+	@ApiOperation({ summary: '切换权限状态' })
+	@Put('cutover')
+	async cutoverRole(@Query() query: CutoverRoleDto) {
+		return await this.roleService.cutoverRole(query)
 	}
 
 	@Delete('delete')
