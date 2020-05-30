@@ -6,7 +6,7 @@ export class SignService {
 	constructor(private readonly jwtService: JwtService) {}
 
 	//加密
-	async sign(user: { uid: string; username: string; password: string }) {
+	async sign(user: { uid: number; username: string; password: string }) {
 		return this.jwtService.sign({
 			username: user.username,
 			password: user.password,

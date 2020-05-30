@@ -37,7 +37,7 @@ export class OssService extends OSSBase {
 		super()
 	}
 
-	//单文件上传
+	//单文件上传阿里云OSS
 	async uploadFile(file: File, path: string) {
 		const result: UploadResult = { upload: false, name: '', url: '', path: '', message: '上传失败' }
 		try {
@@ -57,7 +57,7 @@ export class OssService extends OSSBase {
 		return result
 	}
 
-	//多文件上传
+	//多文件上传阿里云OSS
 	async uploadFiles(files: File[], path: string) {
 		const resultFiles: UploadResult[] = []
 		for (const file of files) {

@@ -19,7 +19,9 @@ async function createSwagger(app) {
 }
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestExpressApplication>(AppModule)
+	const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+		cors: true
+	})
 
 	//swagger文档挂载
 	await createSwagger(app)
@@ -27,7 +29,8 @@ async function bootstrap() {
 	//全局注册验证管道
 	app.useGlobalPipes(
 		new ValidationPipe({
-			transform: true
+			transform: true,
+			whitelist: true
 		})
 	)
 

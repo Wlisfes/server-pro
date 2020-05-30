@@ -6,6 +6,7 @@ import { UserModule } from '@/module/user/user.module'
 import { RoleModule } from '@/module/role/role.module'
 import { OssModule } from '@/module/oss/oss.module'
 import { SignModule } from '@/module/sign/sign.module'
+import { AuthModule } from '@/module/auth/auth.module'
 
 @Module({
 	imports: [
@@ -27,7 +28,8 @@ import { SignModule } from '@/module/sign/sign.module'
 		OssModule,
 		UserModule,
 		RoleModule,
-		SignModule
+		SignModule,
+		AuthModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

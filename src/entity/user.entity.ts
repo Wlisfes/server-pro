@@ -60,9 +60,13 @@ export class UserEntity {
 	@Column({
 		comment: '手机号',
 		length: 11,
-		nullable: true
+		nullable: true,
+		transformer: {
+			from: value => Number(value),
+			to: value => String(value)
+		}
 	})
-	mobile: string | null
+	mobile: string
 
 	@Column({
 		comment: '头像',

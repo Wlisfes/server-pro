@@ -1,12 +1,18 @@
-import { Controller, Get, Post, Body } from '@nestjs/common'
+import { Controller, Get, Post, Body, Put } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { UserService } from './user.service'
-import { CreateUserDto, UpdateUserRoleDto } from './user.dto'
+import { CreateUserDto, UpdateUserRoleDto, LoginUserDto, UpdateUserDto } from './user.dto'
 
 @Controller('api/user')
 @ApiTags('用户模块')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
+
+	@ApiOperation({ summary: '登录' })
+	@Post('login')
+	async loginUser(@Body() body: LoginUserDto) {
+		return await this.userService.loginUser(body)
+	}
 
 	@ApiOperation({ summary: '创建用户' })
 	@Post('create')
@@ -21,9 +27,16 @@ export class UserController {
 	}
 
 	@ApiOperation({ summary: '修改用户角色权限' })
-	@Post('update/role')
+	@Put('update/role')
 	async updateUserRole(@Body() body: UpdateUserRoleDto) {
 		return await this.userService.updateUserRole(body)
+	}
+
+	@ApiOperation({ summary: '修改用户信息' })
+	@Put('update')
+	async updateUser(@Body() body: UpdateUserDto) {
+		console.log(body)
+		return body
 	}
 
 	@Post('article/role')
