@@ -1,6 +1,7 @@
-import { Controller, Post, Get } from '@nestjs/common'
+import { Controller, Post, Put, Delete, Get, Body, Query } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { RoleService } from './role.service'
+import { CreateRoleDto, UpdateRoleDto, DeleteRoleDto } from './role.dto'
 
 @Controller('api/role')
 @ApiTags('角色模块')
@@ -9,13 +10,25 @@ export class RoleController {
 
 	@Post('create')
 	@ApiOperation({ summary: '创建角色' })
-	async createRole() {
-		return await this.roleService.createRole()
+	async createRole(@Body() body: CreateRoleDto) {
+		return await this.roleService.createRole(body)
 	}
 
 	@Get('all')
 	@ApiOperation({ summary: '获取所有角色列表' })
 	async findRoleAll() {
 		return await this.roleService.findRoleAll()
+	}
+
+	@Put('update')
+	@ApiOperation({ summary: '修改角色' })
+	async updateRole(@Body() body: UpdateRoleDto) {
+		return await this.roleService.updateRole(body)
+	}
+
+	@Delete('delete')
+	@ApiOperation({ summary: '删除角色' })
+	async deleteRole(@Query() body: DeleteRoleDto) {
+		return await this.roleService.deleteRole(body)
 	}
 }
