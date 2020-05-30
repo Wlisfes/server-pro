@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Put } from '@nestjs/common'
+import { Controller, Get, Post, Body, Put, Req } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { UserService } from './user.service'
-import { CreateUserDto, UpdateUserRoleDto, LoginUserDto, UpdateUserDto } from './user.dto'
+import { UserService } from '@/module/user/user.service'
+import { AuthUser, AuthRole } from '@/guard/auth.guard'
+import { CreateUserDto, UpdateUserRoleDto, LoginUserDto, UpdateUserDto } from '@/module/user/user.dto'
 
 @Controller('api/user')
 @ApiTags('用户模块')
@@ -22,6 +23,8 @@ export class UserController {
 
 	@ApiOperation({ summary: '获取所有用户列表' })
 	@Get('all')
+	@AuthUser(true)
+	@AuthRole({ key: 'user', apply: 'get' })
 	async findUserAll() {
 		return await this.userService.findUserAll()
 	}

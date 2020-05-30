@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { put, get, del } from 'memory-cache'
+import { User } from '@/module/user/user.dto'
 
 @Injectable()
 export class StoreService {
@@ -9,7 +10,7 @@ export class StoreService {
 	}
 
 	//读取缓存
-	async getStore(key: string) {
+	async getStore(key: string): Promise<User> {
 		return get(key)
 	}
 

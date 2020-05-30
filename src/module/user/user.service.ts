@@ -70,7 +70,7 @@ export class UserService {
 	async loginUser(params: LoginUserDto): Promise<any> {
 		const user = await this.userModel
 			.createQueryBuilder('user')
-			.where('user.username = :username', { username: params.username })
+			.orWhere('user.username = :username', { username: params.username })
 			.orWhere('user.email = :email', { email: params.email })
 			.orWhere('user.mobile = :mobile', { mobile: params.mobile })
 			.getOne()
@@ -101,7 +101,7 @@ export class UserService {
 		return await this.userModel.findOne({
 			where: { uid },
 			select: ['id', 'uid', 'username', 'nickname', 'email', 'mobile', 'avatar', 'status', 'createTime'],
-			relations: ['article', 'role', 'auth']
+			relations: ['role', 'auth']
 		})
 	}
 

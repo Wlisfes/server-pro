@@ -7,10 +7,54 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString, IsEmail, IsIn, IsNumber, ValidateNested, IsObject, IsArray } from 'class-validator'
+import {
+	IsNotEmpty,
+	IsString,
+	IsEmail,
+	IsIn,
+	IsNumber,
+	ValidateNested,
+	IsObject,
+	IsArray,
+	Allow
+} from 'class-validator'
 import { Type } from 'class-transformer'
-import { Auth, Apply } from '@/module/auth/auth.dto'
+import { Auth } from '@/module/auth/auth.dto'
 import { Role } from '@/module/role/role.dto'
+
+export class User {
+	id: number
+	uid: number
+	username: string
+	nickname: string
+	status: number
+	createTime: string
+	password?: string
+	email?: string | null
+	mobile?: string | null
+	avatar?: string | null
+	article?: [] | null
+	role?: {
+		id: number
+		role_key: string
+		role_name: string
+		status: 1 | 0
+		createTime: string
+	} | null
+	auth?: Array<{
+		id: number
+		auth_key: string
+		auth_name: string
+		status: 1 | 0
+		createTime: string
+		apply: Array<{
+			key: string
+			name: string
+			status: 1 | 0
+		}>
+	}> | null;
+	[key: string]: any
+}
 
 export class Users {
 	@ApiProperty({ description: '用户名', example: 'admin' })
@@ -57,38 +101,25 @@ function compose<T extends Constructor>(U: T) {
 export class UpdateUserDto extends compose(CreateUserDto) {}
 
 export class LoginUserDto {
+	@Type(() => String)
 	@ApiProperty({ description: '用户名', example: 'admin' })
-	@IsString({ message: 'username is string' })
+	@Allow()
 	username?: string
 
+	@Type(() => String)
 	@ApiProperty({ description: '密码', example: '3633' })
 	@IsString({ message: 'password is string' })
 	password: string
 
+	@Type(() => String)
 	@ApiProperty({ description: '邮箱', example: '888888@qq.com' })
-	@IsEmail({}, { message: 'email 错误' })
-	@IsString({ message: 'email is string' })
+	@Allow()
 	email?: string
 
+	@Type(() => String)
 	@ApiProperty({ description: '手机号', example: 18888888888 })
+	@Allow()
 	mobile?: string
-}
-
-export class UserRoleDto {
-	@ApiProperty({ description: '角色key', example: 'visitor' })
-	@IsNotEmpty({ message: 'role_key 必填' })
-	@IsString({ message: 'role_key is string' })
-	role_key: string
-
-	@ApiProperty({ description: '角色名称', example: '游客' })
-	@IsNotEmpty({ message: 'role_name 必填' })
-	@IsString({ message: 'role_name is string' })
-	role_name: string
-
-	@ApiProperty({ description: '角色状态', example: 1 })
-	@IsNumber({}, { message: 'status is number' })
-	@IsIn([0, 1], { message: 'status 不合法' })
-	status: number
 }
 
 export class UpdateUserRoleDto {
@@ -103,8 +134,8 @@ export class UpdateUserRoleDto {
 	@ValidateNested()
 	@IsObject()
 	@IsNotEmpty({ message: 'role 必填' })
-	@Type(() => UserRoleDto)
-	role: UserRoleDto
+	@Type(() => Role)
+	role: Role
 
 	@ApiProperty({
 		description: '用户拥有权限',

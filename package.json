@@ -33,6 +33,7 @@
 		"class-transformer": "^0.2.3",
 		"class-validator": "^0.12.2",
 		"dayjs": "^1.8.27",
+		"memory-cache": "^0.2.0",
 		"mysql": "^2.18.1",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.2",
