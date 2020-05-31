@@ -5,7 +5,7 @@ import { compareSync } from 'bcryptjs'
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import { RoleEntity } from '@/entity/role.entity'
-import { CreateUserDto, UpdateUserRoleDto, LoginUserDto, UpdateUserDto } from './user.dto'
+import { UserUid, CreateUserDto, UpdateUserRoleDto, LoginUserDto, UpdateUserDto, UserAvatarDto } from './user.dto'
 import { AuthEntity } from '@/entity/auth.entity'
 import { SignService } from '@/module/sign/sign.service'
 
@@ -19,48 +19,78 @@ export class UserService {
 		@InjectRepository(AuthEntity) private readonly authModel: Repository<AuthEntity>
 	) {}
 
-	//验证用户信息是否已存在
-	public async isUser(params: CreateUserDto): Promise<boolean> {
-		if (await this.userModel.findOne({ where: { username: params.username } })) {
-			throw new HttpException(`username: ${params.username} 已存在`, HttpStatus.BAD_REQUEST)
-		}
-
-		if (await this.userModel.findOne({ where: { nickname: params.nickname } })) {
-			throw new HttpException(`nickname: ${params.nickname} 已存在`, HttpStatus.BAD_REQUEST)
-		}
-
-		if (params.email && (await this.userModel.findOne({ where: { email: params.email } }))) {
-			throw new HttpException(`email: ${params.email} 已存在`, HttpStatus.BAD_REQUEST)
-		}
-
-		if (params.mobile) {
-			if (!/^(?:(?:\+|00)86)?1\d{10}$/.test(params.mobile)) {
-				throw new HttpException(`mobile: ${params.mobile} 错误`, HttpStatus.BAD_REQUEST)
-			}
-			if (await this.userModel.findOne({ where: { mobile: params.mobile } })) {
-				throw new HttpException(`mobile: ${params.mobile} 已存在`, HttpStatus.BAD_REQUEST)
-			}
-		}
-
-		return true
-	}
-
 	//创建用户
 	public async createUser(params: CreateUserDto): Promise<UserEntity> {
 		try {
-			await this.isUser(params)
+			if (await this.userModel.findOne({ where: { username: params.username } })) {
+				throw new HttpException(`username: ${params.username} 已存在`, HttpStatus.BAD_REQUEST)
+			}
+
+			if (await this.userModel.findOne({ where: { nickname: params.nickname } })) {
+				throw new HttpException(`nickname: ${params.nickname} 已存在`, HttpStatus.BAD_REQUEST)
+			}
+
 			const user = await this.userModel.create({
 				username: params.username,
 				password: params.password,
-				nickname: params.nickname,
-				email: params.email || null,
-				mobile: params.mobile || null,
-				avatar: params.avatar || null
+				nickname: params.nickname
 			})
 			const saveUser = await this.userModel.save(user)
 
 			delete saveUser.password
 			return saveUser
+		} catch (error) {
+			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
+		}
+	}
+
+	//修改用户信息
+	async updateUser(params: UpdateUserDto) {
+		try {
+			const user = await this.userModel.findOne({ where: { uid: params.uid } })
+			if (!user) {
+				throw new HttpException(`uid: ${params.uid} 错误`, HttpStatus.BAD_REQUEST)
+			}
+
+			const name = await this.userModel.findOne({ where: { nickname: params.nickname } })
+			if (name && name.uid !== params.uid) {
+				throw new HttpException(`nickname: ${params.nickname} 已存在`, HttpStatus.BAD_REQUEST)
+			}
+
+			if (params.email) {
+				const email = await this.userModel.findOne({ where: { email: params.email } })
+				if (email && email.uid !== params.uid) {
+					throw new HttpException(`email: ${params.email} 已存在`, HttpStatus.BAD_REQUEST)
+				}
+			} else {
+				delete params.email
+			}
+
+			if (params.mobile) {
+				const mobile = await this.userModel.findOne({ where: { mobile: params.mobile } })
+				if (mobile && mobile.uid !== params.uid) {
+					throw new HttpException(`mobile: ${params.mobile} 已存在`, HttpStatus.BAD_REQUEST)
+				}
+			} else {
+				delete params.mobile
+			}
+
+			await this.userModel.update({ uid: params.uid }, params)
+			return await this.userModel.findOne({ where: { uid: params.uid } })
+		} catch (error) {
+			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
+		}
+	}
+
+	//修改用户头像
+	async updateUserAvatar(params: UserAvatarDto) {
+		try {
+			const user = await this.userModel.findOne({ where: { uid: params.uid } })
+			if (user) {
+				await this.userModel.update({ uid: params.uid }, params)
+				return await this.userModel.findOne({ where: { uid: params.uid } })
+			}
+			throw new HttpException(`uid: ${params.uid} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
@@ -114,8 +144,19 @@ export class UserService {
 		})
 	}
 
-	//修改用户信息
-	async updateUser() {}
+	//切换权限状态
+	async cutoverUser(params: UserUid) {
+		try {
+			const role = await this.userModel.findOne({ where: { uid: params.uid } })
+			if (role) {
+				await this.userModel.update({ uid: params.uid }, { status: role.status ? 0 : 1 })
+				return await this.userModel.findOne({ where: { uid: params.uid } })
+			}
+			throw new HttpException(`uid: ${params.uid} 错误`, HttpStatus.BAD_REQUEST)
+		} catch (error) {
+			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
+		}
+	}
 
 	//修改用户权限
 	public async updateUserRole(params: UpdateUserRoleDto): Promise<UserEntity> {
@@ -140,8 +181,8 @@ export class UserService {
 					const props = {
 						auth_key: item.auth_key,
 						auth_name: item.auth_name,
-						status: item.status,
-						apply: JSON.stringify(item.apply)
+						status: item.status
+						// apply: JSON.stringify(item.apply)
 					}
 					const auth = await this.authModel.findOne({ where: { user, auth_key: item.auth_key } })
 					if (auth) {
@@ -160,11 +201,34 @@ export class UserService {
 		}
 	}
 
-	public async updateUserArticle() {
-		const user = await this.userModel.findOne({ where: { id: 1 } })
-		const article = await this.articleModel.create([{ name: 'Angular' }, { name: 'Vue' }, { name: 'React' }])
-		const newArticle = await this.articleModel.save(article.map(k => ({ ...k, user })))
-
-		return newArticle
+	//删除用户
+	async deleteUser(params: UserUid) {
+		try {
+			//查找uid对应的用户
+			const user = await this.userModel.findOne({ where: { uid: params.uid } })
+			if (user) {
+				const role = await this.roleModel.delete({ user }) //删除用户对应角色
+				const auth = await this.authModel.delete({ user }) //删除用户对应权限
+				const article = await this.articleModel.delete({ user }) //删除用户对应文章
+				const delUser = await this.userModel.delete({ uid: params.uid }) //删除用户
+				return {
+					role,
+					auth,
+					article,
+					user: delUser
+				}
+			}
+			throw new HttpException(`uid: ${params.uid} 错误`, HttpStatus.BAD_REQUEST)
+		} catch (error) {
+			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
+		}
 	}
+
+	// public async updateUserArticle() {
+	// 	const user = await this.userModel.findOne({ where: { id: 1 } })
+	// 	const article = await this.articleModel.create([{ name: 'Angular' }, { name: 'Vue' }, { name: 'React' }])
+	// 	const newArticle = await this.articleModel.save(article.map(k => ({ ...k, user })))
+
+	// 	return newArticle
+	// }
 }

@@ -34,7 +34,7 @@ export class RoleId {
 	@Type(() => Number)
 	@ApiProperty({ description: '角色id', example: 1 })
 	@IsNotEmpty({ message: 'id 必填' })
-	@IsNumber({}, { message: 'status is number' })
+	@IsNumber({}, { message: 'id is number' })
 	id: number
 }
 

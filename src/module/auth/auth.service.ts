@@ -19,11 +19,12 @@ export class AuthService {
 				throw new HttpException(`auth_name: ${params.auth_name} 已存在`, HttpStatus.BAD_REQUEST)
 			}
 
+			// return params
 			const auth = await this.authModel.create({
 				auth_key: params.auth_key,
 				auth_name: params.auth_name,
 				status: params.status || 1,
-				apply: JSON.stringify(params.apply)
+				apply: params.apply as any
 			})
 			const newAuth = await this.authModel.save(auth)
 			return await this.authModel.findOne({ where: { id: newAuth.id } })
@@ -55,8 +56,8 @@ export class AuthService {
 				{
 					auth_key: params.auth_key,
 					auth_name: params.auth_name,
-					status: params.status,
-					apply: JSON.stringify(params.apply)
+					status: params.status
+					// apply: params.apply
 				}
 			)
 			return await this.authModel.findOne({ where: { id: params.id } })

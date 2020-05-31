@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { RoleEntity } from '@/entity/role.entity'
-import { CreateRoleDto, UpdateRoleDto, DeleteRoleDto, CutoverRoleDto } from './role.dto'
+import { RoleId, CreateRoleDto, UpdateRoleDto, DeleteRoleDto, CutoverRoleDto } from './role.dto'
 
 @Injectable()
 export class RoleService {
@@ -33,6 +33,11 @@ export class RoleService {
 	//获取角色列表
 	async findRoleAll() {
 		return await this.roleModel.find({ where: { user: null } })
+	}
+
+	//获取角色详情
+	async findIdRole(params: RoleId) {
+		return await this.roleModel.findOne({ where: { id: params.id } })
 	}
 
 	//修改角色

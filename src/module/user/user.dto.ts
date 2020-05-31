@@ -7,17 +7,7 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger'
-import {
-	IsNotEmpty,
-	IsString,
-	IsEmail,
-	IsIn,
-	IsNumber,
-	ValidateNested,
-	IsObject,
-	IsArray,
-	Allow
-} from 'class-validator'
+import { IsNotEmpty, IsString, ValidateNested, IsObject, IsArray, Allow, IsNumber, IsIn } from 'class-validator'
 import { Type } from 'class-transformer'
 import { Auth } from '@/module/auth/auth.dto'
 import { Role } from '@/module/role/role.dto'
@@ -57,48 +47,65 @@ export class User {
 }
 
 export class Users {
+	@Type(() => String)
 	@ApiProperty({ description: '用户名', example: 'admin' })
 	@IsNotEmpty({ message: 'username 必填' })
 	@IsString({ message: 'username is string' })
 	username: string
 
+	@Type(() => String)
 	@ApiProperty({ description: '密码', example: '3633' })
 	@IsNotEmpty({ message: 'password 必填' })
 	@IsString({ message: 'password is string' })
 	password: string
 
+	@Type(() => String)
 	@ApiProperty({ description: '昵称', example: '猪头' })
 	@IsNotEmpty({ message: 'nickname 必填' })
 	@IsString({ message: 'nickname is string' })
 	nickname: string
 }
 
-export class CreateUserDto extends Users {
+export class UserUid {
+	@Type(() => Number)
+	@ApiProperty({ description: 'uid', example: 1590652354316 })
+	@IsNotEmpty({ message: 'uid 必填' })
+	uid: number
+}
+
+export class CreateUserDto extends Users {}
+
+export class UserAvatarDto extends UserUid {
+	@Type(() => String)
+	@ApiProperty({ description: '头像url', example: 'http://xxx/xxx.png' })
+	@IsNotEmpty({ message: 'avatar 必填' })
+	@IsString({ message: 'avatar is string' })
+	avatar: string
+}
+
+export class UpdateUserDto extends UserUid {
+	@Type(() => String)
+	@ApiProperty({ description: '昵称', example: '猪头' })
+	@IsNotEmpty({ message: 'nickname 必填' })
+	@IsString({ message: 'nickname is string' })
+	nickname: string
+
+	@Type(() => String)
 	@ApiProperty({ description: '邮箱', example: '888888@qq.com' })
-	@IsEmail({}, { message: 'email 错误' })
-	@IsString({ message: 'email is string' })
+	@Allow()
 	email?: string
 
+	@Type(() => String)
 	@ApiProperty({ description: '手机号', example: 18888888888 })
+	@Allow()
 	mobile?: string
 
-	@ApiProperty({ description: '头像', example: 'http://xxx.com/xxx.png' })
-	@IsString({ message: 'avatar is string' })
-	avatar?: string
-
-	@ApiProperty({ description: '用户状态', example: 1 })
+	@Type(() => Number)
+	@ApiProperty({ description: '角色状态', example: 1 })
 	@IsNumber({}, { message: 'status is number' })
 	@IsIn([0, 1], { message: 'status 不合法' })
-	status?: number
+	status: number
 }
-
-type Constructor<T = {}> = new (...args: any[]) => T
-
-function compose<T extends Constructor>(U: T) {
-	return class extends U {}
-}
-
-export class UpdateUserDto extends compose(CreateUserDto) {}
 
 export class LoginUserDto {
 	@Type(() => String)
@@ -122,11 +129,8 @@ export class LoginUserDto {
 	mobile?: string
 }
 
-export class UpdateUserRoleDto {
-	@ApiProperty({ description: 'uid', example: 1590652354316 })
-	@IsNotEmpty({ message: 'uid 必填' })
-	uid: number
-
+export class UpdateUserRoleDto extends UserUid {
+	@Type(() => Role)
 	@ApiProperty({
 		description: '用户所属角色',
 		example: { role_key: 'visitor', role_name: '游客', status: 1 }
@@ -134,9 +138,9 @@ export class UpdateUserRoleDto {
 	@ValidateNested()
 	@IsObject()
 	@IsNotEmpty({ message: 'role 必填' })
-	@Type(() => Role)
 	role: Role
 
+	@Type(() => Auth)
 	@ApiProperty({
 		description: '用户拥有权限',
 		example: [
@@ -155,6 +159,5 @@ export class UpdateUserRoleDto {
 	})
 	@ValidateNested()
 	@IsArray()
-	@Type(() => Auth)
 	auth: Auth[]
 }

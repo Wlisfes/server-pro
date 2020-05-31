@@ -3,7 +3,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { OssService } from './oss.service'
 
-@Controller('oss')
+@Controller('api/oss')
 @ApiTags('文件模块')
 export class OssController {
 	constructor(private readonly ossService: OssService) {}

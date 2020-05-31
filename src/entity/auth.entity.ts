@@ -6,8 +6,27 @@
  * @Description: 权限表
  */
 
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ValueTransformer } from 'typeorm'
 import { UserEntity } from './user.entity'
+
+const transformer: ValueTransformer = {
+	from: value => {
+		// if (value) {
+		// 	JSON.parse(value)
+		// }
+		return value
+	},
+	to: value => {
+		console.log('to', value)
+		return (value as []).map(k => JSON.stringify(k))
+	}
+}
+
+class Apply {
+	key: string
+	name: string
+	status: number
+}
 
 @Entity('auth')
 export class AuthEntity {
@@ -31,13 +50,8 @@ export class AuthEntity {
 	})
 	createTime: string
 
-	@Column({
-		transformer: {
-			from: v => JSON.parse(v),
-			to: v => v
-		}
-	})
-	apply: string
+	@Column('json-array')
+	apply: Apply[]
 
 	@ManyToOne(
 		type => UserEntity,

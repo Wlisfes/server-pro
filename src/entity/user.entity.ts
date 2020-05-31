@@ -62,7 +62,7 @@ export class UserEntity {
 		length: 11,
 		nullable: true,
 		transformer: {
-			from: value => Number(value),
+			from: value => (value ? Number(value) : null),
 			to: value => String(value)
 		}
 	})
@@ -91,7 +91,8 @@ export class UserEntity {
 
 	@OneToMany(
 		type => ArticleEntity,
-		article => article.user
+		article => article.user,
+		{ cascade: true }
 	)
 	article: ArticleEntity[]
 
