@@ -20,6 +20,12 @@ export class AuthController {
 		return await this.authService.findAuthAll()
 	}
 
+	@Get('info')
+	@ApiOperation({ summary: '获取权限模块详情' })
+	async findIdAuth(@Query() query: CutoverAuthDto) {
+		return await this.authService.findIdAuth(query)
+	}
+
 	@ApiOperation({ summary: '修改权限模块' })
 	@Put('update')
 	async updateAuth(@Body() body: UpdateAuthDto) {

@@ -38,6 +38,11 @@ export class AuthService {
 		return await this.authModel.find({ where: { user: null } })
 	}
 
+	//获取权限模块详情
+	async findIdAuth(params: CutoverAuthDto) {
+		return await this.authModel.findOne({ where: { id: params.id } })
+	}
+
 	//修改权限模块
 	async updateAuth(params: UpdateAuthDto) {
 		try {
