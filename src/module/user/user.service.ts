@@ -181,8 +181,8 @@ export class UserService {
 					const props = {
 						auth_key: item.auth_key,
 						auth_name: item.auth_name,
-						status: item.status
-						// apply: JSON.stringify(item.apply)
+						status: item.status,
+						apply: item.apply as any
 					}
 					const auth = await this.authModel.findOne({ where: { user, auth_key: item.auth_key } })
 					if (auth) {

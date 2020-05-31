@@ -11,14 +11,10 @@ import { UserEntity } from './user.entity'
 
 const transformer: ValueTransformer = {
 	from: value => {
-		// if (value) {
-		// 	JSON.parse(value)
-		// }
-		return value
+		return JSON.parse(value)
 	},
 	to: value => {
-		console.log('to', value)
-		return (value as []).map(k => JSON.stringify(k))
+		return JSON.stringify(value)
 	}
 }
 
@@ -50,8 +46,10 @@ export class AuthEntity {
 	})
 	createTime: string
 
-	@Column('json-array')
-	apply: Apply[]
+	@Column('text', {
+		transformer: transformer
+	})
+	apply: string
 
 	@ManyToOne(
 		type => UserEntity,

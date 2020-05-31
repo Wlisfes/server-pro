@@ -56,8 +56,8 @@ export class AuthService {
 				{
 					auth_key: params.auth_key,
 					auth_name: params.auth_name,
-					status: params.status
-					// apply: params.apply
+					status: params.status,
+					apply: params.apply as any
 				}
 			)
 			return await this.authModel.findOne({ where: { id: params.id } })
