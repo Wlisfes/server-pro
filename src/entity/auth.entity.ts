@@ -9,21 +9,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ValueTransformer } from 'typeorm'
 import { UserEntity } from './user.entity'
 
-const transformer: ValueTransformer = {
-	from: value => {
-		return JSON.parse(value)
-	},
-	to: value => {
-		return JSON.stringify(value)
-	}
-}
-
-class Apply {
-	key: string
-	name: string
-	status: number
-}
-
 @Entity('auth')
 export class AuthEntity {
 	@PrimaryGeneratedColumn()
@@ -47,7 +32,10 @@ export class AuthEntity {
 	createTime: string
 
 	@Column('text', {
-		transformer: transformer
+		transformer: {
+			from: value => JSON.parse(value),
+			to: value => JSON.stringify(value)
+		}
 	})
 	apply: string
 

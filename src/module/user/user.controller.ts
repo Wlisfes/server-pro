@@ -31,7 +31,7 @@ export class UserController {
 	@ApiOperation({ summary: '获取所有用户列表' })
 	@Get('all')
 	// @AuthUser(true)
-	@AuthRole({ key: 'user', apply: 'get' })
+	// @AuthRole({ key: 'user', apply: 'get' })
 	async findUserAll() {
 		return await this.userService.findUserAll()
 	}

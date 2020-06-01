@@ -78,10 +78,30 @@ export class CreateAuthDto extends Auth {}
 
 export class CutoverAuthDto extends AuthId {}
 
-export class UpdateAuthDto extends Auth {
+export class UpdateAuthDto extends AuthId {
+	@Type(() => String)
+	@ApiProperty({ description: '权限名称', example: '用户管理' })
+	@IsNotEmpty({ message: 'auth_name 必填' })
+	@IsString({ message: 'auth_name is string' })
+	auth_name: string
+
 	@Type(() => Number)
-	@ApiProperty({ description: '权限模块id', example: 1 })
-	@IsNotEmpty({ message: 'id 必填' })
+	@ApiProperty({ description: '权限状态', example: 1 })
 	@IsNumber({}, { message: 'status is number' })
-	id: number
+	@IsIn([0, 1], { message: 'status 不合法' })
+	status: number
+
+	@ApiProperty({
+		description: '权限拥有操作',
+		example: [
+			{ key: 'create', name: '新增', status: 1 },
+			{ key: 'update', name: '修改', status: 1 },
+			{ key: 'delete', name: '删除', status: 1 },
+			{ key: 'get', name: '查找', status: 1 }
+		]
+	})
+	@ValidateNested()
+	@IsArray()
+	@Type(() => Apply)
+	apply: Apply[]
 }

@@ -32,7 +32,7 @@ export class RoleService {
 
 	//获取角色列表
 	async findRoleAll() {
-		return await this.roleModel.find({ where: { user: null } })
+		return await this.roleModel.find({ where: { user: null }, order: { id: 'DESC' } })
 	}
 
 	//获取角色详情

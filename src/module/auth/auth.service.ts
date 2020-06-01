@@ -35,7 +35,7 @@ export class AuthService {
 
 	//获取权限列表
 	async findAuthAll() {
-		return await this.authModel.find({ where: { user: null } })
+		return await this.authModel.find({ where: { user: null }, order: { id: 'DESC' } })
 	}
 
 	//获取权限模块详情
@@ -46,11 +46,6 @@ export class AuthService {
 	//修改权限模块
 	async updateAuth(params: UpdateAuthDto) {
 		try {
-			const key = await this.authModel.findOne({ where: { auth_key: params.auth_key, user: null } })
-			if (key && key.id !== params.id) {
-				throw new HttpException(`auth_key: ${params.auth_key} 已存在`, HttpStatus.BAD_REQUEST)
-			}
-
 			const name = await this.authModel.findOne({ where: { auth_name: params.auth_name, user: null } })
 			if (name && name.id !== params.id) {
 				throw new HttpException(`auth_name: ${params.auth_name} 已存在`, HttpStatus.BAD_REQUEST)
@@ -59,7 +54,6 @@ export class AuthService {
 			await this.authModel.update(
 				{ id: params.id },
 				{
-					auth_key: params.auth_key,
 					auth_name: params.auth_name,
 					status: params.status,
 					apply: params.apply as any
