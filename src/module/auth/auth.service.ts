@@ -24,7 +24,8 @@ export class AuthService {
 				auth_key: params.auth_key,
 				auth_name: params.auth_name,
 				status: params.status || 1,
-				apply: params.apply as any
+				apply: params.apply as any,
+				all: params.apply.length
 			})
 			const newAuth = await this.authModel.save(auth)
 			return await this.authModel.findOne({ where: { id: newAuth.id } })
@@ -56,7 +57,8 @@ export class AuthService {
 				{
 					auth_name: params.auth_name,
 					status: params.status,
-					apply: params.apply as any
+					apply: params.apply as any,
+					all: params.apply.length
 				}
 			)
 			return await this.authModel.findOne({ where: { id: params.id } })

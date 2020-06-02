@@ -6,7 +6,7 @@
  * @Description: 权限表
  */
 
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ValueTransformer } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
 import { UserEntity } from './user.entity'
 
 @Entity('auth')
@@ -22,6 +22,9 @@ export class AuthEntity {
 
 	@Column({ default: () => 1, nullable: false })
 	status: number
+
+	@Column({ default: () => 0 })
+	all: number
 
 	@Column({
 		type: 'timestamp',

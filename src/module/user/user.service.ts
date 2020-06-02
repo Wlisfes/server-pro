@@ -182,7 +182,8 @@ export class UserService {
 						auth_key: item.auth_key,
 						auth_name: item.auth_name,
 						status: item.status,
-						apply: item.apply as any
+						apply: item.apply as any,
+						all: item.apply.length
 					}
 					const auth = await this.authModel.findOne({ where: { user, auth_key: item.auth_key } })
 					if (auth) {
