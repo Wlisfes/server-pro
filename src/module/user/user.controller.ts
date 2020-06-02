@@ -30,46 +30,56 @@ export class UserController {
 
 	@ApiOperation({ summary: '获取所有用户列表' })
 	@Get('all')
-	// @AuthUser(true)
-	// @AuthRole({ key: 'user', apply: 'get' })
+	@AuthUser(true)
+	@AuthRole({ key: 'user', apply: 'query' })
 	async findUserAll() {
 		return await this.userService.findUserAll()
 	}
 
 	@ApiOperation({ summary: '获取用户详情' })
 	@Get('info')
-	// @AuthUser(true)
-	// @AuthRole({ key: 'user', apply: 'get' })
+	@AuthUser(true)
+	@AuthRole({ key: 'user', apply: 'get' })
 	async findUidUser(@Query() query: UserUid) {
 		return await this.userService.findUidUser(query.uid)
 	}
 
 	@ApiOperation({ summary: '修改用户角色权限' })
 	@Put('update/role')
+	@AuthUser(true)
+	@AuthRole({ key: 'user', apply: 'update' })
 	async updateUserRole(@Body() body: UpdateUserRoleDto) {
 		return await this.userService.updateUserRole(body)
 	}
 
 	@ApiOperation({ summary: '修改用户信息' })
 	@Put('update')
+	@AuthUser(true)
+	@AuthRole({ key: 'user', apply: 'update' })
 	async updateUser(@Body() body: UpdateUserDto) {
 		return this.userService.updateUser(body)
 	}
 
 	@ApiOperation({ summary: '修改用户头像' })
 	@Put('update/avatar')
+	@AuthUser(true)
+	@AuthRole({ key: 'user', apply: 'update' })
 	async updateUserAvatar(@Body() body: UserAvatarDto) {
 		return this.userService.updateUserAvatar(body)
 	}
 
 	@ApiOperation({ summary: '切换用户状态' })
 	@Put('cutover')
+	@AuthUser(true)
+	@AuthRole({ key: 'user', apply: 'update' })
 	async cutoverUser(@Query() query: UserUid) {
 		return await this.userService.cutoverUser(query)
 	}
 
 	@ApiOperation({ summary: '删除用户' })
 	@Delete('delete')
+	@AuthUser(true)
+	@AuthRole({ key: 'user', apply: 'delete' })
 	async deleteUser(@Query() query: UserUid) {
 		return await this.userService.deleteUser(query)
 	}

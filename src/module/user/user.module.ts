@@ -7,9 +7,10 @@ import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import { RoleEntity } from '@/entity/role.entity'
 import { AuthEntity } from '@/entity/auth.entity'
+import { StoreModule } from '@/module/store/store.module'
 
 @Module({
-	imports: [SignModule, TypeOrmModule.forFeature([UserEntity, ArticleEntity, RoleEntity, AuthEntity])],
+	imports: [SignModule, StoreModule, TypeOrmModule.forFeature([UserEntity, ArticleEntity, RoleEntity, AuthEntity])],
 	controllers: [UserController],
 	providers: [UserService],
 	exports: [UserService]

@@ -68,11 +68,6 @@ export class AuthGuard implements CanActivate {
 							`账户权限不足: 缺少${role.key}=>${role.apply}权限`,
 							HttpStatus.FORBIDDEN
 						)
-					} else if (apply.status !== 1) {
-						throw new HttpException(
-							`账户权限不足: ${role.key}=>${role.apply}权限已经被禁用`,
-							HttpStatus.FORBIDDEN
-						)
 					}
 				}
 			}

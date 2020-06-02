@@ -8,11 +8,13 @@ import { RoleEntity } from '@/entity/role.entity'
 import { UserUid, CreateUserDto, UpdateUserRoleDto, LoginUserDto, UpdateUserDto, UserAvatarDto } from './user.dto'
 import { AuthEntity } from '@/entity/auth.entity'
 import { SignService } from '@/module/sign/sign.service'
+import { StoreService } from '@/module/store/store.service'
 
 @Injectable()
 export class UserService {
 	constructor(
 		private readonly signService: SignService,
+		private readonly storeService: StoreService,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>,
 		@InjectRepository(RoleEntity) private readonly roleModel: Repository<RoleEntity>,
@@ -76,6 +78,7 @@ export class UserService {
 			}
 
 			await this.userModel.update({ uid: params.uid }, params)
+			await this.storeService.delStore(String(params.uid))
 			return await this.userModel.findOne({ where: { uid: params.uid } })
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
@@ -88,6 +91,7 @@ export class UserService {
 			const user = await this.userModel.findOne({ where: { uid: params.uid } })
 			if (user) {
 				await this.userModel.update({ uid: params.uid }, params)
+				await this.storeService.delStore(String(params.uid))
 				return await this.userModel.findOne({ where: { uid: params.uid } })
 			}
 			throw new HttpException(`uid: ${params.uid} 错误`, HttpStatus.BAD_REQUEST)
@@ -140,7 +144,7 @@ export class UserService {
 		return await this.userModel.find({
 			order: { id: 'DESC' },
 			select: ['id', 'uid', 'username', 'nickname', 'email', 'mobile', 'avatar', 'status', 'createTime'],
-			relations: ['article', 'role', 'auth']
+			relations: ['role', 'auth']
 		})
 	}
 
@@ -167,11 +171,15 @@ export class UserService {
 			}
 
 			//修改role表数据
-			const role = await this.roleModel.findOne({ where: { user, role_key: params.role.role_key } })
+			const role = await this.roleModel.findOne({ where: { user } })
 			if (role) {
-				await this.roleModel.update(role, { ...params.role })
+				await this.roleModel.update({ user }, { ...params.role })
 			} else {
-				const roles = await this.roleModel.create(params.role)
+				const roles = await this.roleModel.create({
+					role_key: params.role.role_key,
+					role_name: params.role.role_name,
+					status: params.role.status
+				})
 				await this.roleModel.save({ ...roles, user })
 			}
 
@@ -195,7 +203,7 @@ export class UserService {
 				})
 				resolve()
 			})
-
+			await this.storeService.delStore(String(params.uid))
 			return await this.findUidUser(params.uid)
 		} catch (error) {
 			throw new HttpException(error.message || 'uid 错误', HttpStatus.BAD_REQUEST)
@@ -212,6 +220,7 @@ export class UserService {
 				const auth = await this.authModel.delete({ user }) //删除用户对应权限
 				const article = await this.articleModel.delete({ user }) //删除用户对应文章
 				const delUser = await this.userModel.delete({ uid: params.uid }) //删除用户
+				await this.storeService.delStore(String(params.uid))
 				return {
 					role,
 					auth,
