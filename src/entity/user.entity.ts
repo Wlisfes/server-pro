@@ -2,7 +2,7 @@
  * @Author: 情雨随风
  * @Date: 2020-05-28 21:51:46
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2020-05-28 22:00:47
+ * @Last Modified time: 2020-06-03 23:18:42
  * @Description: 用户表
  */
 
@@ -11,6 +11,7 @@ import { hashSync } from 'bcryptjs'
 import { ArticleEntity } from './article.entity'
 import { RoleEntity } from './role.entity'
 import { AuthEntity } from './auth.entity'
+import { TagEntity } from './tag.entity'
 
 @Entity('user')
 export class UserEntity {
@@ -90,13 +91,23 @@ export class UserEntity {
 	createTime: string
 
 	@OneToMany(
+		//文章
 		type => ArticleEntity,
 		article => article.user,
 		{ cascade: true }
 	)
 	article: ArticleEntity[]
 
+	@OneToMany(
+		//标签
+		type => TagEntity,
+		tag => tag.user,
+		{ cascade: true }
+	)
+	tag: TagEntity[]
+
 	@OneToOne(
+		//角色
 		type => RoleEntity,
 		role => role.user,
 		{ cascade: true }
@@ -104,6 +115,7 @@ export class UserEntity {
 	role: RoleEntity
 
 	@OneToMany(
+		//权限
 		type => AuthEntity,
 		auth => auth.user,
 		{ cascade: true }
