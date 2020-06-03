@@ -5,10 +5,10 @@ import { compareSync } from 'bcryptjs'
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import { RoleEntity } from '@/entity/role.entity'
-import { UserUid, CreateUserDto, UpdateUserRoleDto, LoginUserDto, UpdateUserDto, UserAvatarDto } from './user.dto'
 import { AuthEntity } from '@/entity/auth.entity'
 import { SignService } from '@/module/sign/sign.service'
 import { StoreService } from '@/module/store/store.service'
+import * as UserDto from '@/module/user/user.dto'
 
 @Injectable()
 export class UserService {
@@ -22,7 +22,7 @@ export class UserService {
 	) {}
 
 	//创建用户
-	public async createUser(params: CreateUserDto): Promise<UserEntity> {
+	public async createUser(params: UserDto.CreateUserDto): Promise<UserEntity> {
 		try {
 			if (await this.userModel.findOne({ where: { username: params.username } })) {
 				throw new HttpException(`username: ${params.username} 已存在`, HttpStatus.BAD_REQUEST)
@@ -47,7 +47,7 @@ export class UserService {
 	}
 
 	//修改用户信息
-	async updateUser(params: UpdateUserDto) {
+	async updateUser(params: UserDto.UpdateUserDto) {
 		try {
 			const user = await this.userModel.findOne({ where: { uid: params.uid } })
 			if (!user) {
@@ -86,7 +86,7 @@ export class UserService {
 	}
 
 	//修改用户头像
-	async updateUserAvatar(params: UserAvatarDto) {
+	async updateUserAvatar(params: UserDto.UserAvatarDto) {
 		try {
 			const user = await this.userModel.findOne({ where: { uid: params.uid } })
 			if (user) {
@@ -101,7 +101,7 @@ export class UserService {
 	}
 
 	//登录
-	async loginUser(params: LoginUserDto): Promise<any> {
+	async loginUser(params: UserDto.LoginUserDto): Promise<any> {
 		const user = await this.userModel
 			.createQueryBuilder('user')
 			.orWhere('user.username = :username', { username: params.username })
@@ -149,7 +149,7 @@ export class UserService {
 	}
 
 	//切换权限状态
-	async cutoverUser(params: UserUid) {
+	async cutoverUser(params: UserDto.UserUid) {
 		try {
 			const role = await this.userModel.findOne({ where: { uid: params.uid } })
 			if (role) {
@@ -163,7 +163,7 @@ export class UserService {
 	}
 
 	//修改用户权限
-	public async updateUserRole(params: UpdateUserRoleDto): Promise<UserEntity> {
+	public async updateUserRole(params: UserDto.UpdateUserRoleDto): Promise<UserEntity> {
 		try {
 			const user = await this.userModel.findOne({ where: { uid: params.uid } })
 			if (!user) {
@@ -211,7 +211,7 @@ export class UserService {
 	}
 
 	//删除用户
-	async deleteUser(params: UserUid) {
+	async deleteUser(params: UserDto.UserUid) {
 		try {
 			//查找uid对应的用户
 			const user = await this.userModel.findOne({ where: { uid: params.uid } })

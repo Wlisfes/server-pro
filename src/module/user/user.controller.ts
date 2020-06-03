@@ -2,14 +2,7 @@ import { Controller, Get, Post, Body, Put, Delete, Query } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { UserService } from '@/module/user/user.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
-import {
-	UserUid,
-	CreateUserDto,
-	UpdateUserRoleDto,
-	LoginUserDto,
-	UpdateUserDto,
-	UserAvatarDto
-} from '@/module/user/user.dto'
+import * as UserDto from '@/module/user/user.dto'
 
 @Controller('api/user')
 @ApiTags('用户模块')
@@ -18,13 +11,13 @@ export class UserController {
 
 	@ApiOperation({ summary: '登录' })
 	@Post('login')
-	async loginUser(@Body() body: LoginUserDto) {
+	async loginUser(@Body() body: UserDto.LoginUserDto) {
 		return await this.userService.loginUser(body)
 	}
 
 	@ApiOperation({ summary: '创建用户' })
 	@Post('create')
-	async createUser(@Body() body: CreateUserDto) {
+	async createUser(@Body() body: UserDto.CreateUserDto) {
 		return await this.userService.createUser(body)
 	}
 
@@ -40,7 +33,7 @@ export class UserController {
 	@Get('info')
 	@AuthUser(true)
 	@AuthRole({ key: 'user', apply: 'get' })
-	async findUidUser(@Query() query: UserUid) {
+	async findUidUser(@Query() query: UserDto.UserUid) {
 		return await this.userService.findUidUser(query.uid)
 	}
 
@@ -48,7 +41,7 @@ export class UserController {
 	@Put('update/role')
 	@AuthUser(true)
 	@AuthRole({ key: 'user', apply: 'update' })
-	async updateUserRole(@Body() body: UpdateUserRoleDto) {
+	async updateUserRole(@Body() body: UserDto.UpdateUserRoleDto) {
 		return await this.userService.updateUserRole(body)
 	}
 
@@ -56,7 +49,7 @@ export class UserController {
 	@Put('update')
 	@AuthUser(true)
 	@AuthRole({ key: 'user', apply: 'update' })
-	async updateUser(@Body() body: UpdateUserDto) {
+	async updateUser(@Body() body: UserDto.UpdateUserDto) {
 		return this.userService.updateUser(body)
 	}
 
@@ -64,7 +57,7 @@ export class UserController {
 	@Put('update/avatar')
 	@AuthUser(true)
 	@AuthRole({ key: 'user', apply: 'update' })
-	async updateUserAvatar(@Body() body: UserAvatarDto) {
+	async updateUserAvatar(@Body() body: UserDto.UserAvatarDto) {
 		return this.userService.updateUserAvatar(body)
 	}
 
@@ -72,7 +65,7 @@ export class UserController {
 	@Put('cutover')
 	@AuthUser(true)
 	@AuthRole({ key: 'user', apply: 'update' })
-	async cutoverUser(@Query() query: UserUid) {
+	async cutoverUser(@Query() query: UserDto.UserUid) {
 		return await this.userService.cutoverUser(query)
 	}
 
@@ -80,7 +73,7 @@ export class UserController {
 	@Delete('delete')
 	@AuthUser(true)
 	@AuthRole({ key: 'user', apply: 'delete' })
-	async deleteUser(@Query() query: UserUid) {
+	async deleteUser(@Query() query: UserDto.UserUid) {
 		return await this.userService.deleteUser(query)
 	}
 }
