@@ -6,7 +6,8 @@
  * @Description: 标签表
  */
 
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm'
+import { Entity, ManyToOne, ManyToMany, JoinTable } from 'typeorm'
+import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { UserEntity } from './user.entity'
 import { ArticleEntity } from './article.entity'
 
@@ -40,13 +41,11 @@ export class TagEntity {
 	})
 	sort: number
 
-	@Column({
-		type: 'timestamp',
-		comment: '创建时间',
-		default: () => 'CURRENT_TIMESTAMP',
-		nullable: false
-	})
-	createTime: string
+	@CreateDateColumn({ comment: '创建时间' })
+	createTime: Date
+
+	@UpdateDateColumn({ comment: '修改时间' })
+	updateTime: Date
 
 	@ManyToOne(
 		//创建标签用户
@@ -58,7 +57,7 @@ export class TagEntity {
 	@ManyToMany(
 		//标签拥有的文章
 		type => ArticleEntity,
-		article => article,
+		article => article.tag,
 		{ cascade: true }
 	)
 	@JoinTable()
