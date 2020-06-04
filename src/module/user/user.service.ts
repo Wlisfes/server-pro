@@ -216,29 +216,13 @@ export class UserService {
 			//查找uid对应的用户
 			const user = await this.userModel.findOne({ where: { uid: params.uid } })
 			if (user) {
-				const role = await this.roleModel.delete({ user }) //删除用户对应角色
-				const auth = await this.authModel.delete({ user }) //删除用户对应权限
-				const article = await this.articleModel.delete({ user }) //删除用户对应文章
 				const delUser = await this.userModel.delete({ uid: params.uid }) //删除用户
 				await this.storeService.delStore(String(params.uid))
-				return {
-					role,
-					auth,
-					article,
-					user: delUser
-				}
+				return delUser
 			}
 			throw new HttpException(`uid: ${params.uid} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
 	}
-
-	// public async updateUserArticle() {
-	// 	const user = await this.userModel.findOne({ where: { id: 1 } })
-	// 	const article = await this.articleModel.create([{ name: 'Angular' }, { name: 'Vue' }, { name: 'React' }])
-	// 	const newArticle = await this.articleModel.save(article.map(k => ({ ...k, user })))
-
-	// 	return newArticle
-	// }
 }

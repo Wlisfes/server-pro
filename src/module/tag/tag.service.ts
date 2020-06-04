@@ -6,22 +6,34 @@ import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import * as TagDto from '@/module/tag/tag.dto'
 
+type key = 'tag' | 'user'
+
 @Injectable()
 export class TagService {
-	private tagKey: string[] = ['id', 'name', 'color', 'status', 'sort', 'createTime']
-	private userKey: string[] = ['uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
-
 	constructor(
 		@InjectRepository(TagEntity) private readonly tagModel: Repository<TagEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>
 	) {}
 
+	private filter(key: key, u: key) {
+		const tag = ['id', 'name', 'color', 'status', 'sort', 'createTime']
+		const user = ['uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
+		switch (key) {
+			case 'tag':
+				return tag.map(k => `${u}.${k}`)
+				break
+			case 'user':
+				return user.map(k => `${u}.${k}`)
+				break
+		}
+	}
+
 	//创建标签
 	async createTag(params: TagDto.CreateTagDto, uid: number) {
 		try {
-			const T = await this.tagModel.findOne({ where: { name: params.name } })
-			if (T) {
+			const TAG = await this.tagModel.findOne({ where: { name: params.name } })
+			if (TAG) {
 				throw new HttpException(`username: ${params.name} 已存在`, HttpStatus.BAD_REQUEST)
 			}
 
@@ -30,13 +42,11 @@ export class TagService {
 			const tag = await this.tagModel.create({ name: params.name, color: params.color })
 			const { id } = await this.tagModel.save({ ...tag, user })
 
-			const keys = [].concat(
-				this.tagKey.map(k => `tag.${k}`),
-				this.userKey.map(k => `user.${k}`)
-			)
+			const T = this.filter('tag', 'tag')
+			const U = this.filter('user', 'user')
 			return await this.tagModel
 				.createQueryBuilder('tag')
-				.select(keys)
+				.select([].concat(T, U))
 				.leftJoin('tag.user', 'user')
 				.where('tag.id = :id', { id })
 				.getMany()
@@ -47,7 +57,14 @@ export class TagService {
 
 	//获取所有标签列表
 	async findTagAll() {
-		return await this.tagModel.find({ order: { sort: 'DESC', createTime: 'DESC' } })
+		const T = this.filter('tag', 'tag')
+		const U = this.filter('user', 'user')
+		return await this.tagModel
+			.createQueryBuilder('tag')
+			.select([].concat(T, U))
+			.leftJoin('tag.user', 'user')
+			.orderBy({ 'tag.sort': 'DESC', 'tag.createTime': 'DESC' })
+			.getMany()
 	}
 
 	//获取标签详情

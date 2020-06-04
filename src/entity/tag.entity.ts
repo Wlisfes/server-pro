@@ -7,7 +7,7 @@
  */
 
 import { Entity, ManyToOne, ManyToMany, JoinTable } from 'typeorm'
-import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { PrimaryGeneratedColumn, Column } from 'typeorm'
 import { UserEntity } from './user.entity'
 import { ArticleEntity } from './article.entity'
 
@@ -41,11 +41,12 @@ export class TagEntity {
 	})
 	sort: number
 
-	@CreateDateColumn({ comment: '创建时间' })
-	createTime: Date
-
-	@UpdateDateColumn({ comment: '修改时间' })
-	updateTime: Date
+	@Column({
+		type: 'timestamp',
+		comment: '创建时间',
+		default: () => 'CURRENT_TIMESTAMP'
+	})
+	createTime: string
 
 	@ManyToOne(
 		//创建标签用户
