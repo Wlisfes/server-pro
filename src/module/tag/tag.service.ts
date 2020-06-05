@@ -75,6 +75,11 @@ export class TagService {
 	//修改标签信息
 	async updateTag(params: TagDto.UpdateTagDto) {
 		try {
+			const name = await this.tagModel.findOne({ where: { name: params.name } })
+			if (name && name.id !== params.id) {
+				throw new HttpException(`name: ${params.name} 已存在`, HttpStatus.BAD_REQUEST)
+			}
+
 			const tag = await this.tagModel.findOne({ where: { id: params.id } })
 			if (tag) {
 				await this.tagModel.update({ id: params.id }, params)
