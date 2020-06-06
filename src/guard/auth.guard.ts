@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
 
 		//验证是否登录
 		if (auth) {
-			const token = request.headers['authorization'] //读取headers中的access_token
+			const token = request.headers['access-token'] //读取headers中的access-token
 			if (!token) {
 				throw new HttpException('未登陆', HttpStatus.UNAUTHORIZED)
 			}
