@@ -58,6 +58,7 @@ export class TagService {
 
 	//获取所有标签列表
 	async findTagAll(params: TagDto.FindTagDto) {
+		const { uid, status, createTime } = params
 		const T = this.filter('tag', 'tag')
 		const U = this.filter('user', 'user')
 
@@ -68,12 +69,12 @@ export class TagService {
 			.orderBy({ 'tag.sort': 'DESC', 'tag.createTime': 'DESC' })
 
 		//uid筛选
-		if (params.uid) {
+		if (uid !== undefined && uid !== null) {
 			QB.where('user.uid = :uid', { uid: params.uid })
 		}
 
 		//时间范围筛选
-		if (params.createTime) {
+		if (createTime !== undefined && createTime !== null && createTime !== '') {
 			QB.andWhere('tag.createTime BETWEEN :start AND :end', {
 				start: params.createTime,
 				end: day().toDate()
@@ -81,7 +82,7 @@ export class TagService {
 		}
 
 		//状态筛选
-		if (params.status !== undefined && params.status !== null) {
+		if (status !== undefined && status !== null) {
 			QB.andWhere('tag.status = :status', { status: params.status })
 		}
 
