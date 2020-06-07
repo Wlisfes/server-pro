@@ -15,6 +15,13 @@ export class OssController {
 		return await this.ossService.uploadFile(file, 'avatar')
 	}
 
+	@ApiOperation({ summary: '单张图片上传oss 可上传文章所需图片' })
+	@Post('upload/file/pic')
+	@UseInterceptors(FileInterceptor('file'))
+	public async uploadFileArticle(@UploadedFile() file) {
+		return await this.ossService.uploadFile(file, 'article')
+	}
+
 	@ApiOperation({ summary: '多张图片上传oss 可用户上传照片' })
 	@Post('upload/files')
 	@UseInterceptors(FilesInterceptor('file'))
