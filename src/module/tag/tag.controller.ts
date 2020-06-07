@@ -18,8 +18,8 @@ export class TagController {
 
 	@ApiOperation({ summary: '获取所有标签列表' })
 	@Get('all')
-	async findTagAll() {
-		return await this.tagService.findTagAll()
+	async findTagAll(@Query() query: TagDto.FindTagDto) {
+		return await this.tagService.findTagAll(query)
 	}
 
 	@ApiOperation({ summary: '获取标签详情' })

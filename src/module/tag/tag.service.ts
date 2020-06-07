@@ -5,6 +5,7 @@ import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import * as TagDto from '@/module/tag/tag.dto'
+import * as day from 'dayjs'
 
 type key = 'tag' | 'user'
 
@@ -56,15 +57,35 @@ export class TagService {
 	}
 
 	//获取所有标签列表
-	async findTagAll() {
+	async findTagAll(params: TagDto.FindTagDto) {
 		const T = this.filter('tag', 'tag')
 		const U = this.filter('user', 'user')
-		return await this.tagModel
+
+		const QB = this.tagModel
 			.createQueryBuilder('tag')
 			.select([].concat(T, U))
 			.leftJoin('tag.user', 'user')
 			.orderBy({ 'tag.sort': 'DESC', 'tag.createTime': 'DESC' })
-			.getMany()
+
+		//uid筛选
+		if (params.uid) {
+			QB.where('user.uid = :uid', { uid: params.uid })
+		}
+
+		//时间范围筛选
+		if (params.createTime) {
+			QB.andWhere('tag.createTime BETWEEN :start AND :end', {
+				start: params.createTime,
+				end: day().toDate()
+			})
+		}
+
+		//状态筛选
+		if (params.status !== undefined && params.status !== null) {
+			QB.andWhere('tag.status = :status', { status: params.status })
+		}
+
+		return await QB.getMany()
 	}
 
 	//获取标签详情
