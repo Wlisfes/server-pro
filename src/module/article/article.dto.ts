@@ -7,7 +7,7 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString, IsNumber, IsIn, ValidateNested, IsArray } from 'class-validator'
+import { IsNotEmpty, IsString, IsNumber, IsIn, Allow, IsArray } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class Article {
@@ -40,6 +40,31 @@ export class Article {
 	@IsNotEmpty({ message: 'text 必填' })
 	@IsString({ message: 'text is string' })
 	text: string
+}
+
+export class ArticleIdDto {
+	@Type(() => Number)
+	@ApiProperty({ description: '文章id', example: 1 })
+	@IsNotEmpty({ message: 'id 必填' })
+	@IsNumber({}, { message: 'id is number' })
+	id: number
+}
+
+export class FindArticleDto {
+	@Type(() => Number)
+	@ApiProperty({ description: '作者uid 参数可选', example: 1590938177274 })
+	@Allow()
+	uid?: number
+
+	@Type(() => Number)
+	@ApiProperty({ description: '状态 参数可选', example: 1 })
+	@Allow()
+	status?: number
+
+	@Type(() => String)
+	@ApiProperty({ description: '时间段 参数可选', example: '2020-01-01' })
+	@Allow()
+	createTime?: string
 }
 
 export class CreateArticleDto extends Article {

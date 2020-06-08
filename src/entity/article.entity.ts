@@ -58,6 +58,14 @@ export class ArticleEntity {
 	})
 	sort: number
 
+	@Column({
+		type: 'timestamp',
+		comment: '创建时间',
+		default: () => 'CURRENT_TIMESTAMP',
+		nullable: false
+	})
+	createTime: string
+
 	@ManyToOne(
 		//创建文章的用户
 		type => UserEntity,
