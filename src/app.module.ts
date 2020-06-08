@@ -14,9 +14,10 @@ import { AuthModule } from '@/module/auth/auth.module'
 import { StoreModule } from '@/module/store/store.module'
 import { TagModule } from '@/module/tag/tag.module'
 import { ArticleModule } from '@/module/article/article.module'
+import { ProjectModule } from '@/module/project/project.module'
 
 @Module({
-	imports: [CommonModule, UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule],
+	imports: [CommonModule, UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule],
 	controllers: [AppController],
 	providers: [
 		AppService,

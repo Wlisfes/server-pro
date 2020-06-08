@@ -2,7 +2,7 @@
  * @Author: 情雨随风
  * @Date: 2020-06-03 22:55:04
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2020-06-03 23:19:53
+ * @Last Modified time: 2020-06-08 22:50:03
  * @Description: 标签表
  */
 
@@ -10,6 +10,7 @@ import { Entity, ManyToOne, ManyToMany, JoinTable } from 'typeorm'
 import { PrimaryGeneratedColumn, Column } from 'typeorm'
 import { UserEntity } from './user.entity'
 import { ArticleEntity } from './article.entity'
+import { ProjectEntity } from './project.entity'
 
 @Entity('tag')
 export class TagEntity {
@@ -63,4 +64,13 @@ export class TagEntity {
 	)
 	@JoinTable()
 	article: ArticleEntity[]
+
+	@ManyToMany(
+		//标签拥有的项目
+		type => ProjectEntity,
+		project => project.tag,
+		{ cascade: true }
+	)
+	@JoinTable()
+	project: ProjectEntity[]
 }
