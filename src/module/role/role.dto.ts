@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, IsNumber, IsIn, Allow } from 'class-validator'
 import { Type } from 'class-transformer'
 
-export class Role {
+export class RoleDto {
 	@Type(() => String)
 	@ApiProperty({ description: '角色key', example: 'visitor' })
 	@IsNotEmpty({ message: 'role_key 必填' })
@@ -38,13 +38,13 @@ export class RoleId {
 	id: number
 }
 
-export class CreateRoleDto extends Role {}
+export class CreateRoleDto extends RoleDto {}
 
 export class DeleteRoleDto extends RoleId {}
 
 export class CutoverRoleDto extends RoleId {}
 
-export class UpdateRoleDto extends Role {
+export class UpdateRoleDto extends RoleDto {
 	@Type(() => Number)
 	@ApiProperty({ description: '角色id', example: 1 })
 	@IsNotEmpty({ message: 'id 必填' })

@@ -2,7 +2,7 @@
  * @Date: 2020-05-28 12:42:40
  * @Author: 情雨随风
  * @LastEditors: 情雨随风
- * @LastEditTime: 2020-05-28 17:25:33
+ * @LastEditTime: 2020-06-08 15:17:23
  * @Description: userDto
  */
 
@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, ValidateNested, IsObject, IsArray, Allow, IsNumber, IsIn } from 'class-validator'
 import { Type } from 'class-transformer'
 import { Auth } from '@/module/auth/auth.dto'
-import { Role } from '@/module/role/role.dto'
+import { RoleDto } from '@/module/role/role.dto'
 
 export class User {
 	id: number
@@ -130,7 +130,7 @@ export class LoginUserDto {
 }
 
 export class UpdateUserRoleDto extends UserUid {
-	@Type(() => Role)
+	@Type(() => RoleDto)
 	@ApiProperty({
 		description: '用户所属角色',
 		example: { role_key: 'visitor', role_name: '游客', status: 1 }
@@ -138,7 +138,7 @@ export class UpdateUserRoleDto extends UserUid {
 	@ValidateNested()
 	@IsObject()
 	@IsNotEmpty({ message: 'role 必填' })
-	role: Role
+	role: RoleDto
 
 	@Type(() => Auth)
 	@ApiProperty({

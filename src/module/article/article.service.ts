@@ -30,6 +30,21 @@ export class ArticleService {
 		}
 	}
 
+	//获取文章详情
+	async findIdArticle(id: number) {
+		const U = this.filter('user', 'user')
+		const T = this.filter('tag', 'tag')
+		const A = this.filter('article', 'article')
+
+		return await this.articleModel
+			.createQueryBuilder('article')
+			.select([].concat(U, T, A))
+			.leftJoin('article.user', 'user')
+			.leftJoin('article.tag', 'tag')
+			.where('article.id = :id', { id })
+			.getOne()
+	}
+
 	//创建文章
 	async createArticle(params: ArticleDto.CreateArticleDto, uid: number) {
 		try {
@@ -37,9 +52,6 @@ export class ArticleService {
 				throw new HttpException('所属标签最少需要一个', HttpStatus.BAD_REQUEST)
 			}
 
-			const U = this.filter('user', 'user')
-			const T = this.filter('tag', 'tag')
-			const A = this.filter('article', 'article')
 			const user = await this.userModel.findOne({ where: { uid } })
 			const tag = await this.tagModel
 				.createQueryBuilder('tag')
@@ -55,13 +67,7 @@ export class ArticleService {
 			})
 			const { id } = await this.articleModel.save({ ...article, user, tag })
 
-			return await this.articleModel
-				.createQueryBuilder('article')
-				.select([].concat(U, T, A))
-				.leftJoin('article.user', 'user')
-				.leftJoin('article.tag', 'tag')
-				.where('article.id = :id', { id })
-				.getOne()
+			return await this.findIdArticle(id)
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
@@ -75,7 +81,7 @@ export class ArticleService {
 			}
 
 			const user = await this.userModel.findOne({ where: { uid } })
-			const article = await this.articleModel.findOne({ where: { id: params.id }, relations: ['user'] })
+			const article = await this.articleModel.findOne({ where: { id: params.id }, relations: ['user', 'tag'] })
 			const tag = await this.tagModel
 				.createQueryBuilder('tag')
 				.where('tag.id IN (:id)', { id: params.tag })
@@ -91,7 +97,26 @@ export class ArticleService {
 				}
 			}
 
-			//先删除所拥有tag再添加文章所属标签
+			// await this.tagModel.createQueryBuilder('tag').delete().where('tag')
+			//更新文章
+			await this.articleModel
+				.createQueryBuilder('article')
+				.update({
+					title: params.title,
+					description: params.description,
+					picUrl: params.picUrl,
+					content: params.content,
+					text: params.text,
+					status: params.status,
+					tag: null
+				})
+				.where('article.id = :id', { id: params.id })
+				.execute()
+
+			// article.tag = tag
+			return await this.findIdArticle(params.id)
+
+			// return await this.tagModel.find({ relations: ['article'] })
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}

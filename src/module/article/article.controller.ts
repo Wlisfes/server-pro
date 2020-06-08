@@ -5,7 +5,7 @@ import { AuthUser, AuthRole } from '@/guard/auth.guard'
 
 import * as ArticleDto from '@/module/article/article.dto'
 
-@Controller('article')
+@Controller('api/article')
 @ApiTags('文章模块')
 export class ArticleController {
 	constructor(private readonly articleService: ArticleService) {}

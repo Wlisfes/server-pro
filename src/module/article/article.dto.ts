@@ -44,7 +44,7 @@ export class Article {
 
 export class CreateArticleDto extends Article {
 	@ApiProperty({
-		description: '权限拥有操作',
+		description: '标签id',
 		example: [1, 2, 3, 4, 5]
 	})
 	@IsArray()
@@ -59,10 +59,13 @@ export class UpdateArticleDto extends Article {
 	@IsNumber({}, { message: 'id is number' })
 	id: number
 
-	@ApiProperty({
-		description: '权限拥有操作',
-		example: [1, 2, 3, 4, 5]
-	})
+	@Type(() => Number)
+	@ApiProperty({ description: '文章状态', example: 1 })
+	@IsNumber({}, { message: 'status is number' })
+	@IsIn([0, 1], { message: 'status 不合法' })
+	status: number
+
+	@ApiProperty({ description: '标签id', example: [1, 2, 3, 4, 5] })
 	@IsArray()
 	@Type(() => Number)
 	tag: number[]
