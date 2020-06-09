@@ -6,9 +6,7 @@ import { OssService } from '@/common/oss/oss.service'
 @Controller('oss')
 @ApiTags('文件模块')
 export class OssController {
-	constructor(private readonly ossService: OssService) {
-		console.log(process.env.ADMINPREFIX)
-	}
+	constructor(private readonly ossService: OssService) {}
 
 	@ApiOperation({ summary: '单张图片上传oss 可用户上传头像' })
 	@Post('upload/file')
