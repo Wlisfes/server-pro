@@ -1,8 +1,8 @@
 import { Controller, Post, Body, Req } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { ProjectService } from '@/module/project/project.service'
+import { ProjectService } from '@/module/admin/project/project.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
-import * as ProjectDto from '@/module/project/project.dto'
+import * as ProjectDto from '@/module/admin/project/project.dto'
 
 @Controller('api/project')
 @ApiTags('项目模块')

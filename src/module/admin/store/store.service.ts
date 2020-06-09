@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { put, get, del } from 'memory-cache'
-import { User } from '@/module/user/user.dto'
+import { User } from '@/module/admin/user/user.dto'
 
 @Injectable()
 export class StoreService {

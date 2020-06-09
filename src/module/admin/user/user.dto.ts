@@ -9,8 +9,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, ValidateNested, IsObject, IsArray, Allow, IsNumber, IsIn } from 'class-validator'
 import { Type } from 'class-transformer'
-import { Auth } from '@/module/auth/auth.dto'
-import { RoleDto } from '@/module/role/role.dto'
+import { Auth } from '@/module/admin/auth/auth.dto'
+import { RoleDto } from '@/module/admin/role/role.dto'
 
 export class User {
 	id: number

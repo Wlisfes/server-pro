@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Put, Delete, Body, Query, Req } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { TagService } from '@/module/tag/tag.service'
+import { TagService } from '@/module/admin/tag/tag.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
-import * as TagDto from '@/module/tag/tag.dto'
+import * as TagDto from '@/module/admin/tag/tag.dto'
 
 @Controller('api/tag')
 @ApiTags('标签模块')

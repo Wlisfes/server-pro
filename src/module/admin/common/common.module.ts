@@ -1,8 +1,8 @@
 import { Module, Global } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { OssModule } from '@/module/oss/oss.module'
-import { SignModule } from '@/module/sign/sign.module'
+import { OssModule } from '@/module/admin/oss/oss.module'
+import { SignModule } from '@/module/admin/sign/sign.module'
 
 @Global()
 @Module({

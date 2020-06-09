@@ -1,9 +1,9 @@
 import { Controller, Post, Put, Get, Body, Delete, Query, Req } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { ArticleService } from '@/module/article/article.service'
+import { ArticleService } from '@/module/admin/article/article.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
 
-import * as ArticleDto from '@/module/article/article.dto'
+import * as ArticleDto from '@/module/admin/article/article.dto'
 
 @Controller('api/article')
 @ApiTags('文章模块')

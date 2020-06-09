@@ -4,7 +4,7 @@ import { Repository } from 'typeorm'
 import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { ProjectEntity } from '@/entity/project.entity'
-import * as ProjectDto from '@/module/project/project.dto'
+import * as ProjectDto from '@/module/admin/project/project.dto'
 import * as day from 'dayjs'
 
 type key = 'tag' | 'user' | 'project'

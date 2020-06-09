@@ -1,9 +1,9 @@
 import { Injectable, CanActivate, SetMetadata, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { SignService } from '@/module/sign/sign.service'
-import { UserService } from '@/module/user/user.service'
-import { StoreService } from '@/module/store/store.service'
-import { User } from '@/module/user/user.dto'
+import { SignService } from '@/module/admin/sign/sign.service'
+import { UserService } from '@/module/admin/user/user.service'
+import { StoreService } from '@/module/admin/store/store.service'
+import { User } from '@/module/admin/user/user.dto'
 
 interface Role {
 	key: string

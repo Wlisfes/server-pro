@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Put, Delete, Query } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { UserService } from '@/module/user/user.service'
+import { UserService } from '@/module/admin/user/user.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
-import * as UserDto from '@/module/user/user.dto'
+import * as UserDto from '@/module/admin/user/user.dto'
 
 @Controller('api/user')
 @ApiTags('用户模块')
