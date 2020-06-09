@@ -3,11 +3,11 @@ import { AppController } from '@/app.controller'
 import { AppService } from '@/app.service'
 
 //各端主模块入口导入
-import { AdminModule } from '@/module/admin/admin/admin.module'
-import { WebModule } from '@/module/web/web/web.module'
+import { AppAdminModule } from '@/module/admin/app/app.module'
+import { AppWebModule } from '@/module/web/app/app.module'
 
 @Module({
-	imports: [AdminModule, WebModule],
+	imports: [AppAdminModule, AppWebModule],
 	controllers: [AppController],
 	providers: [AppService]
 })

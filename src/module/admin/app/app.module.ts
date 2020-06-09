@@ -24,4 +24,4 @@ import { ProjectModule } from '@/module/admin/project/project.module'
 	],
 	exports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule]
 })
-export class AdminModule {}
+export class AppAdminModule {}
