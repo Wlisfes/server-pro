@@ -4,7 +4,9 @@ import { TagService } from '@/module/admin/tag/tag.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
 import * as TagDto from '@/module/admin/tag/tag.dto'
 
-@Controller('api/tag')
+const path = `${process.env.ADMINPREFIX}/tag`
+
+@Controller(path)
 @ApiTags('标签模块')
 export class TagController {
 	constructor(private readonly tagService: TagService) {}

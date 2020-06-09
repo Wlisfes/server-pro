@@ -2,10 +2,11 @@ import { Controller, Post, Put, Get, Body, Delete, Query, Req } from '@nestjs/co
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { ArticleService } from '@/module/admin/article/article.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
-
 import * as ArticleDto from '@/module/admin/article/article.dto'
 
-@Controller('api/article')
+const path = `${process.env.ADMINPREFIX}/article`
+
+@Controller(path)
 @ApiTags('文章模块')
 export class ArticleController {
 	constructor(private readonly articleService: ArticleService) {}

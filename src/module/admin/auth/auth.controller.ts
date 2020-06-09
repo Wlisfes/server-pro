@@ -4,7 +4,9 @@ import { AuthService } from './auth.service'
 import { CreateAuthDto, UpdateAuthDto, DeleteAuthDto, CutoverAuthDto } from './auth.dto'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
 
-@Controller('api/auth')
+const path = `${process.env.ADMINPREFIX}/auth`
+
+@Controller(path)
 @ApiTags('权限模块')
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}

@@ -50,3 +50,47 @@ export class CreateProjectDto extends ProjectDto {
 	@Type(() => Number)
 	tag: number[]
 }
+
+export class ProjectIdDto {
+	@Type(() => Number)
+	@ApiProperty({ description: '项目id', example: 1 })
+	@IsNotEmpty({ message: 'id 必填' })
+	@IsNumber({}, { message: 'id is number' })
+	id: number
+}
+
+export class FindProjectDto {
+	@Type(() => Number)
+	@ApiProperty({ description: '作者uid 参数可选', example: 1590938177274 })
+	@Allow()
+	uid?: number
+
+	@Type(() => Number)
+	@ApiProperty({ description: '状态 参数可选', example: 1 })
+	@Allow()
+	status?: number
+
+	@Type(() => String)
+	@ApiProperty({ description: '时间段 参数可选', example: '2020-01-01' })
+	@Allow()
+	createTime?: string
+}
+
+export class UpdateProjectDto extends ProjectDto {
+	@Type(() => Number)
+	@ApiProperty({ description: '项目id', example: 1 })
+	@IsNotEmpty({ message: 'id 必填' })
+	@IsNumber({}, { message: 'id is number' })
+	id: number
+
+	@Type(() => Number)
+	@ApiProperty({ description: '项目状态', example: 1 })
+	@IsNumber({}, { message: 'status is number' })
+	@IsIn([0, 1], { message: 'status 不合法' })
+	status: number
+
+	@ApiProperty({ description: '标签id', example: [1, 2, 3, 4, 5] })
+	@IsArray()
+	@Type(() => Number)
+	tag: number[]
+}

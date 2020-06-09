@@ -4,7 +4,9 @@ import { RoleService } from './role.service'
 import { RoleId, CreateRoleDto, UpdateRoleDto, DeleteRoleDto, CutoverRoleDto } from './role.dto'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
 
-@Controller('api/role')
+const path = `${process.env.ADMINPREFIX}/role`
+
+@Controller(path)
 @ApiTags('角色模块')
 export class RoleController {
 	constructor(private readonly roleService: RoleService) {}

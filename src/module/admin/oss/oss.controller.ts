@@ -1,9 +1,11 @@
 import { Controller, UseInterceptors, UploadedFile, UploadedFiles, Post } from '@nestjs/common'
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { OssService } from './oss.service'
+import { OssService } from '@/module/admin/oss/oss.service'
 
-@Controller('api/oss')
+const path = `${process.env.ADMINPREFIX}/oss`
+
+@Controller(path)
 @ApiTags('文件模块')
 export class OssController {
 	constructor(private readonly ossService: OssService) {}

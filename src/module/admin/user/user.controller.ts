@@ -4,7 +4,9 @@ import { UserService } from '@/module/admin/user/user.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
 import * as UserDto from '@/module/admin/user/user.dto'
 
-@Controller('api/user')
+const path = `${process.env.ADMINPREFIX}/user`
+
+@Controller(path)
 @ApiTags('用户模块')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
