@@ -1,8 +1,8 @@
 import { Module, Global } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { OssModule } from '@/module/admin/oss/oss.module'
-import { SignModule } from '@/module/admin/sign/sign.module'
+import { OssModule } from '@/common/oss/oss.module'
+import { SignModule } from '@/common/sign/sign.module'
 
 @Global()
 @Module({
@@ -24,6 +24,6 @@ import { SignModule } from '@/module/admin/sign/sign.module'
 		}),
 		SignModule
 	],
-	exports: [SignModule]
+	exports: [SignModule, OssModule]
 })
-export class CommonModule {}
+export class AsyncModule {}

@@ -1,14 +1,14 @@
 import { Controller, UseInterceptors, UploadedFile, UploadedFiles, Post } from '@nestjs/common'
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { OssService } from '@/module/admin/oss/oss.service'
+import { OssService } from '@/common/oss/oss.service'
 
-const path = `${process.env.ADMINPREFIX}/oss`
-
-@Controller(path)
+@Controller('oss')
 @ApiTags('文件模块')
 export class OssController {
-	constructor(private readonly ossService: OssService) {}
+	constructor(private readonly ossService: OssService) {
+		console.log(process.env.ADMINPREFIX)
+	}
 
 	@ApiOperation({ summary: '单张图片上传oss 可用户上传头像' })
 	@Post('upload/file')

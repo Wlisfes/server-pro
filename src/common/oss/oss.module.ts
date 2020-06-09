@@ -1,7 +1,7 @@
 import { Module, Global, DynamicModule } from '@nestjs/common'
-import { OSS_OPTIONS, OSSOptions, ossProvider } from './oss.provider'
-import { OssController } from './oss.controller'
-import { OssService } from './oss.service'
+import { OSS_OPTIONS, OSSOptions, ossProvider } from '@/common/oss/oss.provider'
+import { OssController } from '@/common/oss/oss.controller'
+import { OssService } from '@/common/oss/oss.service'
 
 @Global()
 @Module({

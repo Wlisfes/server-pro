@@ -6,8 +6,8 @@ import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import { RoleEntity } from '@/entity/role.entity'
 import { AuthEntity } from '@/entity/auth.entity'
-import { SignService } from '@/module/admin/sign/sign.service'
-import { StoreService } from '@/module/admin/store/store.service'
+import { SignService } from '@/common/sign/sign.service'
+import { StoreService } from '@/common/store/store.service'
 import * as UserDto from '@/module/admin/user/user.dto'
 
 @Injectable()
