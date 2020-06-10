@@ -9,6 +9,9 @@ import { AuthEntity } from '@/entity/auth.entity'
 import { SignService } from '@/common/sign/sign.service'
 import { StoreService } from '@/common/store/store.service'
 import * as UserDto from '@/module/admin/user/user.dto'
+import * as day from 'dayjs'
+
+type key = 'user'
 
 @Injectable()
 export class UserService {
@@ -20,6 +23,14 @@ export class UserService {
 		@InjectRepository(RoleEntity) private readonly roleModel: Repository<RoleEntity>,
 		@InjectRepository(AuthEntity) private readonly authModel: Repository<AuthEntity>
 	) {}
+
+	private filter(key: key, u: key) {
+		const user = ['id', 'uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
+		switch (key) {
+			case 'user':
+				return user.map(k => `${u}.${k}`)
+		}
+	}
 
 	//创建用户
 	public async createUser(params: UserDto.CreateUserDto): Promise<UserEntity> {
@@ -140,12 +151,42 @@ export class UserService {
 	}
 
 	//获取所有用户列表
-	public async findUserAll(): Promise<UserEntity[]> {
-		return await this.userModel.find({
-			order: { id: 'DESC' },
-			select: ['id', 'uid', 'username', 'nickname', 'email', 'mobile', 'avatar', 'status', 'createTime'],
-			relations: ['role', 'auth']
-		})
+	public async findUserAll(params: UserDto.FindUserDto): Promise<UserEntity[] | any> {
+		const U = this.filter('user', 'user')
+		const { nickname, status, createTime } = params
+
+		const QB = this.userModel
+			.createQueryBuilder('user')
+			.select([].concat(U))
+			.innerJoinAndSelect('user.role', 'role')
+			.innerJoinAndSelect('user.auth', 'auth')
+			.orderBy({ 'user.createTime': 'DESC' })
+
+		//nickname筛选
+		if (nickname !== undefined && nickname !== null) {
+			QB.orWhere('user.nickname = :nickname', {
+				nickname: nickname
+			})
+
+			QB.orWhere('user.username = :username', {
+				username: nickname
+			})
+		}
+
+		// //时间范围筛选
+		if (createTime !== undefined && createTime !== null && createTime !== '') {
+			QB.andWhere('user.createTime BETWEEN :start AND :end', {
+				start: params.createTime,
+				end: day().toDate()
+			})
+		}
+
+		// //状态筛选
+		if (status !== undefined && status !== null) {
+			QB.andWhere('user.status = :status', { status: params.status })
+		}
+
+		return await QB.getMany()
 	}
 
 	//切换权限状态

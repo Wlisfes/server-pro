@@ -49,6 +49,11 @@ export class CreateProjectDto extends ProjectDto {
 	@IsArray()
 	@Type(() => Number)
 	tag: number[]
+
+	@Type(() => Number)
+	@ApiProperty({ description: '状态 参数可选', example: 1 })
+	@Allow()
+	status?: number
 }
 
 export class ProjectIdDto {

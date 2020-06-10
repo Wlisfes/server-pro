@@ -7,7 +7,7 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString, IsNumber, IsIn, ValidateNested, IsArray } from 'class-validator'
+import { IsNotEmpty, IsString, IsNumber, IsIn, ValidateNested, IsArray, Allow } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class Apply {
@@ -104,4 +104,21 @@ export class UpdateAuthDto extends AuthId {
 	@IsArray()
 	@Type(() => Apply)
 	apply: Apply[]
+}
+
+export class FindAuthDto {
+	@Type(() => String)
+	@ApiProperty({ description: '标识码或者名称 参数可选', example: '标签管理' })
+	@Allow()
+	auth_name?: string
+
+	@Type(() => Number)
+	@ApiProperty({ description: '状态 参数可选', example: 1 })
+	@Allow()
+	status?: number
+
+	@Type(() => String)
+	@ApiProperty({ description: '时间段 参数可选', example: '2020-01-01' })
+	@Allow()
+	createTime?: string
 }

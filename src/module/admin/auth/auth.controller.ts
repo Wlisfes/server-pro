@@ -1,8 +1,8 @@
 import { Controller, Post, Put, Delete, Get, Body, Query } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { AuthService } from './auth.service'
-import { CreateAuthDto, UpdateAuthDto, DeleteAuthDto, CutoverAuthDto } from './auth.dto'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
+import * as AuthDto from '@/module/admin/auth/auth.dto'
 
 const path = `${process.env.ADMINPREFIX}/auth`
 
@@ -15,7 +15,7 @@ export class AuthController {
 	@Post('create')
 	@AuthUser(true)
 	@AuthRole({ key: 'auth', apply: 'create' })
-	async createAuth(@Body() body: CreateAuthDto) {
+	async createAuth(@Body() body: AuthDto.CreateAuthDto) {
 		return this.authService.createAuth(body)
 	}
 
@@ -23,15 +23,15 @@ export class AuthController {
 	@Get('all')
 	@AuthUser(true)
 	@AuthRole({ key: 'auth', apply: 'get' })
-	async findAuthAll() {
-		return await this.authService.findAuthAll()
+	async findAuthAll(@Query() query: AuthDto.FindAuthDto) {
+		return await this.authService.findAuthAll(query)
 	}
 
 	@Get('info')
 	@ApiOperation({ summary: '获取权限模块详情' })
 	@AuthUser(true)
 	@AuthRole({ key: 'auth', apply: 'query' })
-	async findIdAuth(@Query() query: CutoverAuthDto) {
+	async findIdAuth(@Query() query: AuthDto.CutoverAuthDto) {
 		return await this.authService.findIdAuth(query)
 	}
 
@@ -39,7 +39,7 @@ export class AuthController {
 	@Put('update')
 	@AuthUser(true)
 	@AuthRole({ key: 'auth', apply: 'update' })
-	async updateAuth(@Body() body: UpdateAuthDto) {
+	async updateAuth(@Body() body: AuthDto.UpdateAuthDto) {
 		return this.authService.updateAuth(body)
 	}
 
@@ -47,7 +47,7 @@ export class AuthController {
 	@Put('cutover')
 	@AuthUser(true)
 	@AuthRole({ key: 'auth', apply: 'update' })
-	async cutoverAuth(@Query() query: CutoverAuthDto) {
+	async cutoverAuth(@Query() query: AuthDto.CutoverAuthDto) {
 		return await this.authService.cutoverAuth(query)
 	}
 
@@ -55,7 +55,7 @@ export class AuthController {
 	@Delete('delete')
 	@AuthUser(true)
 	@AuthRole({ key: 'auth', apply: 'delete' })
-	async deleteAuth(@Query() query: DeleteAuthDto) {
+	async deleteAuth(@Query() query: AuthDto.DeleteAuthDto) {
 		return await this.authService.deleteAuth(query)
 	}
 }

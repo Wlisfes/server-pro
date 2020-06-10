@@ -2,14 +2,15 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { AuthEntity } from '@/entity/auth.entity'
-import { CreateAuthDto, UpdateAuthDto, DeleteAuthDto, CutoverAuthDto } from './auth.dto'
+import * as AuthDto from '@/module/admin/auth/auth.dto'
+import * as day from 'dayjs'
 
 @Injectable()
 export class AuthService {
 	constructor(@InjectRepository(AuthEntity) private readonly authModel: Repository<AuthEntity>) {}
 
 	//创建权限模块
-	async createAuth(params: CreateAuthDto) {
+	async createAuth(params: AuthDto.CreateAuthDto) {
 		try {
 			if (await this.authModel.findOne({ where: { auth_key: params.auth_key, user: null } })) {
 				throw new HttpException(`auth_key: ${params.auth_key} 已存在`, HttpStatus.BAD_REQUEST)
@@ -35,17 +36,44 @@ export class AuthService {
 	}
 
 	//获取权限列表
-	async findAuthAll() {
-		return await this.authModel.find({ where: { user: null }, order: { id: 'DESC' } })
+	async findAuthAll(params: AuthDto.FindAuthDto) {
+		const { auth_name, status, createTime } = params
+		const QB = await this.authModel.createQueryBuilder('auth').orderBy({ 'auth.createTime': 'DESC' })
+
+		//auth_name筛选
+		if (auth_name !== undefined && auth_name !== null) {
+			QB.orWhere('auth.auth_name = :auth_name', {
+				auth_name: auth_name
+			}).andWhere('auth.user is null')
+
+			QB.orWhere('auth.auth_key = :auth_key', {
+				auth_key: auth_name
+			}).andWhere('auth.user is null')
+		}
+
+		// //时间范围筛选
+		if (createTime !== undefined && createTime !== null && createTime !== '') {
+			QB.andWhere('auth.createTime BETWEEN :start AND :end', {
+				start: params.createTime,
+				end: day().toDate()
+			})
+		}
+
+		// //状态筛选
+		if (status !== undefined && status !== null) {
+			QB.andWhere('auth.status = :status', { status: params.status })
+		}
+
+		return await QB.andWhere('auth.user is null').getMany()
 	}
 
 	//获取权限模块详情
-	async findIdAuth(params: CutoverAuthDto) {
+	async findIdAuth(params: AuthDto.CutoverAuthDto) {
 		return await this.authModel.findOne({ where: { id: params.id } })
 	}
 
 	//修改权限模块
-	async updateAuth(params: UpdateAuthDto) {
+	async updateAuth(params: AuthDto.UpdateAuthDto) {
 		try {
 			const name = await this.authModel.findOne({ where: { auth_name: params.auth_name, user: null } })
 			if (name && name.id !== params.id) {
@@ -68,7 +96,7 @@ export class AuthService {
 	}
 
 	//切换权限状态
-	async cutoverAuth(params: CutoverAuthDto) {
+	async cutoverAuth(params: AuthDto.CutoverAuthDto) {
 		try {
 			const auth = await this.authModel.findOne({ where: { id: params.id } })
 			if (auth) {
@@ -82,7 +110,7 @@ export class AuthService {
 	}
 
 	//删除权限模块
-	async deleteAuth(params: DeleteAuthDto) {
+	async deleteAuth(params: AuthDto.DeleteAuthDto) {
 		try {
 			const auth = await this.authModel.delete({ id: params.id })
 			if (auth.affected === 0) {

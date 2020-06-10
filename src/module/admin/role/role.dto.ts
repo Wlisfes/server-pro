@@ -30,7 +30,7 @@ export class RoleDto {
 	status: number
 }
 
-export class RoleId {
+export class RoleIdDto {
 	@Type(() => Number)
 	@ApiProperty({ description: '角色id', example: 1 })
 	@IsNotEmpty({ message: 'id 必填' })
@@ -40,9 +40,9 @@ export class RoleId {
 
 export class CreateRoleDto extends RoleDto {}
 
-export class DeleteRoleDto extends RoleId {}
+export class DeleteRoleDto extends RoleIdDto {}
 
-export class CutoverRoleDto extends RoleId {}
+export class CutoverRoleDto extends RoleIdDto {}
 
 export class UpdateRoleDto extends RoleDto {
 	@Type(() => Number)
@@ -50,4 +50,21 @@ export class UpdateRoleDto extends RoleDto {
 	@IsNotEmpty({ message: 'id 必填' })
 	@IsNumber({}, { message: 'status is number' })
 	id: number
+}
+
+export class FindRoleDto {
+	@Type(() => String)
+	@ApiProperty({ description: '标识码或者名称 参数可选', example: '管理员' })
+	@Allow()
+	role_name?: string
+
+	@Type(() => Number)
+	@ApiProperty({ description: '状态 参数可选', example: 1 })
+	@Allow()
+	status?: number
+
+	@Type(() => String)
+	@ApiProperty({ description: '时间段 参数可选', example: '2020-01-01' })
+	@Allow()
+	createTime?: string
 }

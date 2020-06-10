@@ -161,3 +161,20 @@ export class UpdateUserRoleDto extends UserUid {
 	@IsArray()
 	auth: Auth[]
 }
+
+export class FindUserDto {
+	@Type(() => Number)
+	@ApiProperty({ description: '用户名或者昵称 参数可选', example: '情雨随风' })
+	@Allow()
+	nickname?: number
+
+	@Type(() => Number)
+	@ApiProperty({ description: '状态 参数可选', example: 1 })
+	@Allow()
+	status?: number
+
+	@Type(() => String)
+	@ApiProperty({ description: '时间段 参数可选', example: '2020-01-01' })
+	@Allow()
+	createTime?: string
+}

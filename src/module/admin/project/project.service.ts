@@ -60,7 +60,8 @@ export class ProjectService {
 				description: params.description,
 				picUrl: params.picUrl,
 				github: params.github,
-				accessUrl: params.accessUrl
+				accessUrl: params.accessUrl || null,
+				status: params.status
 			})
 			const { id } = await this.projectModel.save({ ...project, user, tag })
 

@@ -27,8 +27,8 @@ export class UserController {
 	@Get('all')
 	@AuthUser(true)
 	@AuthRole({ key: 'user', apply: 'query' })
-	async findUserAll() {
-		return await this.userService.findUserAll()
+	async findUserAll(@Query() query: UserDto.FindUserDto) {
+		return await this.userService.findUserAll(query)
 	}
 
 	@ApiOperation({ summary: '获取用户详情' })
