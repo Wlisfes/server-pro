@@ -19,10 +19,10 @@ export class OssController {
 	@Post('upload/file/pic')
 	@UseInterceptors(FileInterceptor('file'))
 	public async uploadFileArticle(@UploadedFile() file) {
-		return await this.ossService.uploadFile(file, 'article')
+		return await this.ossService.uploadFile(file, 'upload')
 	}
 
-	@ApiOperation({ summary: '多张图片上传oss 可用户上传照片' })
+	@ApiOperation({ summary: '多张图片上传oss' })
 	@Post('upload/files')
 	@UseInterceptors(FilesInterceptor('file'))
 	public async uploadFiles(@UploadedFiles() files) {
