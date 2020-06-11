@@ -163,7 +163,7 @@ export class UpdateUserRoleDto extends UserUid {
 }
 
 export class FindUserDto {
-	@Type(() => Number)
+	@Type(() => String)
 	@ApiProperty({ description: '用户名或者昵称 参数可选', example: '情雨随风' })
 	@Allow()
 	nickname?: number

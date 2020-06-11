@@ -164,10 +164,9 @@ export class UserService {
 
 		//nickname筛选
 		if (nickname !== undefined && nickname !== null) {
-			QB.orWhere('user.nickname = :nickname', {
+			QB.where('user.nickname = :nickname', {
 				nickname: nickname
 			})
-
 			QB.orWhere('user.username = :username', {
 				username: nickname
 			})
