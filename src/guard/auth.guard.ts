@@ -37,7 +37,10 @@ export class AuthGuard implements CanActivate {
 				request.user = store //user信息挂载request向下传递
 			} else {
 				const newUser = await this.userService.findUidUser(ifyUser.uid)
-				if (newUser.status !== 1) {
+				if (!newUser || newUser.status !== 1) {
+					if (!newUser) {
+						throw new HttpException('账户不存在', HttpStatus.FORBIDDEN)
+					}
 					throw new HttpException('账户已被禁用', HttpStatus.FORBIDDEN)
 				} else {
 					await this.storeService.setStore(String(newUser.uid), newUser) //写入缓存
@@ -48,7 +51,11 @@ export class AuthGuard implements CanActivate {
 			//验证是否需要角色权限
 			if (role) {
 				const user: User = request.user
-				if (user.role?.role_key === 'paker' && user.role?.status === 1) {
+				if (!user.role) {
+					throw new HttpException(`账户角色异常`, HttpStatus.FORBIDDEN)
+				}
+
+				if (user.role?.role_key === 'paker') {
 					return true //角色key为paker是超级管理员、直接开放全部接口权限
 				}
 
@@ -56,7 +63,7 @@ export class AuthGuard implements CanActivate {
 					throw new HttpException(`账户role角色已被禁用`, HttpStatus.FORBIDDEN)
 				}
 
-				const auth = user.auth.find(k => k.auth_key === role.key)
+				const auth = (user.auth || []).find(k => k.auth_key === role.key)
 				if (!auth) {
 					throw new HttpException(`账户权限不足: 缺少${role.key}权限`, HttpStatus.FORBIDDEN)
 				} else if (auth.status !== 1) {

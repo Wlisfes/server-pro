@@ -166,7 +166,7 @@ export class FindUserDto {
 	@Type(() => String)
 	@ApiProperty({ description: '用户名或者昵称 参数可选', example: '情雨随风' })
 	@Allow()
-	nickname?: number
+	nickname?: string
 
 	@Type(() => Number)
 	@ApiProperty({ description: '状态 参数可选', example: 1 })

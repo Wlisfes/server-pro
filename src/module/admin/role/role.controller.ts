@@ -13,16 +13,16 @@ export class RoleController {
 
 	@Post('create')
 	@ApiOperation({ summary: '创建角色' })
-	@AuthUser(true)
-	@AuthRole({ key: 'role', apply: 'create' })
+	// @AuthUser(true)
+	// @AuthRole({ key: 'role', apply: 'create' })
 	async createRole(@Body() body: RoleIdDto.CreateRoleDto) {
 		return await this.roleService.createRole(body)
 	}
 
 	@Get('all')
 	@ApiOperation({ summary: '获取所有角色列表' })
-	@AuthUser(true)
-	@AuthRole({ key: 'role', apply: 'query' })
+	// @AuthUser(true)
+	// @AuthRole({ key: 'role', apply: 'query' })
 	async findRoleAll(@Query() query: RoleIdDto.FindRoleDto) {
 		return await this.roleService.findRoleAll(query)
 	}

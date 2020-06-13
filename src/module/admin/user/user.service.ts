@@ -163,7 +163,7 @@ export class UserService {
 			.orderBy({ 'user.createTime': 'DESC' })
 
 		//nickname筛选
-		if (nickname !== undefined && nickname !== null) {
+		if (nickname !== undefined && nickname !== null && nickname !== '') {
 			QB.where('user.nickname = :nickname', {
 				nickname: nickname
 			})
