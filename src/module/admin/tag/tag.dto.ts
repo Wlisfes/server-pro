@@ -32,7 +32,12 @@ export class TagId {
 	id: number
 }
 
-export class CreateTagDto extends Tag {}
+export class CreateTagDto extends Tag {
+	@Type(() => Number)
+	@ApiProperty({ description: '状态 参数可选', example: 1 })
+	@Allow()
+	status?: number
+}
 
 export class FindTagDto {
 	@Type(() => Number)

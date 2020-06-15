@@ -40,7 +40,11 @@ export class TagService {
 
 			//获取uid用户
 			const user = await this.userModel.findOne({ where: { uid } })
-			const tag = await this.tagModel.create({ name: params.name, color: params.color })
+			const tag = await this.tagModel.create({
+				name: params.name,
+				color: params.color,
+				status: params.status
+			})
 			const { id } = await this.tagModel.save({ ...tag, user })
 
 			const T = this.filter('tag', 'tag')
