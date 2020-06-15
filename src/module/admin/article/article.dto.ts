@@ -37,9 +37,15 @@ export class Article {
 
 	@Type(() => String)
 	@ApiProperty({ description: '文本内容 用于页面加载', example: '这是一段文本内容...' })
-	@IsNotEmpty({ message: 'text 必填' })
-	@IsString({ message: 'text is string' })
-	text: string
+	@IsNotEmpty({ message: 'html 必填' })
+	@IsString({ message: 'html is string' })
+	html: string
+
+	@Type(() => String)
+	@ApiProperty({ description: '代码风格', example: 'oneDark' })
+	@IsNotEmpty({ message: 'themeName 必填' })
+	@IsString({ message: 'themeName is string' })
+	themeName: string
 }
 
 export class ArticleIdDto {
@@ -75,6 +81,11 @@ export class CreateArticleDto extends Article {
 	@IsArray()
 	@Type(() => Number)
 	tag: number[]
+
+	@Type(() => Number)
+	@ApiProperty({ description: '状态 参数可选 默认为1', example: 1 })
+	@Allow()
+	status?: number
 }
 
 export class UpdateArticleDto extends Article {

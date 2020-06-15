@@ -26,6 +26,12 @@ export class ArticleEntity {
 	picUrl: string
 
 	@Column({
+		nullable: false,
+		comment: '代码风格'
+	})
+	themeName: string
+
+	@Column({
 		type: 'text',
 		nullable: false,
 		comment: '原始内容'
@@ -37,7 +43,7 @@ export class ArticleEntity {
 		nullable: false,
 		comment: '文本内容'
 	})
-	text: string
+	html: string
 
 	@Column({
 		comment: '阅读数',

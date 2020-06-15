@@ -16,7 +16,7 @@ import { SignModule } from '@/common/sign/sign.module'
 				accessKeySecret: process.env.ACCESSKEYSECRET, // 密码
 				bucket: process.env.BUCKET, // 存储桶
 				internal: false,
-				secure: false,
+				secure: true,
 				cname: false,
 				timeout: process.env.TIMEOUT
 			},

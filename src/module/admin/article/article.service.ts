@@ -20,7 +20,18 @@ export class ArticleService {
 	private filter(key: key, u: key) {
 		const tag = ['id', 'name', 'color', 'status', 'createTime']
 		const user = ['uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
-		const article = ['id', 'title', 'description', 'picUrl', 'content', 'text', 'sort', 'reading', 'status']
+		const article = [
+			'id',
+			'title',
+			'description',
+			'picUrl',
+			'content',
+			'html',
+			'sort',
+			'reading',
+			'status',
+			'themeName'
+		]
 		switch (key) {
 			case 'tag':
 				return tag.map(k => `${u}.${k}`)
@@ -49,7 +60,9 @@ export class ArticleService {
 				description: params.description,
 				picUrl: params.picUrl,
 				content: params.content,
-				text: params.text
+				html: params.html,
+				status: params.status,
+				themeName: params.themeName
 			})
 			const { id } = await this.articleModel.save({ ...article, user, tag })
 
@@ -148,8 +161,9 @@ export class ArticleService {
 					description: params.description,
 					picUrl: params.picUrl,
 					content: params.content,
-					text: params.text,
-					status: params.status
+					html: params.html,
+					status: params.status,
+					themeName: params.themeName
 				})
 				.where('article.id = :id', { id: params.id })
 				.execute()
