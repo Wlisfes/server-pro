@@ -13,8 +13,11 @@ import { TagModule } from '@/module/admin/tag/tag.module'
 import { ArticleModule } from '@/module/admin/article/article.module'
 import { ProjectModule } from '@/module/admin/project/project.module'
 
+//数据初始化模块
+import { InitModule } from '@/module/admin/init/init.module'
+
 @Module({
-	imports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule],
+	imports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule, InitModule],
 	providers: [
 		{
 			provide: APP_GUARD,
