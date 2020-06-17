@@ -51,12 +51,13 @@ export class AuthGuard implements CanActivate {
 			//验证是否需要角色权限
 			if (role) {
 				const user: User = request.user
-				if (!user.role) {
-					throw new HttpException(`账户角色异常`, HttpStatus.FORBIDDEN)
+
+				if (user.username === 'admin') {
+					return true //用户名为admin是超级管理员、直接开放全部接口权限
 				}
 
-				if (user.role?.role_key === 'paker') {
-					return true //角色key为paker是超级管理员、直接开放全部接口权限
+				if (!user.role) {
+					throw new HttpException(`账户角色异常`, HttpStatus.FORBIDDEN)
 				}
 
 				if (user.role?.status !== 1) {
