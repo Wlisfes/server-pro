@@ -38,18 +38,17 @@ export class InitService {
 				})
 
 				//查找权限
-				const auth = await this.authModel.find({ where: { user: null } })
-
-				auth.forEach(async props => {
-					const newAuth = await this.authModel.create({
-						auth_key: props.auth_key,
-						auth_name: props.auth_name,
-						status: 1,
-						apply: props.apply,
-						all: props.apply.length
-					})
-					await this.authModel.save({ ...newAuth, user: saveUser })
+				const auth = await this.authModel.find({
+					where: { user: null },
+					select: ['auth_key', 'auth_name', 'status', 'apply', 'all']
 				})
+				const auths = auth.map(k => ({ ...k, user: saveUser }))
+
+				await this.authModel
+					.createQueryBuilder('auth')
+					.insert()
+					.values(auths)
+					.execute()
 
 				console.log('数据库初始化完成')
 			} catch (error) {
@@ -64,14 +63,12 @@ export class InitService {
 			{ role_key: 'paker', role_name: '管理员', status: 1 },
 			{ role_key: 'visitor', role_name: '游客', status: 1 }
 		]
+		await this.roleModel
+			.createQueryBuilder('role')
+			.insert()
+			.values(roles)
+			.execute()
 
-		roles.forEach(async params => {
-			const role = await this.roleModel.findOne({ where: { role_key: params.role_key, user: null } })
-			if (!role) {
-				const newRole = await this.roleModel.create(params)
-				await this.roleModel.save(newRole)
-			}
-		})
 		return true
 	}
 
@@ -96,19 +93,11 @@ export class InitService {
 			{ auth_key: 'note', auth_name: '笔记管理', status: 1, apply, all: apply.length }
 		]
 
-		auths.forEach(async params => {
-			const auth = await this.authModel.findOne({ where: { auth_key: params.auth_key, user: null } })
-			if (!auth) {
-				const newAuth = await this.authModel.create({
-					auth_key: params.auth_key,
-					auth_name: params.auth_name,
-					status: params.status || 1,
-					apply: params.apply as any,
-					all: params.apply.length
-				})
-				await this.authModel.save(newAuth)
-			}
-		})
+		await this.authModel
+			.createQueryBuilder('auth')
+			.insert()
+			.values(auths as any)
+			.execute()
 
 		return true
 	}
