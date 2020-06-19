@@ -11,7 +11,7 @@ import { StoreService } from '@/common/store/store.service'
 import * as UserDto from '@/module/admin/user/user.dto'
 import * as day from 'dayjs'
 
-type key = 'user'
+type key = 'user' | 'role' | 'auth'
 
 @Injectable()
 export class UserService {
@@ -26,9 +26,15 @@ export class UserService {
 
 	private filter(key: key, u: key) {
 		const user = ['id', 'uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
+		const role = ['id', 'role_key', 'role_name', 'status', 'createTime']
+		const auth = ['id', 'auth_key', 'auth_name', 'all', 'apply', 'status', 'createTime']
 		switch (key) {
 			case 'user':
 				return user.map(k => `${u}.${k}`)
+			case 'role':
+				return role.map(k => `${u}.${k}`)
+			case 'auth':
+				return auth.map(k => `${u}.${k}`)
 		}
 	}
 
@@ -43,6 +49,7 @@ export class UserService {
 				throw new HttpException(`nickname: ${params.nickname} 已存在`, HttpStatus.BAD_REQUEST)
 			}
 
+			//插入用户
 			const user = await this.userModel.create({
 				username: params.username,
 				password: params.password,
@@ -50,8 +57,39 @@ export class UserService {
 			})
 			const saveUser = await this.userModel.save(user)
 
-			delete saveUser.password
-			return saveUser
+			//插入用户角色
+			await this.roleModel
+				.createQueryBuilder('role')
+				.insert()
+				.values({
+					role_key: 'visitor',
+					role_name: '游客',
+					status: 1,
+					user: saveUser
+				})
+				.execute()
+
+			//插入权限
+			const auth = await this.authModel.find({
+				where: { user: null },
+				select: ['auth_key', 'auth_name', 'apply', 'all', 'status']
+			})
+			const newAuth = auth.map(k => {
+				const apply = (k.apply as any).filter(k => k.key === 'query' || k.key === 'get')
+				return {
+					...k,
+					apply,
+					all: apply.length,
+					user: saveUser
+				}
+			})
+			await this.authModel
+				.createQueryBuilder('auth')
+				.insert()
+				.values(newAuth)
+				.execute()
+
+			return await this.findUidUser(saveUser.uid)
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
@@ -153,13 +191,15 @@ export class UserService {
 	//获取所有用户列表
 	public async findUserAll(params: UserDto.FindUserDto): Promise<UserEntity[] | any> {
 		const U = this.filter('user', 'user')
+		const R = this.filter('role', 'role')
+		const A = this.filter('auth', 'auth')
 		const { nickname, status, createTime } = params
 
 		const QB = this.userModel
 			.createQueryBuilder('user')
-			.select([].concat(U))
-			.innerJoinAndSelect('user.role', 'role')
-			.innerJoinAndSelect('user.auth', 'auth')
+			.select([].concat(U, R, A))
+			.leftJoin('user.role', 'role')
+			.leftJoin('user.auth', 'auth')
 			.orderBy({ 'user.createTime': 'DESC' })
 
 		//nickname筛选
