@@ -49,7 +49,7 @@ export class ArticleService {
 
 	//获取所有文章列表
 	async findArticleAll(params: ArticleDto.FindArticleDto) {
-		const { uid, status, createTime } = params
+		const { uid, status, tag, createTime } = params
 
 		const U = await this.utilsService.filter('user', 'user', ['article', 'project', 'notes', 'tag', 'role', 'auth'])
 		const T = await this.utilsService.filter('tag', 'tag', ['sort', 'user', 'article', 'notes', 'project'])
@@ -73,6 +73,11 @@ export class ArticleService {
 				start: params.createTime,
 				end: day().toDate()
 			})
+		}
+
+		//标签筛选
+		if (tag !== undefined && tag !== null) {
+			QB.andWhere('tag.id = :id', { id: params.tag })
 		}
 
 		//状态筛选

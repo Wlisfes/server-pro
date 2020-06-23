@@ -73,6 +73,11 @@ export class FindNotesDto {
 	@Allow()
 	status?: number
 
+	@Type(() => Number)
+	@ApiProperty({ description: '标签id 参数可选', example: 1 })
+	@Allow()
+	tag?: number
+
 	@Type(() => String)
 	@ApiProperty({ description: '时间段 参数可选', example: '2020-01-01' })
 	@Allow()

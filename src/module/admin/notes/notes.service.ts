@@ -49,7 +49,7 @@ export class NotesService {
 
 	//获取所有笔记
 	public async findNotesAll(params: NotesDto.FindNotesDto) {
-		const { uid, status, createTime } = params
+		const { uid, status, tag, createTime } = params
 
 		const U = await this.utilsService.filter('user', 'user', ['article', 'project', 'notes', 'tag', 'role', 'auth'])
 		const T = await this.utilsService.filter('tag', 'tag', ['sort', 'user', 'article', 'notes', 'project'])
@@ -73,6 +73,11 @@ export class NotesService {
 				start: params.createTime,
 				end: day().toDate()
 			})
+		}
+
+		//标签筛选
+		if (tag !== undefined && tag !== null) {
+			QB.andWhere('tag.id = :id', { id: params.tag })
 		}
 
 		//状态筛选
