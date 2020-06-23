@@ -113,7 +113,7 @@ export class ArticleService {
 			}
 
 			if (article.user.uid !== uid) {
-				if (user.role.role_key !== 'paker') {
+				if (user.role.role_key !== 'admin') {
 					throw new HttpException('无法更改他人文章', HttpStatus.BAD_REQUEST)
 				}
 			}
