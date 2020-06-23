@@ -11,6 +11,7 @@ import { PrimaryGeneratedColumn, Column } from 'typeorm'
 import { UserEntity } from './user.entity'
 import { ArticleEntity } from './article.entity'
 import { ProjectEntity } from './project.entity'
+import { NotesEntity } from './notes.entity'
 
 @Entity('tag')
 export class TagEntity {
@@ -64,6 +65,15 @@ export class TagEntity {
 	)
 	@JoinTable()
 	article: ArticleEntity[]
+
+	@ManyToMany(
+		//标签拥有的笔记
+		type => NotesEntity,
+		notes => notes.tag,
+		{ cascade: true }
+	)
+	@JoinTable()
+	notes: NotesEntity[]
 
 	@ManyToMany(
 		//标签拥有的项目

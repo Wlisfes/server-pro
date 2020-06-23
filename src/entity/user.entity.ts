@@ -13,6 +13,7 @@ import { AuthEntity } from './auth.entity'
 import { TagEntity } from './tag.entity'
 import { ArticleEntity } from './article.entity'
 import { ProjectEntity } from './project.entity'
+import { NotesEntity } from './notes.entity'
 
 @Entity('user')
 export class UserEntity {
@@ -106,6 +107,14 @@ export class UserEntity {
 		{ cascade: true }
 	)
 	project: ProjectEntity[]
+
+	@OneToMany(
+		//笔记
+		type => NotesEntity,
+		notes => notes.user,
+		{ cascade: true }
+	)
+	notes: NotesEntity[]
 
 	@OneToMany(
 		//标签

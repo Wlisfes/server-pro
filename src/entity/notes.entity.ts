@@ -1,17 +1,17 @@
 /*
- * @Date: 2020-06-09 08:48:17
+ * @Date: 2020-06-22 15:29:39
  * @Author: 情雨随风
  * @LastEditors: 情雨随风
- * @LastEditTime: 2020-06-22 15:29:54
- * @Description: 文章表
+ * @LastEditTime: 2020-06-23 09:43:21
+ * @Description: 笔记表
  */
 
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany } from 'typeorm'
 import { UserEntity } from './user.entity'
 import { TagEntity } from './tag.entity'
 
-@Entity('article')
-export class ArticleEntity {
+@Entity('notes')
+export class NotesEntity {
 	@PrimaryGeneratedColumn()
 	id: number
 
@@ -20,12 +20,6 @@ export class ArticleEntity {
 		comment: '标题'
 	})
 	title: string
-
-	@Column({
-		nullable: false,
-		comment: '描述'
-	})
-	description: string
 
 	@Column({
 		nullable: false,
@@ -54,12 +48,6 @@ export class ArticleEntity {
 	html: string
 
 	@Column({
-		comment: '阅读数',
-		default: () => 0
-	})
-	reading: number
-
-	@Column({
 		default: () => 1,
 		nullable: false,
 		comment: '状态'
@@ -81,16 +69,16 @@ export class ArticleEntity {
 	createTime: string
 
 	@ManyToOne(
-		//创建文章的用户
+		//创建笔记的用户
 		type => UserEntity,
-		user => user.article
+		user => user.notes
 	)
 	user: UserEntity
 
 	@ManyToMany(
-		//文章所属标签
+		//笔记所属标签
 		type => TagEntity,
-		tag => tag.article
+		tag => tag.notes
 	)
 	tag: TagEntity[]
 }

@@ -12,18 +12,29 @@ import { StoreModule } from '@/common/store/store.module'
 import { TagModule } from '@/module/admin/tag/tag.module'
 import { ArticleModule } from '@/module/admin/article/article.module'
 import { ProjectModule } from '@/module/admin/project/project.module'
+import { NotesModule } from '@/module/admin/notes/notes.module'
 
 //数据初始化模块
 import { InitModule } from '@/module/admin/init/init.module'
 
 @Module({
-	imports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule, InitModule],
+	imports: [
+		UserModule,
+		RoleModule,
+		AuthModule,
+		StoreModule,
+		TagModule,
+		ArticleModule,
+		ProjectModule,
+		NotesModule,
+		InitModule
+	],
 	providers: [
 		{
 			provide: APP_GUARD,
 			useClass: AuthGuard
 		}
 	],
-	exports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule]
+	exports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule, NotesModule]
 })
 export class AppAdminModule {}
