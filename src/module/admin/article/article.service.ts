@@ -1,46 +1,21 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { UtilsService } from '@/common/utils/utils.service'
 import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import * as ArticleDto from '@/module/admin/article/article.dto'
 import * as day from 'dayjs'
 
-type key = 'tag' | 'user' | 'article'
-
 @Injectable()
 export class ArticleService {
 	constructor(
+		private readonly utilsService: UtilsService,
 		@InjectRepository(TagEntity) private readonly tagModel: Repository<TagEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>
 	) {}
-
-	private filter(key: key, u: key) {
-		const tag = ['id', 'name', 'color', 'status', 'createTime']
-		const user = ['uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
-		const article = [
-			'id',
-			'title',
-			'description',
-			'picUrl',
-			'content',
-			'html',
-			'sort',
-			'reading',
-			'status',
-			'themeName'
-		]
-		switch (key) {
-			case 'tag':
-				return tag.map(k => `${u}.${k}`)
-			case 'user':
-				return user.map(k => `${u}.${k}`)
-			case 'article':
-				return article.map(k => `${u}.${k}`)
-		}
-	}
 
 	//创建文章
 	async createArticle(params: ArticleDto.CreateArticleDto, uid: number) {
@@ -76,9 +51,9 @@ export class ArticleService {
 	async findArticleAll(params: ArticleDto.FindArticleDto) {
 		const { uid, status, createTime } = params
 
-		const U = this.filter('user', 'user')
-		const T = this.filter('tag', 'tag')
-		const A = this.filter('article', 'article')
+		const U = await this.utilsService.filter('user', 'user', ['article', 'project', 'notes', 'tag', 'role', 'auth'])
+		const T = await this.utilsService.filter('tag', 'tag', ['sort', 'user', 'article', 'notes', 'project'])
+		const A = await this.utilsService.filter('article', 'article', ['createTime', 'user', 'tag'])
 
 		const QB = await this.articleModel
 			.createQueryBuilder('article')
@@ -110,9 +85,9 @@ export class ArticleService {
 
 	//获取文章详情
 	async findIdArticle(id: number) {
-		const U = this.filter('user', 'user')
-		const T = this.filter('tag', 'tag')
-		const A = this.filter('article', 'article')
+		const U = await this.utilsService.filter('user', 'user', ['article', 'project', 'notes', 'tag', 'role', 'auth'])
+		const T = await this.utilsService.filter('tag', 'tag', ['sort', 'user', 'article', 'notes', 'project'])
+		const A = await this.utilsService.filter('article', 'article', ['createTime', 'user', 'tag'])
 
 		return await this.articleModel
 			.createQueryBuilder('article')

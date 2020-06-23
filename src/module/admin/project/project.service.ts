@@ -1,46 +1,48 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { UtilsService } from '@/common/utils/utils.service'
 import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { ProjectEntity } from '@/entity/project.entity'
 import * as ProjectDto from '@/module/admin/project/project.dto'
 import * as day from 'dayjs'
 
-type key = 'tag' | 'user' | 'project'
+// type key = 'tag' | 'user' | 'project'
 
 @Injectable()
 export class ProjectService {
 	constructor(
+		private readonly utilsService: UtilsService,
 		@InjectRepository(TagEntity) private readonly tagModel: Repository<TagEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ProjectEntity) private readonly projectModel: Repository<ProjectEntity>
 	) {}
 
-	private filter(key: key, u: key) {
-		const tag = ['id', 'name', 'color', 'status', 'createTime']
-		const user = ['uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
-		const project = [
-			'id',
-			'title',
-			'description',
-			'picUrl',
-			'sort',
-			'status',
-			'like',
-			'github',
-			'accessUrl',
-			'createTime'
-		]
-		switch (key) {
-			case 'tag':
-				return tag.map(k => `${u}.${k}`)
-			case 'user':
-				return user.map(k => `${u}.${k}`)
-			case 'project':
-				return project.map(k => `${u}.${k}`)
-		}
-	}
+	// private filter(key: key, u: key) {
+	// 	const tag = ['id', 'name', 'color', 'status', 'createTime']
+	// 	const user = ['uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
+	// 	const project = [
+	// 		'id',
+	// 		'title',
+	// 		'description',
+	// 		'picUrl',
+	// 		'sort',
+	// 		'status',
+	// 		'like',
+	// 		'github',
+	// 		'accessUrl',
+	// 		'createTime'
+	// 	]
+	// 	switch (key) {
+	// 		case 'tag':
+	// 			return tag.map(k => `${u}.${k}`)
+	// 		case 'user':
+	// 			return user.map(k => `${u}.${k}`)
+	// 		case 'project':
+	// 			return project.map(k => `${u}.${k}`)
+	// 	}
+	// }
 
 	//创建项目
 	async createProject(params: ProjectDto.CreateProjectDto, uid: number) {
@@ -75,9 +77,17 @@ export class ProjectService {
 	async findProjectAll(params: ProjectDto.FindProjectDto) {
 		try {
 			const { uid, status, createTime } = params
-			const U = this.filter('user', 'user')
-			const T = this.filter('tag', 'tag')
-			const A = this.filter('project', 'project')
+			const U = await this.utilsService.filter('user', 'user', [
+				'id',
+				'article',
+				'project',
+				'notes',
+				'tag',
+				'role',
+				'auth'
+			])
+			const T = await this.utilsService.filter('tag', 'tag', ['sort', 'user', 'article', 'notes', 'project'])
+			const A = await this.utilsService.filter('project', 'project', ['tag', 'user'])
 
 			const QB = await this.projectModel
 				.createQueryBuilder('project')
@@ -112,9 +122,17 @@ export class ProjectService {
 
 	//获取项目详情
 	async findIdProject(id: number) {
-		const U = this.filter('user', 'user')
-		const T = this.filter('tag', 'tag')
-		const A = this.filter('project', 'project')
+		const U = await this.utilsService.filter('user', 'user', [
+			'id',
+			'article',
+			'project',
+			'notes',
+			'tag',
+			'role',
+			'auth'
+		])
+		const T = await this.utilsService.filter('tag', 'tag', ['sort', 'user', 'article', 'notes', 'project'])
+		const A = await this.utilsService.filter('project', 'project', ['tag', 'user'])
 
 		return await this.projectModel
 			.createQueryBuilder('project')

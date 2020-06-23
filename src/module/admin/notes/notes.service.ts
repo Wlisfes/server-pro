@@ -6,8 +6,6 @@ import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { NotesEntity } from '@/entity/notes.entity'
 
-type key = 'tag' | 'user' | 'notes'
-
 @Injectable()
 export class NotesService {
 	constructor(
@@ -19,6 +17,6 @@ export class NotesService {
 
 	//获取所有笔记
 	public async findNotesAll() {
-		return await this.utilsService.filter('user', ['id', 'uid'])
+		return await this.utilsService.filter('user', 'user', ['id', 'uid'])
 	}
 }

@@ -8,35 +8,21 @@ import { RoleEntity } from '@/entity/role.entity'
 import { AuthEntity } from '@/entity/auth.entity'
 import { SignService } from '@/common/sign/sign.service'
 import { StoreService } from '@/common/store/store.service'
+import { UtilsService } from '@/common/utils/utils.service'
 import * as UserDto from '@/module/admin/user/user.dto'
 import * as day from 'dayjs'
-
-type key = 'user' | 'role' | 'auth'
 
 @Injectable()
 export class UserService {
 	constructor(
 		private readonly signService: SignService,
 		private readonly storeService: StoreService,
+		private readonly utilsService: UtilsService,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>,
 		@InjectRepository(RoleEntity) private readonly roleModel: Repository<RoleEntity>,
 		@InjectRepository(AuthEntity) private readonly authModel: Repository<AuthEntity>
 	) {}
-
-	private filter(key: key, u: key) {
-		const user = ['id', 'uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
-		const role = ['id', 'role_key', 'role_name', 'status', 'createTime']
-		const auth = ['id', 'auth_key', 'auth_name', 'all', 'apply', 'status', 'createTime']
-		switch (key) {
-			case 'user':
-				return user.map(k => `${u}.${k}`)
-			case 'role':
-				return role.map(k => `${u}.${k}`)
-			case 'auth':
-				return auth.map(k => `${u}.${k}`)
-		}
-	}
 
 	//创建用户
 	public async createUser(params: UserDto.CreateUserDto): Promise<UserEntity> {
@@ -190,9 +176,10 @@ export class UserService {
 
 	//获取所有用户列表
 	public async findUserAll(params: UserDto.FindUserDto): Promise<UserEntity[] | any> {
-		const U = this.filter('user', 'user')
-		const R = this.filter('role', 'role')
-		const A = this.filter('auth', 'auth')
+		const U = await this.utilsService.filter('user', 'user', ['article', 'project', 'notes', 'tag', 'role', 'auth'])
+		const R = await this.utilsService.filter('role', 'role', ['user'])
+		const A = await this.utilsService.filter('auth', 'auth', ['user'])
+
 		const { nickname, status, createTime } = params
 
 		const QB = this.userModel

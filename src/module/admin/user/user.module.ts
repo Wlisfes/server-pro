@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { UserController } from '@/module/admin/user/user.controller'
 import { UserService } from '@/module/admin/user/user.service'
+import { UtilsService } from '@/common/utils/utils.service'
 
 import { SignModule } from '@/common/sign/sign.module'
 import { StoreModule } from '@/common/store/store.module'
@@ -19,7 +20,7 @@ import { TagEntity } from '@/entity/tag.entity'
 		TypeOrmModule.forFeature([UserEntity, ArticleEntity, RoleEntity, AuthEntity, TagEntity])
 	],
 	controllers: [UserController],
-	providers: [UserService],
+	providers: [UserService, UtilsService],
 	exports: [UserService]
 })
 export class UserModule {}

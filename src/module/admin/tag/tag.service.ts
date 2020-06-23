@@ -1,34 +1,21 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { UtilsService } from '@/common/utils/utils.service'
 import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import * as TagDto from '@/module/admin/tag/tag.dto'
 import * as day from 'dayjs'
 
-type key = 'tag' | 'user'
-
 @Injectable()
 export class TagService {
 	constructor(
+		private readonly utilsService: UtilsService,
 		@InjectRepository(TagEntity) private readonly tagModel: Repository<TagEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>
 	) {}
-
-	private filter(key: key, u: key) {
-		const tag = ['id', 'name', 'color', 'status', 'sort', 'createTime']
-		const user = ['uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
-		switch (key) {
-			case 'tag':
-				return tag.map(k => `${u}.${k}`)
-				break
-			case 'user':
-				return user.map(k => `${u}.${k}`)
-				break
-		}
-	}
 
 	//创建标签
 	async createTag(params: TagDto.CreateTagDto, uid: number) {
@@ -47,8 +34,16 @@ export class TagService {
 			})
 			const { id } = await this.tagModel.save({ ...tag, user })
 
-			const T = this.filter('tag', 'tag')
-			const U = this.filter('user', 'user')
+			const T = await this.utilsService.filter('tag', 'tag', ['user', 'article', 'notes', 'project'])
+			const U = await this.utilsService.filter('user', 'user', [
+				'id',
+				'article',
+				'project',
+				'notes',
+				'tag',
+				'role',
+				'auth'
+			])
 			return await this.tagModel
 				.createQueryBuilder('tag')
 				.select([].concat(T, U))
@@ -63,8 +58,16 @@ export class TagService {
 	//获取所有标签列表
 	async findTagAll(params: TagDto.FindTagDto) {
 		const { uid, status, createTime } = params
-		const T = this.filter('tag', 'tag')
-		const U = this.filter('user', 'user')
+		const T = await this.utilsService.filter('tag', 'tag', ['user', 'article', 'notes', 'project'])
+		const U = await this.utilsService.filter('user', 'user', [
+			'id',
+			'article',
+			'project',
+			'notes',
+			'tag',
+			'role',
+			'auth'
+		])
 
 		const QB = this.tagModel
 			.createQueryBuilder('tag')
