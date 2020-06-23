@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { OssModule } from '@/common/oss/oss.module'
 import { SignModule } from '@/common/sign/sign.module'
+import { UtilsModule } from '@/common/utils/utils.module'
 
 @Global()
 @Module({
@@ -22,8 +23,9 @@ import { SignModule } from '@/common/sign/sign.module'
 			},
 			domain: process.env.DOMAIN // 自定义域名
 		}),
-		SignModule
+		SignModule,
+		UtilsModule
 	],
-	exports: [SignModule, OssModule]
+	exports: [SignModule, OssModule, UtilsModule]
 })
 export class AsyncModule {}
