@@ -55,6 +55,8 @@ export class NotesService {
 		const T = await this.utilsService.filter('tag', 'tag', ['sort', 'user', 'article', 'notes', 'project'])
 		const N = await this.utilsService.filter('notes', 'notes', ['user', 'tag'])
 
+		const where = {}
+
 		const QB = await this.notesModel
 			.createQueryBuilder('notes')
 			.select([].concat(U, T, N))
@@ -85,7 +87,19 @@ export class NotesService {
 			QB.andWhere('notes.status = :status', { status: params.status })
 		}
 
-		return await QB.getMany()
+		const netes = await QB.getMany()
+
+		if (tag !== undefined && tag !== null && netes.length > 0) {
+			return await this.notesModel
+				.createQueryBuilder('notes')
+				.select([].concat(U, T, N))
+				.leftJoin('notes.user', 'user')
+				.leftJoin('notes.tag', 'tag')
+				.orderBy({ 'notes.sort': 'DESC', 'notes.createTime': 'DESC' })
+				.where('notes.id IN (:id)', { id: netes.map(k => k.id) })
+				.getMany()
+		}
+		return netes
 	}
 
 	//获取笔记详情
