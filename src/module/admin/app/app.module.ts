@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { AppService } from '@/module/admin/app/app.service'
+import { AppController } from '@/module/admin/app/app.controller'
 
 //守卫
 import { APP_GUARD } from '@nestjs/core'
@@ -17,6 +20,12 @@ import { NotesModule } from '@/module/admin/notes/notes.module'
 //数据初始化模块
 import { InitModule } from '@/module/admin/init/init.module'
 
+//表组合查询
+import { TagEntity } from '@/entity/tag.entity'
+import { ArticleEntity } from '@/entity/article.entity'
+import { ProjectEntity } from '@/entity/project.entity'
+import { NotesEntity } from '@/entity/notes.entity'
+
 @Module({
 	imports: [
 		UserModule,
@@ -27,14 +36,17 @@ import { InitModule } from '@/module/admin/init/init.module'
 		ArticleModule,
 		ProjectModule,
 		NotesModule,
-		InitModule
+		InitModule,
+		TypeOrmModule.forFeature([TagEntity, ArticleEntity, ProjectEntity, NotesEntity])
 	],
 	providers: [
 		{
 			provide: APP_GUARD,
 			useClass: AuthGuard
-		}
+		},
+		AppService
 	],
-	exports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule, NotesModule]
+	exports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule, NotesModule],
+	controllers: [AppController]
 })
 export class AppAdminModule {}
