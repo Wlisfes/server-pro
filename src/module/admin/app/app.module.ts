@@ -25,6 +25,7 @@ import { TagEntity } from '@/entity/tag.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import { ProjectEntity } from '@/entity/project.entity'
 import { NotesEntity } from '@/entity/notes.entity'
+import { UserEntity } from '@/entity/user.entity'
 
 @Module({
 	imports: [
@@ -37,7 +38,7 @@ import { NotesEntity } from '@/entity/notes.entity'
 		ProjectModule,
 		NotesModule,
 		InitModule,
-		TypeOrmModule.forFeature([TagEntity, ArticleEntity, ProjectEntity, NotesEntity])
+		TypeOrmModule.forFeature([UserEntity, TagEntity, ArticleEntity, ProjectEntity, NotesEntity])
 	],
 	providers: [
 		{
