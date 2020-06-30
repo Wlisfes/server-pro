@@ -2,7 +2,7 @@
  * @Date: 2020-05-28 12:42:40
  * @Author: 情雨随风
  * @LastEditors: 情雨随风
- * @LastEditTime: 2020-06-08 15:17:23
+ * @LastEditTime: 2020-06-30 11:22:14
  * @Description: userDto
  */
 
@@ -73,7 +73,12 @@ export class UserUid {
 	uid: number
 }
 
-export class CreateUserDto extends Users {}
+export class CreateUserDto extends Users {
+	@Type(() => String)
+	@ApiProperty({ description: '4位验证码', example: 'n6k2' })
+	@Allow()
+	code: string
+}
 
 export class UserAvatarDto extends UserUid {
 	@Type(() => String)
@@ -109,13 +114,19 @@ export class UpdateUserDto extends UserUid {
 
 export class LoginUserDto {
 	@Type(() => String)
+	@ApiProperty({ description: '4位验证码', example: 'n6k2' })
+	@IsNotEmpty({ message: 'code 必填' })
+	@Allow()
+	code: string
+
+	@Type(() => String)
 	@ApiProperty({ description: '用户名', example: 'admin' })
 	@Allow()
 	username?: string
 
 	@Type(() => String)
 	@ApiProperty({ description: '密码', example: '3633' })
-	@IsString({ message: 'password is string' })
+	@Allow()
 	password: string
 
 	@Type(() => String)

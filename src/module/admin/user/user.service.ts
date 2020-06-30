@@ -11,6 +11,8 @@ import { StoreService } from '@/common/store/store.service'
 import { UtilsService } from '@/common/utils/utils.service'
 import * as UserDto from '@/module/admin/user/user.dto'
 import * as day from 'dayjs'
+import * as svgCaptcha from 'svg-captcha'
+import { hashSync } from 'bcryptjs'
 
 @Injectable()
 export class UserService {
@@ -24,9 +26,26 @@ export class UserService {
 		@InjectRepository(AuthEntity) private readonly authModel: Repository<AuthEntity>
 	) {}
 
+	//验证码
+	public async svgCode(): Promise<any> {
+		const Code = svgCaptcha.create({
+			fontSize: 36,
+			noise: 2,
+			width: 123,
+			height: 40,
+			inverse: true,
+			background: '#cc9966'
+		})
+		return Code
+	}
+
 	//创建用户
-	public async createUser(params: UserDto.CreateUserDto): Promise<UserEntity> {
+	public async createUser(params: UserDto.CreateUserDto, code: string): Promise<UserEntity> {
 		try {
+			if (code !== params.code.toUpperCase()) {
+				throw new HttpException('验证码错误', HttpStatus.BAD_REQUEST)
+			}
+
 			if (await this.userModel.findOne({ where: { username: params.username } })) {
 				throw new HttpException(`username: ${params.username} 已存在`, HttpStatus.BAD_REQUEST)
 			}
@@ -136,33 +155,41 @@ export class UserService {
 	}
 
 	//登录
-	async loginUser(params: UserDto.LoginUserDto): Promise<any> {
-		const user = await this.userModel
-			.createQueryBuilder('user')
-			.orWhere('user.username = :username', { username: params.username })
-			.orWhere('user.email = :email', { email: params.email })
-			.orWhere('user.mobile = :mobile', { mobile: params.mobile })
-			.getOne()
-
-		if (user) {
-			if (user.status !== 1) {
-				throw new HttpException('账户已被禁用', HttpStatus.BAD_REQUEST)
+	async loginUser(params: UserDto.LoginUserDto, code: string): Promise<any> {
+		try {
+			if (code !== params.code.toUpperCase()) {
+				throw new HttpException('验证码错误', HttpStatus.BAD_REQUEST)
 			}
 
-			if (!compareSync(params.password, user.password)) {
-				throw new HttpException('password 错误', HttpStatus.BAD_REQUEST)
+			const user = await this.userModel
+				.createQueryBuilder('user')
+				.orWhere('user.username = :username', { username: params.username })
+				.orWhere('user.email = :email', { email: params.email })
+				.orWhere('user.mobile = :mobile', { mobile: params.mobile })
+				.getOne()
+
+			if (user) {
+				if (user.status !== 1) {
+					throw new HttpException('账户已被禁用', HttpStatus.BAD_REQUEST)
+				}
+
+				if (!compareSync(params.password, user.password)) {
+					throw new HttpException('password 错误', HttpStatus.BAD_REQUEST)
+				}
+
+				const access_token = await this.signService.sign({
+					uid: user.uid,
+					username: user.username,
+					password: user.password
+				})
+
+				delete user.password
+				return { ...user, access_token }
 			}
-
-			const access_token = await this.signService.sign({
-				uid: user.uid,
-				username: user.username,
-				password: user.password
-			})
-
-			delete user.password
-			return { ...user, access_token }
+			throw new HttpException('username、email、mobile 错误', HttpStatus.BAD_REQUEST)
+		} catch (error) {
+			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
-		throw new HttpException('username、email、mobile 错误', HttpStatus.BAD_REQUEST)
 	}
 
 	//根据uid获取用户详情信息

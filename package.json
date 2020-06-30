@@ -37,9 +37,11 @@
 		"dayjs": "^1.8.27",
 		"memory-cache": "^0.2.0",
 		"mysql": "^2.18.1",
+		"nestjs-session": "^1.0.1",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.2",
 		"rxjs": "^6.5.4",
+		"svg-captcha": "^1.4.0",
 		"swagger-ui-express": "^4.1.4",
 		"typeorm": "^0.2.25"
 	},

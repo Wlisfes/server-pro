@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Delete, Query } from '@nestjs/common'
+import { Controller, Get, Post, Body, Put, Delete, Query, Session, Response } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { UserService } from '@/module/admin/user/user.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
@@ -11,16 +11,25 @@ const path = `${process.env.ADMINPREFIX}/user`
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
+	@ApiOperation({ summary: '验证码' })
+	@Get('code')
+	public async svgCode(@Session() session: { code: string }, @Response() res): Promise<any> {
+		const Code = await this.userService.svgCode()
+		session.code = Code.text.toUpperCase()
+		res.type('svg')
+		res.send(Code.data)
+	}
+
 	@ApiOperation({ summary: '登录' })
 	@Post('login')
-	async loginUser(@Body() body: UserDto.LoginUserDto) {
-		return await this.userService.loginUser(body)
+	async loginUser(@Session() session: { code: string }, @Body() body: UserDto.LoginUserDto) {
+		return await this.userService.loginUser(body, session.code)
 	}
 
 	@ApiOperation({ summary: '创建用户' })
 	@Post('create')
-	async createUser(@Body() body: UserDto.CreateUserDto) {
-		return await this.userService.createUser(body)
+	async createUser(@Session() session: { code: string }, @Body() body: UserDto.CreateUserDto) {
+		return await this.userService.createUser(body, session.code)
 	}
 
 	@ApiOperation({ summary: '获取所有用户列表' })
