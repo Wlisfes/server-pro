@@ -5,21 +5,21 @@ import { LoggerEntity } from '@/entity/logger.entity'
 import { UserEntity } from '@/entity/user.entity'
 
 @Injectable()
-export class LoggerService {
+export class UserLoggerService {
 	constructor(
 		@InjectRepository(LoggerEntity) private readonly loggerModel: Repository<LoggerEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>
 	) {}
 
-	//获取动态日志列表
-	public async LoggerAll() {
+	//登录日志
+	public async loginLogger(uid: number) {
 		try {
-			return await this.loggerModel.find({
-				relations: ['user'],
-				order: { createTime: 'DESC' }
-				// skip: 1,
-				// take: 5
+			const user = await this.userModel.findOne({ where: { uid } })
+			const logger = await this.loggerModel.create({
+				commonid: uid,
+				context: `<a>已登录</a>`
 			})
+			return await this.loggerModel.save({ ...logger, user })
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}

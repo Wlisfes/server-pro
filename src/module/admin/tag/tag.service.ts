@@ -36,9 +36,6 @@ export class TagService {
 			})
 			const { id } = await this.tagModel.save({ ...tag, user })
 
-			//写入标签创建日志
-			await this.logger.createTAGLogger(user.uid, params)
-
 			const T = await this.utilsService.filter('tag', 'tag', ['user', 'article', 'notes', 'project'])
 			const U = await this.utilsService.filter('user', 'user', [
 				'id',
@@ -49,12 +46,17 @@ export class TagService {
 				'role',
 				'auth'
 			])
-			return await this.tagModel
+			const TR = await this.tagModel
 				.createQueryBuilder('tag')
 				.select([].concat(T, U))
 				.leftJoin('tag.user', 'user')
 				.where('tag.id = :id', { id })
-				.getMany()
+				.getOne()
+
+			//写入标签创建日志
+			await this.logger.createTAGLogger(user.uid, params)
+
+			return TR
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}

@@ -31,8 +31,9 @@ export class TagLoggerService {
 			const T = commonit.createTAG(params.name, params.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
-				content: '新增',
-				context: `${T}<span>标签</span>`
+				commonid: params.id,
+				content: '新增标签',
+				context: `${T}`
 			})
 			return await this.loggerModel.save({ ...logger, user })
 		} catch (error) {
@@ -46,8 +47,9 @@ export class TagLoggerService {
 			const T = commonit.createTAG(params.name, params.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
-				content: '修改',
-				context: `${T}<span>标签权重为 <a style="font-size: 16px;">${params.sort}</a></span>`
+				commonid: params.id,
+				content: '修改标签',
+				context: `${T}<span>权重变更为 <a style="font-size: 16px;">${params.sort}</a></span>`
 			})
 			return await this.loggerModel.save({ ...logger, user })
 		} catch (error) {
@@ -62,8 +64,9 @@ export class TagLoggerService {
 			const R = commonit.statusTAG(params.status)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
-				content: '修改',
-				context: `${T}<span>标签状态为</span>${R}`
+				commonid: params.id,
+				content: '修改标签',
+				context: `${T}<span>状态变更为</span>${R}`
 			})
 			return await this.loggerModel.save({ ...logger, user })
 		} catch (error) {
@@ -78,8 +81,8 @@ export class TagLoggerService {
 			const R = commonit.createTAG(Old.name, Old.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
-				content: '修改',
-				context: `${T}<span style="margin-right: 8px;">标签状态为</span>${R}<span>标签</span>`
+				content: '修改标签',
+				context: `${T}<span style="margin-right: 8px;">变更为</span>${R}`
 			})
 			return await this.loggerModel.save({ ...logger, user })
 		} catch (error) {
@@ -93,8 +96,9 @@ export class TagLoggerService {
 			const T = commonit.createTAG(params.name, params.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
-				content: '删除',
-				context: `${T}<span>标签</span>`
+				commonid: params.id,
+				content: '删除标签',
+				context: `${T}`
 			})
 			return await this.loggerModel.save({ ...logger, user })
 		} catch (error) {
