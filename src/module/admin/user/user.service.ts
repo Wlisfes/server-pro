@@ -9,10 +9,10 @@ import { AuthEntity } from '@/entity/auth.entity'
 import { SignService } from '@/common/sign/sign.service'
 import { StoreService } from '@/common/store/store.service'
 import { UtilsService } from '@/common/utils/utils.service'
+import { LoggerService } from '@/module/admin/logger/logger.service'
 import * as UserDto from '@/module/admin/user/user.dto'
 import * as day from 'dayjs'
 import * as svgCaptcha from 'svg-captcha'
-import { hashSync } from 'bcryptjs'
 
 @Injectable()
 export class UserService {
@@ -20,6 +20,7 @@ export class UserService {
 		private readonly signService: SignService,
 		private readonly storeService: StoreService,
 		private readonly utilsService: UtilsService,
+		private readonly loggerService: LoggerService,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>,
 		@InjectRepository(RoleEntity) private readonly roleModel: Repository<RoleEntity>,
@@ -182,6 +183,9 @@ export class UserService {
 					username: user.username,
 					password: user.password
 				})
+
+				//写入登录日志
+				await this.loggerService.createLoginLogger(user.uid)
 
 				delete user.password
 				return { ...user, access_token }

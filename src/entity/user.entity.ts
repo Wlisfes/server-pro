@@ -14,6 +14,7 @@ import { TagEntity } from './tag.entity'
 import { ArticleEntity } from './article.entity'
 import { ProjectEntity } from './project.entity'
 import { NotesEntity } from './notes.entity'
+import { LoggerEntity } from './logger.entity'
 
 @Entity('user')
 export class UserEntity {
@@ -139,4 +140,12 @@ export class UserEntity {
 		{ cascade: true }
 	)
 	auth: AuthEntity[]
+
+	@OneToMany(
+		//动态
+		type => LoggerEntity,
+		logger => logger.user,
+		{ cascade: true }
+	)
+	logger: LoggerEntity[]
 }

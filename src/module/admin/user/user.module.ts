@@ -6,6 +6,7 @@ import { UtilsService } from '@/common/utils/utils.service'
 
 import { SignModule } from '@/common/sign/sign.module'
 import { StoreModule } from '@/common/store/store.module'
+import { LoggerModule } from '@/module/admin/logger/logger.module'
 
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
@@ -17,6 +18,7 @@ import { TagEntity } from '@/entity/tag.entity'
 	imports: [
 		SignModule,
 		StoreModule,
+		LoggerModule,
 		TypeOrmModule.forFeature([UserEntity, ArticleEntity, RoleEntity, AuthEntity, TagEntity])
 	],
 	controllers: [UserController],

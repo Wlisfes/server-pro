@@ -16,6 +16,7 @@ import { TagModule } from '@/module/admin/tag/tag.module'
 import { ArticleModule } from '@/module/admin/article/article.module'
 import { ProjectModule } from '@/module/admin/project/project.module'
 import { NotesModule } from '@/module/admin/notes/notes.module'
+import { LoggerModule } from '@/module/admin/logger/logger.module'
 
 //数据初始化模块
 import { InitModule } from '@/module/admin/init/init.module'
@@ -30,6 +31,7 @@ import { UserEntity } from '@/entity/user.entity'
 @Module({
 	imports: [
 		UserModule,
+		LoggerModule,
 		RoleModule,
 		AuthModule,
 		StoreModule,
@@ -47,7 +49,17 @@ import { UserEntity } from '@/entity/user.entity'
 		},
 		AppService
 	],
-	exports: [UserModule, RoleModule, AuthModule, StoreModule, TagModule, ArticleModule, ProjectModule, NotesModule],
+	exports: [
+		UserModule,
+		LoggerModule,
+		RoleModule,
+		AuthModule,
+		StoreModule,
+		TagModule,
+		ArticleModule,
+		ProjectModule,
+		NotesModule
+	],
 	controllers: [AppController]
 })
 export class AppAdminModule {}
