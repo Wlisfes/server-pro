@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UtilsService } from '@/common/utils/utils.service'
+import { TagLoggerService } from '@/module/admin/logger/tag-logger/tag-logger.service'
 import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
@@ -12,6 +13,7 @@ import * as day from 'dayjs'
 export class TagService {
 	constructor(
 		private readonly utilsService: UtilsService,
+		private readonly logger: TagLoggerService,
 		@InjectRepository(TagEntity) private readonly tagModel: Repository<TagEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>
@@ -33,6 +35,9 @@ export class TagService {
 				status: params.status
 			})
 			const { id } = await this.tagModel.save({ ...tag, user })
+
+			//写入标签创建日志
+			await this.logger.createTAGLogger(user.uid, params)
 
 			const T = await this.utilsService.filter('tag', 'tag', ['user', 'article', 'notes', 'project'])
 			const U = await this.utilsService.filter('user', 'user', [
@@ -102,7 +107,7 @@ export class TagService {
 	}
 
 	//修改标签信息
-	async updateTag(params: TagDto.UpdateTagDto) {
+	async updateTag(params: TagDto.UpdateTagDto, uid: number) {
 		try {
 			const name = await this.tagModel.findOne({ where: { name: params.name } })
 			if (name && name.id !== params.id) {
@@ -113,7 +118,12 @@ export class TagService {
 			if (tag) {
 				await this.tagModel.update({ id: params.id }, params)
 
-				return await this.tagModel.findOne({ id: params.id })
+				const T = await this.tagModel.findOne({ id: params.id })
+
+				//写入标签修改日志
+				await this.logger.updateTAGLogger(uid, tag, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -122,7 +132,7 @@ export class TagService {
 	}
 
 	//置顶标签权重
-	async updateTagSort(params: TagDto.TagId) {
+	async updateTagSort(params: TagDto.TagId, uid: number) {
 		try {
 			const tag = await this.tagModel.findOne({ where: { id: params.id } })
 			if (tag) {
@@ -132,7 +142,12 @@ export class TagService {
 					.getRawOne()
 
 				await this.tagModel.update({ id: params.id }, { sort: sort + 1 })
-				return await this.tagModel.findOne({ where: { id: params.id } })
+				const T = await this.tagModel.findOne({ where: { id: params.id } })
+
+				//写入标签权重修改日志
+				await this.logger.sortTAGLogger(uid, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -141,12 +156,17 @@ export class TagService {
 	}
 
 	//切换标签状态
-	async cutoverTag(params: TagDto.TagId) {
+	async cutoverTag(params: TagDto.TagId, uid: number) {
 		try {
 			const tag = await this.tagModel.findOne({ where: { id: params.id } })
 			if (tag) {
 				await this.tagModel.update({ id: params.id }, { status: tag.status ? 0 : 1 })
-				return await this.tagModel.findOne({ where: { id: params.id } })
+				const T = await this.tagModel.findOne({ where: { id: params.id } })
+
+				//写入标签状态修改日志
+				await this.logger.cutoverTAGLogger(uid, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -155,7 +175,7 @@ export class TagService {
 	}
 
 	//删除标签
-	async deleteTag(params: TagDto.TagId) {
+	async deleteTag(params: TagDto.TagId, uid: number) {
 		try {
 			const tag = await this.tagModel.findOne({ where: { id: params.id } })
 			if (tag) {
@@ -163,6 +183,10 @@ export class TagService {
 				if (delTag.affected === 0) {
 					throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 				}
+
+				//写入标签删除日志
+				await this.logger.deleteTAGLogger(uid, tag)
+
 				return delTag
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
