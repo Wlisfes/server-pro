@@ -2,47 +2,22 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UtilsService } from '@/common/utils/utils.service'
+import { ProjectLoggerService } from '@/module/admin/logger/project-logger/project-logger.service'
 import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { ProjectEntity } from '@/entity/project.entity'
 import * as ProjectDto from '@/module/admin/project/project.dto'
 import * as day from 'dayjs'
 
-// type key = 'tag' | 'user' | 'project'
-
 @Injectable()
 export class ProjectService {
 	constructor(
 		private readonly utilsService: UtilsService,
+		private readonly logger: ProjectLoggerService,
 		@InjectRepository(TagEntity) private readonly tagModel: Repository<TagEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ProjectEntity) private readonly projectModel: Repository<ProjectEntity>
 	) {}
-
-	// private filter(key: key, u: key) {
-	// 	const tag = ['id', 'name', 'color', 'status', 'createTime']
-	// 	const user = ['uid', 'username', 'nickname', 'avatar', 'email', 'mobile', 'status', 'createTime']
-	// 	const project = [
-	// 		'id',
-	// 		'title',
-	// 		'description',
-	// 		'picUrl',
-	// 		'sort',
-	// 		'status',
-	// 		'like',
-	// 		'github',
-	// 		'accessUrl',
-	// 		'createTime'
-	// 	]
-	// 	switch (key) {
-	// 		case 'tag':
-	// 			return tag.map(k => `${u}.${k}`)
-	// 		case 'user':
-	// 			return user.map(k => `${u}.${k}`)
-	// 		case 'project':
-	// 			return project.map(k => `${u}.${k}`)
-	// 	}
-	// }
 
 	//创建项目
 	async createProject(params: ProjectDto.CreateProjectDto, uid: number) {
@@ -66,8 +41,12 @@ export class ProjectService {
 				status: params.status
 			})
 			const { id } = await this.projectModel.save({ ...project, user, tag })
+			const T = await this.findIdProject(id)
 
-			return await this.findIdProject(id)
+			//写入项目创建日志
+			await this.logger.createProjectLogger(uid, T)
+
+			return T
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
@@ -187,14 +166,19 @@ export class ProjectService {
 				.where('project.id = :id', { id: params.id })
 				.execute()
 
-			return await this.findIdProject(params.id)
+			const T = await this.findIdProject(params.id)
+
+			//写入项目修改日志
+			await this.logger.updateProjectLogger(uid, T)
+
+			return T
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
 	}
 
 	//置顶项目权重
-	async updateProjectSort(params: ProjectDto.ProjectIdDto) {
+	async updateProjectSort(params: ProjectDto.ProjectIdDto, uid: number) {
 		try {
 			const project = await this.projectModel.findOne({ where: { id: params.id } })
 			if (project) {
@@ -204,7 +188,12 @@ export class ProjectService {
 					.getRawOne()
 
 				await this.projectModel.update({ id: params.id }, { sort: sort + 1 })
-				return await this.findIdProject(params.id)
+				const T = await this.findIdProject(params.id)
+
+				//写入项目权重更改日志
+				await this.logger.sortProjectLogger(uid, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -213,12 +202,17 @@ export class ProjectService {
 	}
 
 	//切换项目状态
-	async cutoverProject(params: ProjectDto.ProjectIdDto) {
+	async cutoverProject(params: ProjectDto.ProjectIdDto, uid: number) {
 		try {
 			const project = await this.projectModel.findOne({ where: { id: params.id } })
 			if (project) {
 				await this.projectModel.update({ id: params.id }, { status: project.status ? 0 : 1 })
-				return await this.findIdProject(params.id)
+				const T = await this.findIdProject(params.id)
+
+				//写入项目状态更改日志
+				await this.logger.cutoverProjectLogger(uid, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -227,7 +221,7 @@ export class ProjectService {
 	}
 
 	//删除项目
-	async deleteProject(params: ProjectDto.ProjectIdDto) {
+	async deleteProject(params: ProjectDto.ProjectIdDto, uid: number) {
 		try {
 			const project = await this.projectModel.findOne({ where: { id: params.id } })
 			if (project) {
@@ -235,6 +229,10 @@ export class ProjectService {
 				if (delProject.affected === 0) {
 					throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 				}
+
+				//写入项目删除日志
+				await this.logger.deleteProjectLogger(uid, project)
+
 				return delProject
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
