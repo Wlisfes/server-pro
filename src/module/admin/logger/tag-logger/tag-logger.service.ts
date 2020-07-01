@@ -81,6 +81,7 @@ export class TagLoggerService {
 			const R = commonit.createTAG(Old.name, Old.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				commonid: params.id,
 				content: '修改标签',
 				context: `${T}<span style="margin-right: 8px;">变更为</span>${R}`
 			})

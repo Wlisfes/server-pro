@@ -14,7 +14,7 @@ export class LoggerEntity {
 	@PrimaryGeneratedColumn({ comment: '自增长主键' })
 	id: number
 
-	@Column({ comment: '动态对应数据id' })
+	@Column({ type: 'double', comment: '动态对应数据id' })
 	commonid: number
 
 	@Column({ comment: '动态类型描述', nullable: true })
