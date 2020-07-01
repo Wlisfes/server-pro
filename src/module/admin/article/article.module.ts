@@ -3,12 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { ArticleController } from '@/module/admin/article/article.controller'
 import { ArticleService } from '@/module/admin/article/article.service'
 import { UtilsService } from '@/common/utils/utils.service'
+import { LoggerModule } from '@/module/admin/logger/logger.module'
 import { TagEntity } from '@/entity/tag.entity'
 import { ArticleEntity } from '@/entity/article.entity'
 import { UserEntity } from '@/entity/user.entity'
 
 @Module({
-	imports: [TypeOrmModule.forFeature([TagEntity, ArticleEntity, UserEntity])],
+	imports: [LoggerModule, TypeOrmModule.forFeature([TagEntity, ArticleEntity, UserEntity])],
 	controllers: [ArticleController],
 	providers: [ArticleService, UtilsService]
 })

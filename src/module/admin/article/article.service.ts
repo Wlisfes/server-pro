@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UtilsService } from '@/common/utils/utils.service'
+import { ArticleLoggerService } from '@/module/admin/logger/article-logger/article-logger.service'
 import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { ArticleEntity } from '@/entity/article.entity'
@@ -12,6 +13,7 @@ import * as day from 'dayjs'
 export class ArticleService {
 	constructor(
 		private readonly utilsService: UtilsService,
+		private readonly logger: ArticleLoggerService,
 		@InjectRepository(TagEntity) private readonly tagModel: Repository<TagEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(ArticleEntity) private readonly articleModel: Repository<ArticleEntity>
@@ -41,7 +43,12 @@ export class ArticleService {
 			})
 			const { id } = await this.articleModel.save({ ...article, user, tag })
 
-			return await this.findIdArticle(id)
+			const T = await this.findIdArticle(id)
+
+			//写入文章创建日志
+			await this.logger.createArticleLogger(uid, T)
+
+			return T
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
@@ -161,14 +168,19 @@ export class ArticleService {
 				.where('article.id = :id', { id: params.id })
 				.execute()
 
-			return await this.findIdArticle(params.id)
+			const T = await this.findIdArticle(params.id)
+
+			//写入文章更改日志
+			await this.logger.updateArticleLogger(uid, T)
+
+			return T
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
 	}
 
 	//置顶标签权重
-	async updateArticleSort(params: ArticleDto.ArticleIdDto) {
+	async updateArticleSort(params: ArticleDto.ArticleIdDto, uid: number) {
 		try {
 			const article = await this.articleModel.findOne({ where: { id: params.id } })
 			if (article) {
@@ -178,7 +190,12 @@ export class ArticleService {
 					.getRawOne()
 
 				await this.articleModel.update({ id: params.id }, { sort: sort + 1 })
-				return await this.findIdArticle(params.id)
+				const T = await this.findIdArticle(params.id)
+
+				//写入文章权重更改日志
+				await this.logger.sortArticleLogger(uid, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -187,12 +204,17 @@ export class ArticleService {
 	}
 
 	//切换文章状态
-	async cutoverArticle(params: ArticleDto.ArticleIdDto) {
+	async cutoverArticle(params: ArticleDto.ArticleIdDto, uid: number) {
 		try {
 			const article = await this.articleModel.findOne({ where: { id: params.id } })
 			if (article) {
 				await this.articleModel.update({ id: params.id }, { status: article.status ? 0 : 1 })
-				return await this.findIdArticle(params.id)
+				const T = await this.findIdArticle(params.id)
+
+				//写入文章状态更改日志
+				await this.logger.cutoverArticleLogger(uid, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -201,7 +223,7 @@ export class ArticleService {
 	}
 
 	//删除文章
-	async deleteArticle(params: ArticleDto.ArticleIdDto) {
+	async deleteArticle(params: ArticleDto.ArticleIdDto, uid: number) {
 		try {
 			const article = await this.articleModel.findOne({ where: { id: params.id } })
 			if (article) {
@@ -209,6 +231,10 @@ export class ArticleService {
 				if (delArticle.affected === 0) {
 					throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 				}
+
+				//写入文章删除日志
+				await this.logger.deleteArticleLogger(uid, article)
+
 				return delArticle
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
