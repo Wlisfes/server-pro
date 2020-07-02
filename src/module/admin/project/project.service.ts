@@ -20,7 +20,7 @@ export class ProjectService {
 	) {}
 
 	//创建项目
-	async createProject(params: ProjectDto.CreateProjectDto, uid: number) {
+	async createProject(params: ProjectDto.CreateProjectDto, uid: number, ipv4: string) {
 		try {
 			if (params.tag.length < 1) {
 				throw new HttpException('所属标签最少需要一个', HttpStatus.BAD_REQUEST)
@@ -44,7 +44,7 @@ export class ProjectService {
 			const T = await this.findIdProject(id)
 
 			//写入项目创建日志
-			await this.logger.createProjectLogger(uid, T)
+			await this.logger.createProjectLogger(uid, T, ipv4)
 
 			return T
 		} catch (error) {
@@ -123,7 +123,7 @@ export class ProjectService {
 	}
 
 	//修改项目
-	async updateProject(params: ProjectDto.UpdateProjectDto, uid: number) {
+	async updateProject(params: ProjectDto.UpdateProjectDto, uid: number, ipv4: string) {
 		try {
 			if (params.tag.length < 1) {
 				throw new HttpException('所属标签最少需要一个', HttpStatus.BAD_REQUEST)
@@ -169,7 +169,7 @@ export class ProjectService {
 			const T = await this.findIdProject(params.id)
 
 			//写入项目修改日志
-			await this.logger.updateProjectLogger(uid, T)
+			await this.logger.updateProjectLogger(uid, T, ipv4)
 
 			return T
 		} catch (error) {
@@ -178,7 +178,7 @@ export class ProjectService {
 	}
 
 	//置顶项目权重
-	async updateProjectSort(params: ProjectDto.ProjectIdDto, uid: number) {
+	async updateProjectSort(params: ProjectDto.ProjectIdDto, uid: number, ipv4: string) {
 		try {
 			const project = await this.projectModel.findOne({ where: { id: params.id } })
 			if (project) {
@@ -191,7 +191,7 @@ export class ProjectService {
 				const T = await this.findIdProject(params.id)
 
 				//写入项目权重更改日志
-				await this.logger.sortProjectLogger(uid, T)
+				await this.logger.sortProjectLogger(uid, T, ipv4)
 
 				return T
 			}
@@ -202,7 +202,7 @@ export class ProjectService {
 	}
 
 	//切换项目状态
-	async cutoverProject(params: ProjectDto.ProjectIdDto, uid: number) {
+	async cutoverProject(params: ProjectDto.ProjectIdDto, uid: number, ipv4: string) {
 		try {
 			const project = await this.projectModel.findOne({ where: { id: params.id } })
 			if (project) {
@@ -210,7 +210,7 @@ export class ProjectService {
 				const T = await this.findIdProject(params.id)
 
 				//写入项目状态更改日志
-				await this.logger.cutoverProjectLogger(uid, T)
+				await this.logger.cutoverProjectLogger(uid, T, ipv4)
 
 				return T
 			}
@@ -221,7 +221,7 @@ export class ProjectService {
 	}
 
 	//删除项目
-	async deleteProject(params: ProjectDto.ProjectIdDto, uid: number) {
+	async deleteProject(params: ProjectDto.ProjectIdDto, uid: number, ipv4: string) {
 		try {
 			const project = await this.projectModel.findOne({ where: { id: params.id } })
 			if (project) {
@@ -231,7 +231,7 @@ export class ProjectService {
 				}
 
 				//写入项目删除日志
-				await this.logger.deleteProjectLogger(uid, project)
+				await this.logger.deleteProjectLogger(uid, project, ipv4)
 
 				return delProject
 			}

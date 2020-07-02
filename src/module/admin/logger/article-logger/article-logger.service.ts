@@ -21,10 +21,11 @@ export class ArticleLoggerService {
 	) {}
 
 	//文章创建日志
-	public async createArticleLogger(uid: number, params: any) {
+	public async createArticleLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '发表文章',
 				context: `<a>${params.title}</a>`
@@ -36,10 +37,11 @@ export class ArticleLoggerService {
 	}
 
 	//文章权重修改日志
-	public async sortArticleLogger(uid: number, params: any) {
+	public async sortArticleLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改文章',
 				context: `<a>${params.title}</a><span style="margin-left: 8px;">
@@ -53,10 +55,11 @@ export class ArticleLoggerService {
 	}
 
 	//文章修改日志
-	public async updateArticleLogger(uid: number, params: any) {
+	public async updateArticleLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改文章',
 				context: `<a>${params.title}</a>`
@@ -68,11 +71,12 @@ export class ArticleLoggerService {
 	}
 
 	//文章状态修改日志
-	public async cutoverArticleLogger(uid: number, params: any) {
+	public async cutoverArticleLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const R = commonit.statusTAG(params.status)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改文章',
 				context: `<a>${params.title}</a><span style="margin-left: 8px;">状态变更为</span>${R}`
@@ -84,10 +88,11 @@ export class ArticleLoggerService {
 	}
 
 	//文章删除日志
-	public async deleteArticleLogger(uid: number, params: any) {
+	public async deleteArticleLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '删除文章',
 				context: `<a>${params.title}</a>`

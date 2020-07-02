@@ -15,8 +15,8 @@ export class TagController {
 	@Post('create')
 	@AuthUser(true)
 	@AuthRole({ key: 'tag', apply: 'create' })
-	async createTag(@Body() body: TagDto.CreateTagDto, @Req() req: { user: { uid: number } }) {
-		return await this.tagService.createTag(body, req.user.uid)
+	async createTag(@Body() body: TagDto.CreateTagDto, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.tagService.createTag(body, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '获取所有标签列表' })
@@ -37,31 +37,31 @@ export class TagController {
 	@Put('update')
 	@AuthUser(true)
 	@AuthRole({ key: 'tag', apply: 'update' })
-	async updateTag(@Body() body: TagDto.UpdateTagDto, @Req() req: { user: { uid: number } }) {
-		return await this.tagService.updateTag(body, req.user.uid)
+	async updateTag(@Body() body: TagDto.UpdateTagDto, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.tagService.updateTag(body, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '置顶标签权重' })
 	@Put('sort')
 	@AuthUser(true)
 	@AuthRole({ key: 'tag', apply: 'update' })
-	async updateTagSort(@Query() query: TagDto.TagId, @Req() req: { user: { uid: number } }) {
-		return await this.tagService.updateTagSort(query, req.user.uid)
+	async updateTagSort(@Query() query: TagDto.TagId, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.tagService.updateTagSort(query, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '切换标签状态' })
 	@Put('cutover')
 	@AuthUser(true)
 	@AuthRole({ key: 'tag', apply: 'update' })
-	async cutoverTag(@Query() query: TagDto.TagId, @Req() req: { user: { uid: number } }) {
-		return await this.tagService.cutoverTag(query, req.user.uid)
+	async cutoverTag(@Query() query: TagDto.TagId, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.tagService.cutoverTag(query, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '删除标签' })
 	@Delete('delete')
 	@AuthUser(true)
 	@AuthRole({ key: 'tag', apply: 'delete' })
-	async deleteTag(@Query() query: TagDto.TagId, @Req() req: { user: { uid: number } }) {
-		return await this.tagService.deleteTag(query, req.user.uid)
+	async deleteTag(@Query() query: TagDto.TagId, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.tagService.deleteTag(query, req.user.uid, req.ipv4)
 	}
 }

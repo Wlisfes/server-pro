@@ -20,7 +20,7 @@ export class ArticleService {
 	) {}
 
 	//创建文章
-	async createArticle(params: ArticleDto.CreateArticleDto, uid: number) {
+	async createArticle(params: ArticleDto.CreateArticleDto, uid: number, ipv4: string) {
 		try {
 			if (params.tag.length < 1) {
 				throw new HttpException('所属标签最少需要一个', HttpStatus.BAD_REQUEST)
@@ -46,7 +46,7 @@ export class ArticleService {
 			const T = await this.findIdArticle(id)
 
 			//写入文章创建日志
-			await this.logger.createArticleLogger(uid, T)
+			await this.logger.createArticleLogger(uid, T, ipv4)
 
 			return T
 		} catch (error) {
@@ -124,7 +124,7 @@ export class ArticleService {
 	}
 
 	//修改文章
-	async updateArticle(params: ArticleDto.UpdateArticleDto, uid: number) {
+	async updateArticle(params: ArticleDto.UpdateArticleDto, uid: number, ipv4: string) {
 		try {
 			if (params.tag.length < 1) {
 				throw new HttpException('所属标签最少需要一个', HttpStatus.BAD_REQUEST)
@@ -171,7 +171,7 @@ export class ArticleService {
 			const T = await this.findIdArticle(params.id)
 
 			//写入文章更改日志
-			await this.logger.updateArticleLogger(uid, T)
+			await this.logger.updateArticleLogger(uid, T, ipv4)
 
 			return T
 		} catch (error) {
@@ -180,7 +180,7 @@ export class ArticleService {
 	}
 
 	//置顶标签权重
-	async updateArticleSort(params: ArticleDto.ArticleIdDto, uid: number) {
+	async updateArticleSort(params: ArticleDto.ArticleIdDto, uid: number, ipv4: string) {
 		try {
 			const article = await this.articleModel.findOne({ where: { id: params.id } })
 			if (article) {
@@ -193,7 +193,7 @@ export class ArticleService {
 				const T = await this.findIdArticle(params.id)
 
 				//写入文章权重更改日志
-				await this.logger.sortArticleLogger(uid, T)
+				await this.logger.sortArticleLogger(uid, T, ipv4)
 
 				return T
 			}
@@ -204,7 +204,7 @@ export class ArticleService {
 	}
 
 	//切换文章状态
-	async cutoverArticle(params: ArticleDto.ArticleIdDto, uid: number) {
+	async cutoverArticle(params: ArticleDto.ArticleIdDto, uid: number, ipv4: string) {
 		try {
 			const article = await this.articleModel.findOne({ where: { id: params.id } })
 			if (article) {
@@ -212,7 +212,7 @@ export class ArticleService {
 				const T = await this.findIdArticle(params.id)
 
 				//写入文章状态更改日志
-				await this.logger.cutoverArticleLogger(uid, T)
+				await this.logger.cutoverArticleLogger(uid, T, ipv4)
 
 				return T
 			}
@@ -223,7 +223,7 @@ export class ArticleService {
 	}
 
 	//删除文章
-	async deleteArticle(params: ArticleDto.ArticleIdDto, uid: number) {
+	async deleteArticle(params: ArticleDto.ArticleIdDto, uid: number, ipv4: string) {
 		try {
 			const article = await this.articleModel.findOne({ where: { id: params.id } })
 			if (article) {
@@ -233,7 +233,7 @@ export class ArticleService {
 				}
 
 				//写入文章删除日志
-				await this.logger.deleteArticleLogger(uid, article)
+				await this.logger.deleteArticleLogger(uid, article, ipv4)
 
 				return delArticle
 			}

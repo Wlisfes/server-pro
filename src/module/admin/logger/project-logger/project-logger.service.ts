@@ -42,11 +42,12 @@ export class ProjectLoggerService {
 	) {}
 
 	//项目创建日志
-	public async createProjectLogger(uid: number, params: any) {
+	public async createProjectLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const I = commonit.createGitHub(params.github)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '新增项目',
 				context: `<a>${params.title}</a>${I}`
@@ -58,11 +59,12 @@ export class ProjectLoggerService {
 	}
 
 	//项目权重修改日志
-	public async sortProjectLogger(uid: number, params: any) {
+	public async sortProjectLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const I = commonit.createGitHub(params.github)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改项目',
 				context: `<a>${params.title}</a><span style="margin-left: 8px;">
@@ -76,11 +78,12 @@ export class ProjectLoggerService {
 	}
 
 	//项目修改日志
-	public async updateProjectLogger(uid: number, params: any) {
+	public async updateProjectLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const I = commonit.createGitHub(params.github)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改项目',
 				context: `<a>${params.title}</a>${I}`
@@ -92,11 +95,12 @@ export class ProjectLoggerService {
 	}
 
 	//项目状态修改日志
-	public async cutoverProjectLogger(uid: number, params: any) {
+	public async cutoverProjectLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const R = commonit.statusTAG(params.status)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改项目',
 				context: `<a>${params.title}</a><span style="margin-left: 8px;">状态变更为</span>${R}`
@@ -108,11 +112,12 @@ export class ProjectLoggerService {
 	}
 
 	//项目删除日志
-	public async deleteProjectLogger(uid: number, params: any) {
+	public async deleteProjectLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const I = commonit.createGitHub(params.github)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '删除项目',
 				context: `<a>${params.title}</a>${I}`

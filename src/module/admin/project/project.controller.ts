@@ -15,8 +15,11 @@ export class ProjectController {
 	@Post('create')
 	@AuthUser(true)
 	@AuthRole({ key: 'project', apply: 'create' })
-	async createProject(@Body() body: ProjectDto.CreateProjectDto, @Req() req: { user: { uid: number } }) {
-		return await this.projectService.createProject(body, req.user.uid)
+	async createProject(
+		@Body() body: ProjectDto.CreateProjectDto,
+		@Req() req: { ipv4: string; user: { uid: number } }
+	) {
+		return await this.projectService.createProject(body, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '获取所有项目列表' })
@@ -39,31 +42,37 @@ export class ProjectController {
 	@Put('update')
 	@AuthUser(true)
 	@AuthRole({ key: 'project', apply: 'update' })
-	async updateProject(@Body() body: ProjectDto.UpdateProjectDto, @Req() req: { user: { uid: number } }) {
-		return await this.projectService.updateProject(body, req.user.uid)
+	async updateProject(
+		@Body() body: ProjectDto.UpdateProjectDto,
+		@Req() req: { ipv4: string; user: { uid: number } }
+	) {
+		return await this.projectService.updateProject(body, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '置顶项目权重' })
 	@Put('sort')
 	@AuthUser(true)
 	@AuthRole({ key: 'project', apply: 'update' })
-	async updateProjectSort(@Query() query: ProjectDto.ProjectIdDto, @Req() req: { user: { uid: number } }) {
-		return await this.projectService.updateProjectSort(query, req.user.uid)
+	async updateProjectSort(
+		@Query() query: ProjectDto.ProjectIdDto,
+		@Req() req: { ipv4: string; user: { uid: number } }
+	) {
+		return await this.projectService.updateProjectSort(query, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '切换项目状态' })
 	@Put('cutover')
 	@AuthUser(true)
 	@AuthRole({ key: 'project', apply: 'update' })
-	async cutoverProject(@Query() query: ProjectDto.ProjectIdDto, @Req() req: { user: { uid: number } }) {
-		return await this.projectService.cutoverProject(query, req.user.uid)
+	async cutoverProject(@Query() query: ProjectDto.ProjectIdDto, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.projectService.cutoverProject(query, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '删除项目' })
 	@Delete('delete')
 	@AuthUser(true)
 	@AuthRole({ key: 'project', apply: 'delete' })
-	async deleteProject(@Query() query: ProjectDto.ProjectIdDto, @Req() req: { user: { uid: number } }) {
-		return await this.projectService.deleteProject(query, req.user.uid)
+	async deleteProject(@Query() query: ProjectDto.ProjectIdDto, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.projectService.deleteProject(query, req.user.uid, req.ipv4)
 	}
 }

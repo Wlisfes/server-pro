@@ -14,6 +14,9 @@ export class LoggerEntity {
 	@PrimaryGeneratedColumn({ comment: '自增长主键' })
 	id: number
 
+	@Column({ comment: '来源ip' })
+	ipv4: string
+
 	@Column({ type: 'double', comment: '动态对应数据id' })
 	commonid: number
 

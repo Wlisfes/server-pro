@@ -12,10 +12,11 @@ export class UserLoggerService {
 	) {}
 
 	//登录日志
-	public async loginLogger(uid: number) {
+	public async loginLogger(uid: number, ipv4: string) {
 		try {
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: uid,
 				context: `<a>已登录</a>`
 			})

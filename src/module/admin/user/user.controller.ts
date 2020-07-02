@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Delete, Query, Session, Response } from '@nestjs/common'
+import { Controller, Get, Post, Body, Put, Delete, Query, Session, Response, Req } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { UserService } from '@/module/admin/user/user.service'
 import { AuthUser, AuthRole } from '@/guard/auth.guard'
@@ -22,8 +22,12 @@ export class UserController {
 
 	@ApiOperation({ summary: '登录' })
 	@Post('login')
-	async loginUser(@Session() session: { code: string }, @Body() body: UserDto.LoginUserDto) {
-		return await this.userService.loginUser(body, session.code)
+	async loginUser(
+		@Session() session: { code: string },
+		@Body() body: UserDto.LoginUserDto,
+		@Req() req: { ipv4: string }
+	) {
+		return await this.userService.loginUser(body, session.code, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '创建用户' })

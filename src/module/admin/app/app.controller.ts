@@ -18,16 +18,7 @@ export class AppController {
 
 	@ApiOperation({ summary: 'ip获取' })
 	@Get('ip')
-	public async AppIp(@Req() req, @Request() request) {
-		const reqs = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || '127.0.0.1'
-		const requests = request.headers['x-forwarded-for'] || request.headers['x-real-ip'] || '127.0.0.1'
-		return {
-			req,
-			request,
-			data: {
-				req,
-				request
-			}
-		}
+	public async AppIp(@Req() req: { ipv4: string }) {
+		return req.ipv4
 	}
 }

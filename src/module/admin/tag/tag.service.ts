@@ -20,7 +20,7 @@ export class TagService {
 	) {}
 
 	//创建标签
-	async createTag(params: TagDto.CreateTagDto, uid: number) {
+	async createTag(params: TagDto.CreateTagDto, uid: number, ipv4: string) {
 		try {
 			const TAG = await this.tagModel.findOne({ where: { name: params.name } })
 			if (TAG) {
@@ -54,7 +54,7 @@ export class TagService {
 				.getOne()
 
 			//写入标签创建日志
-			await this.logger.createTAGLogger(user.uid, params)
+			await this.logger.createTAGLogger(user.uid, TR, ipv4)
 
 			return TR
 		} catch (error) {
@@ -109,7 +109,7 @@ export class TagService {
 	}
 
 	//修改标签信息
-	async updateTag(params: TagDto.UpdateTagDto, uid: number) {
+	async updateTag(params: TagDto.UpdateTagDto, uid: number, ipv4: string) {
 		try {
 			const name = await this.tagModel.findOne({ where: { name: params.name } })
 			if (name && name.id !== params.id) {
@@ -123,7 +123,7 @@ export class TagService {
 				const T = await this.tagModel.findOne({ id: params.id })
 
 				//写入标签修改日志
-				await this.logger.updateTAGLogger(uid, tag, T)
+				await this.logger.updateTAGLogger(uid, tag, T, ipv4)
 
 				return T
 			}
@@ -134,7 +134,7 @@ export class TagService {
 	}
 
 	//置顶标签权重
-	async updateTagSort(params: TagDto.TagId, uid: number) {
+	async updateTagSort(params: TagDto.TagId, uid: number, ipv4: string) {
 		try {
 			const tag = await this.tagModel.findOne({ where: { id: params.id } })
 			if (tag) {
@@ -147,7 +147,7 @@ export class TagService {
 				const T = await this.tagModel.findOne({ where: { id: params.id } })
 
 				//写入标签权重修改日志
-				await this.logger.sortTAGLogger(uid, T)
+				await this.logger.sortTAGLogger(uid, T, ipv4)
 
 				return T
 			}
@@ -158,7 +158,7 @@ export class TagService {
 	}
 
 	//切换标签状态
-	async cutoverTag(params: TagDto.TagId, uid: number) {
+	async cutoverTag(params: TagDto.TagId, uid: number, ipv4: string) {
 		try {
 			const tag = await this.tagModel.findOne({ where: { id: params.id } })
 			if (tag) {
@@ -166,7 +166,7 @@ export class TagService {
 				const T = await this.tagModel.findOne({ where: { id: params.id } })
 
 				//写入标签状态修改日志
-				await this.logger.cutoverTAGLogger(uid, T)
+				await this.logger.cutoverTAGLogger(uid, T, ipv4)
 
 				return T
 			}
@@ -177,7 +177,7 @@ export class TagService {
 	}
 
 	//删除标签
-	async deleteTag(params: TagDto.TagId, uid: number) {
+	async deleteTag(params: TagDto.TagId, uid: number, ipv4: string) {
 		try {
 			const tag = await this.tagModel.findOne({ where: { id: params.id } })
 			if (tag) {
@@ -187,7 +187,7 @@ export class TagService {
 				}
 
 				//写入标签删除日志
-				await this.logger.deleteTAGLogger(uid, tag)
+				await this.logger.deleteTAGLogger(uid, tag, ipv4)
 
 				return delTag
 			}

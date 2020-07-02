@@ -156,7 +156,7 @@ export class UserService {
 	}
 
 	//登录
-	async loginUser(params: UserDto.LoginUserDto, code: string): Promise<any> {
+	async loginUser(params: UserDto.LoginUserDto, code: string, ipv4: string): Promise<any> {
 		try {
 			if (code !== params.code.toUpperCase()) {
 				throw new HttpException('验证码错误', HttpStatus.BAD_REQUEST)
@@ -185,7 +185,7 @@ export class UserService {
 				})
 
 				//写入登录日志
-				await this.logger.loginLogger(user.uid)
+				await this.logger.loginLogger(user.uid, ipv4)
 
 				delete user.password
 				return { ...user, access_token }

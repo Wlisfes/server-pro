@@ -15,8 +15,11 @@ export class ArticleController {
 	@Post('create')
 	@AuthUser(true)
 	@AuthRole({ key: 'article', apply: 'create' })
-	async createArticle(@Body() body: ArticleDto.CreateArticleDto, @Req() req: { user: { uid: number } }) {
-		return await this.articleService.createArticle(body, req.user.uid)
+	async createArticle(
+		@Body() body: ArticleDto.CreateArticleDto,
+		@Req() req: { ipv4: string; user: { uid: number } }
+	) {
+		return await this.articleService.createArticle(body, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '获取所有文章列表' })
@@ -39,31 +42,37 @@ export class ArticleController {
 	@Put('update')
 	@AuthUser(true)
 	@AuthRole({ key: 'article', apply: 'update' })
-	async updateArticle(@Body() body: ArticleDto.UpdateArticleDto, @Req() req: { user: { uid: number } }) {
-		return await this.articleService.updateArticle(body, req.user.uid)
+	async updateArticle(
+		@Body() body: ArticleDto.UpdateArticleDto,
+		@Req() req: { ipv4: string; user: { uid: number } }
+	) {
+		return await this.articleService.updateArticle(body, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '置顶文章权重' })
 	@Put('sort')
 	@AuthUser(true)
 	@AuthRole({ key: 'article', apply: 'update' })
-	async updateArticleSort(@Query() query: ArticleDto.ArticleIdDto, @Req() req: { user: { uid: number } }) {
-		return await this.articleService.updateArticleSort(query, req.user.uid)
+	async updateArticleSort(
+		@Query() query: ArticleDto.ArticleIdDto,
+		@Req() req: { ipv4: string; user: { uid: number } }
+	) {
+		return await this.articleService.updateArticleSort(query, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '切换文章状态' })
 	@Put('cutover')
 	@AuthUser(true)
 	@AuthRole({ key: 'article', apply: 'update' })
-	async cutoverArticle(@Query() query: ArticleDto.ArticleIdDto, @Req() req: { user: { uid: number } }) {
-		return await this.articleService.cutoverArticle(query, req.user.uid)
+	async cutoverArticle(@Query() query: ArticleDto.ArticleIdDto, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.articleService.cutoverArticle(query, req.user.uid, req.ipv4)
 	}
 
 	@ApiOperation({ summary: '删除文章' })
 	@Delete('delete')
 	@AuthUser(true)
 	@AuthRole({ key: 'article', apply: 'delete' })
-	async deleteArticle(@Query() query: ArticleDto.ArticleIdDto, @Req() req: { user: { uid: number } }) {
-		return await this.articleService.deleteArticle(query, req.user.uid)
+	async deleteArticle(@Query() query: ArticleDto.ArticleIdDto, @Req() req: { ipv4: string; user: { uid: number } }) {
+		return await this.articleService.deleteArticle(query, req.user.uid, req.ipv4)
 	}
 }

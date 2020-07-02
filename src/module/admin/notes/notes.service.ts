@@ -20,7 +20,7 @@ export class NotesService {
 	) {}
 
 	//创建笔记
-	public async createNotes(params: NotesDto.CreateNotesDto, uid: number) {
+	public async createNotes(params: NotesDto.CreateNotesDto, uid: number, ipv4: string) {
 		try {
 			if (params.tag.length < 1) {
 				throw new HttpException('所属标签最少需要一个', HttpStatus.BAD_REQUEST)
@@ -45,7 +45,7 @@ export class NotesService {
 			const T = await this.findIdNotes(id)
 
 			//写入笔记创建日志
-			await this.logger.createNotesLogger(uid, T)
+			await this.logger.createNotesLogger(uid, T, ipv4)
 
 			return T
 		} catch (error) {
@@ -141,7 +141,7 @@ export class NotesService {
 	}
 
 	//修改笔记
-	public async updateNotes(params: NotesDto.UpdateNotesDto, uid: number) {
+	public async updateNotes(params: NotesDto.UpdateNotesDto, uid: number, ipv4: string) {
 		try {
 			console.log(params)
 			if (params.tag.length < 1) {
@@ -188,7 +188,7 @@ export class NotesService {
 			const T = await this.findIdNotes(params.id)
 
 			//写入笔记修改日志
-			await this.logger.updateNotesLogger(uid, T)
+			await this.logger.updateNotesLogger(uid, T, ipv4)
 
 			return T
 		} catch (error) {
@@ -197,7 +197,7 @@ export class NotesService {
 	}
 
 	//置顶笔记权重
-	public async updateNotesSort(params: NotesDto.NotesIdDto, uid: number) {
+	public async updateNotesSort(params: NotesDto.NotesIdDto, uid: number, ipv4: string) {
 		try {
 			const notes = await this.notesModel.findOne({ where: { id: params.id } })
 			if (notes) {
@@ -210,7 +210,7 @@ export class NotesService {
 				const T = await this.findIdNotes(params.id)
 
 				//写入笔记权重修改日志
-				await this.logger.sortNotesLogger(uid, T)
+				await this.logger.sortNotesLogger(uid, T, ipv4)
 
 				return T
 			}
@@ -221,7 +221,7 @@ export class NotesService {
 	}
 
 	//切换笔记状态
-	public async cutoverNotes(params: NotesDto.NotesIdDto, uid: number) {
+	public async cutoverNotes(params: NotesDto.NotesIdDto, uid: number, ipv4: string) {
 		try {
 			const notes = await this.notesModel.findOne({ where: { id: params.id } })
 			if (notes) {
@@ -229,7 +229,7 @@ export class NotesService {
 				const T = await this.findIdNotes(params.id)
 
 				//写入笔记状态修改日志
-				await this.logger.cutoverNotesLogger(uid, T)
+				await this.logger.cutoverNotesLogger(uid, T, ipv4)
 
 				return T
 			}
@@ -240,7 +240,7 @@ export class NotesService {
 	}
 
 	//删除笔记
-	public async deleteNotes(params: NotesDto.NotesIdDto, uid: number) {
+	public async deleteNotes(params: NotesDto.NotesIdDto, uid: number, ipv4: string) {
 		try {
 			const notes = await this.notesModel.findOne({ where: { id: params.id } })
 			if (notes) {
@@ -250,7 +250,7 @@ export class NotesService {
 				}
 
 				//写入笔记删除日志
-				await this.logger.deleteNotesLogger(uid, notes)
+				await this.logger.deleteNotesLogger(uid, notes, ipv4)
 
 				return delNotes
 			}

@@ -26,11 +26,12 @@ export class TagLoggerService {
 	) {}
 
 	//标签创建日志
-	public async createTAGLogger(uid: number, params: any) {
+	public async createTAGLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const T = commonit.createTAG(params.name, params.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '新增标签',
 				context: `${T}`
@@ -42,11 +43,12 @@ export class TagLoggerService {
 	}
 
 	//标签权重修改日志
-	public async sortTAGLogger(uid: number, params: any) {
+	public async sortTAGLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const T = commonit.createTAG(params.name, params.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改标签',
 				context: `${T}<span>权重变更为 <a style="font-size: 16px;">${params.sort}</a></span>`
@@ -58,12 +60,13 @@ export class TagLoggerService {
 	}
 
 	///标签状态修改日志
-	public async cutoverTAGLogger(uid: number, params: any) {
+	public async cutoverTAGLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const T = commonit.createTAG(params.name, params.color)
 			const R = commonit.statusTAG(params.status)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改标签',
 				context: `${T}<span>状态变更为</span>${R}`
@@ -75,12 +78,13 @@ export class TagLoggerService {
 	}
 
 	//标签信息修改日志
-	public async updateTAGLogger(uid: number, params: any, Old: any) {
+	public async updateTAGLogger(uid: number, params: any, Old: any, ipv4: string) {
 		try {
 			const T = commonit.createTAG(params.name, params.color)
 			const R = commonit.createTAG(Old.name, Old.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '修改标签',
 				context: `${T}<span style="margin-right: 8px;">变更为</span>${R}`
@@ -92,11 +96,12 @@ export class TagLoggerService {
 	}
 
 	//标签删除日志
-	public async deleteTAGLogger(uid: number, params: any) {
+	public async deleteTAGLogger(uid: number, params: any, ipv4: string) {
 		try {
 			const T = commonit.createTAG(params.name, params.color)
 			const user = await this.userModel.findOne({ where: { uid } })
 			const logger = await this.loggerModel.create({
+				ipv4,
 				commonid: params.id,
 				content: '删除标签',
 				context: `${T}`
