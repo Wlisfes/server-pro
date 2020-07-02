@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, Req, Request } from '@nestjs/common'
 import { AppService } from '@/module/admin/app/app.service'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { AuthUser } from '@/guard/auth.guard'
@@ -14,5 +14,20 @@ export class AppController {
 	@Get('count')
 	public async AppCount() {
 		return await this.appService.AppCount()
+	}
+
+	@ApiOperation({ summary: 'ip获取' })
+	@Get('ip')
+	public async AppIp(@Req() req, @Request() request) {
+		const reqs = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || '127.0.0.1'
+		const requests = request.headers['x-forwarded-for'] || request.headers['x-real-ip'] || '127.0.0.1'
+		return {
+			req,
+			request,
+			data: {
+				req,
+				request
+			}
+		}
 	}
 }

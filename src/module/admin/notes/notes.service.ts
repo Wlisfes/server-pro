@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UtilsService } from '@/common/utils/utils.service'
+import { NotesLoggerService } from '@/module/admin/logger/notes-logger/notes-logger.service'
 import { TagEntity } from '@/entity/tag.entity'
 import { UserEntity } from '@/entity/user.entity'
 import { NotesEntity } from '@/entity/notes.entity'
@@ -12,6 +13,7 @@ import * as day from 'dayjs'
 export class NotesService {
 	constructor(
 		private readonly utilsService: UtilsService,
+		private readonly logger: NotesLoggerService,
 		@InjectRepository(TagEntity) private readonly tagModel: Repository<TagEntity>,
 		@InjectRepository(UserEntity) private readonly userModel: Repository<UserEntity>,
 		@InjectRepository(NotesEntity) private readonly notesModel: Repository<NotesEntity>
@@ -40,8 +42,12 @@ export class NotesService {
 			})
 
 			const { id } = await this.notesModel.save({ ...notes, user, tag })
+			const T = await this.findIdNotes(id)
 
-			return await this.findIdNotes(id)
+			//写入笔记创建日志
+			await this.logger.createNotesLogger(uid, T)
+
+			return T
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
@@ -179,14 +185,19 @@ export class NotesService {
 				.where('notes.id = :id', { id: params.id })
 				.execute()
 
-			return await this.findIdNotes(params.id)
+			const T = await this.findIdNotes(params.id)
+
+			//写入笔记修改日志
+			await this.logger.updateNotesLogger(uid, T)
+
+			return T
 		} catch (error) {
 			throw new HttpException(error.message || error.toString(), HttpStatus.BAD_REQUEST)
 		}
 	}
 
 	//置顶笔记权重
-	public async updateNotesSort(params: NotesDto.NotesIdDto) {
+	public async updateNotesSort(params: NotesDto.NotesIdDto, uid: number) {
 		try {
 			const notes = await this.notesModel.findOne({ where: { id: params.id } })
 			if (notes) {
@@ -196,7 +207,12 @@ export class NotesService {
 					.getRawOne()
 
 				await this.notesModel.update({ id: params.id }, { sort: sort + 1 })
-				return await this.findIdNotes(params.id)
+				const T = await this.findIdNotes(params.id)
+
+				//写入笔记权重修改日志
+				await this.logger.sortNotesLogger(uid, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -205,12 +221,17 @@ export class NotesService {
 	}
 
 	//切换笔记状态
-	public async cutoverNotes(params: NotesDto.NotesIdDto) {
+	public async cutoverNotes(params: NotesDto.NotesIdDto, uid: number) {
 		try {
 			const notes = await this.notesModel.findOne({ where: { id: params.id } })
 			if (notes) {
 				await this.notesModel.update({ id: params.id }, { status: notes.status ? 0 : 1 })
-				return await this.findIdNotes(params.id)
+				const T = await this.findIdNotes(params.id)
+
+				//写入笔记状态修改日志
+				await this.logger.cutoverNotesLogger(uid, T)
+
+				return T
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 		} catch (error) {
@@ -219,7 +240,7 @@ export class NotesService {
 	}
 
 	//删除笔记
-	public async deleteNotes(params: NotesDto.NotesIdDto) {
+	public async deleteNotes(params: NotesDto.NotesIdDto, uid: number) {
 		try {
 			const notes = await this.notesModel.findOne({ where: { id: params.id } })
 			if (notes) {
@@ -227,6 +248,10 @@ export class NotesService {
 				if (delNotes.affected === 0) {
 					throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
 				}
+
+				//写入笔记删除日志
+				await this.logger.deleteNotesLogger(uid, notes)
+
 				return delNotes
 			}
 			throw new HttpException(`id: ${params.id} 错误`, HttpStatus.BAD_REQUEST)
