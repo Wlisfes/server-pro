@@ -27,7 +27,9 @@ export class ArticleController {
 	@AuthUser(true)
 	@AuthRole({ key: 'article', apply: 'query' })
 	async findArticleAll(@Query() query: ArticleDto.FindArticleDto) {
-		return await this.articleService.findArticleAll(query)
+		const limit = query.limit || 5
+		const offset = query.offset ? query.offset : 0
+		return await this.articleService.findArticleAll(query, limit, offset)
 	}
 
 	@ApiOperation({ summary: '获取文章详情' })

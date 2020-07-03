@@ -187,8 +187,8 @@ export class UserService {
 				//写入登录日志
 				await this.logger.loginLogger(user.uid, ipv4)
 
-				delete user.password
-				return { ...user, access_token }
+				const T = await this.findUidUser(user.uid)
+				return { ...T, access_token }
 			}
 			throw new HttpException('username、email、mobile 错误', HttpStatus.BAD_REQUEST)
 		} catch (error) {

@@ -25,6 +25,8 @@ export class UtilsService {
 				return utils.project.filter(next()).map(k => `${alias}.${k}`)
 			case 'notes':
 				return utils.notes.filter(next()).map(k => `${alias}.${k}`)
+			case 'logger':
+				return utils.logger.filter(next()).map(k => `${alias}.${k}`)
 		}
 	}
 }

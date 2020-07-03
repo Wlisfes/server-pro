@@ -2,7 +2,7 @@
  * @Author: 情雨随风
  * @Date: 2020-06-07 23:25:56
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2020-06-07 23:43:10
+ * @Last Modified time: 2020-07-03 12:46:37
  * @Description: articleDto
  */
 
@@ -76,6 +76,16 @@ export class FindArticleDto {
 	@ApiProperty({ description: '时间段 参数可选', example: '2020-01-01' })
 	@Allow()
 	createTime?: string
+
+	@Type(() => Number)
+	@ApiProperty({ description: '分页数量 参数可选', example: 5 })
+	@Allow()
+	limit?: number
+
+	@Type(() => Number)
+	@ApiProperty({ description: '筛选数量 参数可选', example: 0 })
+	@Allow()
+	offset?: number
 }
 
 export class CreateArticleDto extends Article {

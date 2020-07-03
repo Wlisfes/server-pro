@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, Query } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { LoggerService } from '@/module/admin/logger/logger.service'
+import * as LoggerDto from '@/module/admin/logger/logger.dto'
 
 const path = `${process.env.ADMINPREFIX}/logger`
 
@@ -11,7 +12,9 @@ export class LoggerController {
 
 	@ApiOperation({ summary: '动态日志列表' })
 	@Get('all')
-	public async LoggerAll() {
-		return await this.loggerService.LoggerAll()
+	public async LoggerAll(@Query() query: LoggerDto.Logger) {
+		const limit = query.limit || 5
+		const offset = query.offset ? query.offset : 0
+		return await this.loggerService.LoggerAll(limit, offset)
 	}
 }

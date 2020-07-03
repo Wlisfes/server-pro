@@ -14,7 +14,7 @@ export class NotesController {
 	@ApiOperation({ summary: '创建笔记' })
 	@Post('create')
 	@AuthUser(true)
-	@AuthRole({ key: 'notes', apply: 'create' })
+	@AuthRole({ key: 'note', apply: 'create' })
 	public async createNotes(
 		@Body() body: NotesDto.CreateNotesDto,
 		@Req() req: { ipv4: string; user: { uid: number } }
@@ -25,7 +25,7 @@ export class NotesController {
 	@ApiOperation({ summary: '获取所有笔记列表' })
 	@Get('all')
 	@AuthUser(true)
-	@AuthRole({ key: 'notes', apply: 'query' })
+	@AuthRole({ key: 'note', apply: 'query' })
 	public async findNotesAll(@Query() query: NotesDto.FindNotesDto) {
 		return this.notesService.findNotesAll(query)
 	}
@@ -33,7 +33,7 @@ export class NotesController {
 	@ApiOperation({ summary: '获取笔记详情' })
 	@Get('info')
 	@AuthUser(true)
-	@AuthRole({ key: 'notes', apply: 'get' })
+	@AuthRole({ key: 'note', apply: 'get' })
 	public async findIdNotes(@Query() query: NotesDto.NotesIdDto) {
 		return await this.notesService.findIdNotes(query.id)
 	}
@@ -41,7 +41,7 @@ export class NotesController {
 	@ApiOperation({ summary: '修改笔记' })
 	@Put('update')
 	@AuthUser(true)
-	@AuthRole({ key: 'notes', apply: 'update' })
+	@AuthRole({ key: 'note', apply: 'update' })
 	async updateNotes(@Body() body: NotesDto.UpdateNotesDto, @Req() req: { ipv4: string; user: { uid: number } }) {
 		return await this.notesService.updateNotes(body, req.user.uid, req.ipv4)
 	}
@@ -49,7 +49,7 @@ export class NotesController {
 	@ApiOperation({ summary: '置顶笔记权重' })
 	@Put('sort')
 	@AuthUser(true)
-	@AuthRole({ key: 'notes', apply: 'update' })
+	@AuthRole({ key: 'note', apply: 'update' })
 	public async updateNotesSort(
 		@Query() query: NotesDto.NotesIdDto,
 		@Req() req: { ipv4: string; user: { uid: number } }
@@ -60,7 +60,7 @@ export class NotesController {
 	@ApiOperation({ summary: '切换笔记状态' })
 	@Put('cutover')
 	@AuthUser(true)
-	@AuthRole({ key: 'notes', apply: 'update' })
+	@AuthRole({ key: 'note', apply: 'update' })
 	public async cutoverNotes(
 		@Query() query: NotesDto.NotesIdDto,
 		@Req() req: { ipv4: string; user: { uid: number } }
@@ -71,7 +71,7 @@ export class NotesController {
 	@ApiOperation({ summary: '删除笔记' })
 	@Delete('delete')
 	@AuthUser(true)
-	@AuthRole({ key: 'notes', apply: 'delete' })
+	@AuthRole({ key: 'note', apply: 'delete' })
 	public async deleteNotes(@Query() query: NotesDto.NotesIdDto, @Req() req: { ipv4: string; user: { uid: number } }) {
 		return await this.notesService.deleteNotes(query, req.user.uid, req.ipv4)
 	}

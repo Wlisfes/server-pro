@@ -55,12 +55,12 @@ export class ArticleService {
 	}
 
 	//获取所有文章列表
-	async findArticleAll(params: ArticleDto.FindArticleDto) {
+	async findArticleAll(params: ArticleDto.FindArticleDto, limit: number, offset: number) {
 		const { uid, status, tag, createTime } = params
 
 		const U = await this.utilsService.filter('user', 'user', ['article', 'project', 'notes', 'tag', 'role', 'auth'])
 		const T = await this.utilsService.filter('tag', 'tag', ['sort', 'user', 'article', 'notes', 'project'])
-		const A = await this.utilsService.filter('article', 'article', ['createTime', 'user', 'tag'])
+		const A = await this.utilsService.filter('article', 'article', ['user', 'tag'])
 
 		const QB = await this.articleModel
 			.createQueryBuilder('article')
@@ -92,20 +92,24 @@ export class ArticleService {
 			QB.andWhere('article.status = :status', { status: params.status })
 		}
 
-		const article = await QB.getMany()
+		const len = await (await QB.getMany()).length
 
-		if (tag !== undefined && tag !== null && article.length > 0) {
-			const QB = await this.articleModel
-				.createQueryBuilder('article')
-				.select([].concat(U, T, A))
-				.leftJoin('article.user', 'user')
-				.leftJoin('article.tag', 'tag')
-				.orderBy({ 'article.sort': 'DESC', 'article.createTime': 'DESC' })
-				.where('article.id IN (:id)', { id: article.map(k => k.id) })
-				.getMany()
-		}
+		const article = await QB.skip(offset)
+			.take(limit)
+			.getMany()
 
-		return article
+		// if (tag !== undefined && tag !== null && article.length > 0) {
+		// 	const QB = await this.articleModel
+		// 		.createQueryBuilder('article')
+		// 		.select([].concat(U, T, A))
+		// 		.leftJoin('article.user', 'user')
+		// 		.leftJoin('article.tag', 'tag')
+		// 		.orderBy({ 'article.sort': 'DESC', 'article.createTime': 'DESC' })
+		// 		.where('article.id IN (:id)', { id: article.map(k => k.id) })
+		// 		.getMany()
+		// }
+
+		return { len, article }
 	}
 
 	//获取文章详情

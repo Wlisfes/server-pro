@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { LoggerService } from '@/module/admin/logger/logger.service'
+import { UtilsService } from '@/common/utils/utils.service'
 import { LoggerController } from '@/module/admin/logger/logger.controller'
 import { LoggerEntity } from '@/entity/logger.entity'
 import { UserEntity } from '@/entity/user.entity'
@@ -18,7 +19,8 @@ import { NotesLoggerService } from '@/module/admin/logger/notes-logger/notes-log
 		UserLoggerService,
 		ProjectLoggerService,
 		ArticleLoggerService,
-		NotesLoggerService
+		NotesLoggerService,
+		UtilsService
 	],
 	controllers: [LoggerController],
 	exports: [

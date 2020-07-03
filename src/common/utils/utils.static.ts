@@ -1,5 +1,5 @@
 //数据库表
-export type key = 'user' | 'tag' | 'article' | 'auth' | 'role' | 'project' | 'notes'
+export type key = 'user' | 'tag' | 'article' | 'auth' | 'role' | 'project' | 'notes' | 'logger'
 
 //用户表字段
 export const user = [
@@ -76,3 +76,6 @@ export const notes = [
 	'user',
 	'tag'
 ]
+
+//日志表
+export const logger = ['id', 'ipv4', 'commonid', 'content', 'content', 'context', 'createTime']
