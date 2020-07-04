@@ -27,7 +27,9 @@ export class NotesController {
 	@AuthUser(true)
 	@AuthRole({ key: 'note', apply: 'query' })
 	public async findNotesAll(@Query() query: NotesDto.FindNotesDto) {
-		return this.notesService.findNotesAll(query)
+		const limit = query.limit || 5
+		const offset = query.offset ? query.offset : 0
+		return this.notesService.findNotesAll(query, limit, offset)
 	}
 
 	@ApiOperation({ summary: '获取笔记详情' })

@@ -18,6 +18,12 @@ export class Notes {
 	title: string
 
 	@Type(() => String)
+	@ApiProperty({ description: '笔记描述', example: '这是一段描述...' })
+	@IsNotEmpty({ message: 'description 必填' })
+	@IsString({ message: 'description is string' })
+	description: string
+
+	@Type(() => String)
 	@ApiProperty({ description: '笔记封面', example: 'http://xxx/xx.png' })
 	@IsNotEmpty({ message: 'picUrl 必填' })
 	@IsString({ message: 'picUrl is string' })
@@ -82,6 +88,16 @@ export class FindNotesDto {
 	@ApiProperty({ description: '时间段 参数可选', example: '2020-01-01' })
 	@Allow()
 	createTime?: string
+
+	@Type(() => Number)
+	@ApiProperty({ description: '分页数量 参数可选', example: 5 })
+	@Allow()
+	limit?: number
+
+	@Type(() => Number)
+	@ApiProperty({ description: '筛选数量 参数可选', example: 0 })
+	@Allow()
+	offset?: number
 }
 
 export class UpdateNotesDto extends Notes {

@@ -23,6 +23,12 @@ export class NotesEntity {
 
 	@Column({
 		nullable: false,
+		comment: '描述'
+	})
+	description: string
+
+	@Column({
+		nullable: false,
 		comment: '封面'
 	})
 	picUrl: string

@@ -66,6 +66,7 @@ export const project = [
 export const notes = [
 	'id',
 	'title',
+	'description',
 	'picUrl',
 	'themeName',
 	'content',

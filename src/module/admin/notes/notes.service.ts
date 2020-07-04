@@ -34,6 +34,7 @@ export class NotesService {
 
 			const notes = await this.notesModel.create({
 				title: params.title,
+				description: params.description,
 				picUrl: params.picUrl,
 				content: params.content,
 				html: params.html,
@@ -54,7 +55,7 @@ export class NotesService {
 	}
 
 	//获取所有笔记
-	public async findNotesAll(params: NotesDto.FindNotesDto) {
+	public async findNotesAll(params: NotesDto.FindNotesDto, limit: number, offset: number) {
 		const { uid, status, tag, createTime } = params
 
 		const U = await this.utilsService.filter('user', 'user', ['article', 'project', 'notes', 'tag', 'role', 'auth'])
@@ -93,19 +94,22 @@ export class NotesService {
 			QB.andWhere('notes.status = :status', { status: params.status })
 		}
 
-		const netes = await QB.getMany()
+		const len = await (await QB.getMany()).length
+		const notes = await QB.skip(offset)
+			.take(limit)
+			.getMany()
 
-		if (tag !== undefined && tag !== null && netes.length > 0) {
-			return await this.notesModel
-				.createQueryBuilder('notes')
-				.select([].concat(U, T, N))
-				.leftJoin('notes.user', 'user')
-				.leftJoin('notes.tag', 'tag')
-				.orderBy({ 'notes.sort': 'DESC', 'notes.createTime': 'DESC' })
-				.where('notes.id IN (:id)', { id: netes.map(k => k.id) })
-				.getMany()
-		}
-		return netes
+		// if (tag !== undefined && tag !== null && netes.length > 0) {
+		// 	return await this.notesModel
+		// 		.createQueryBuilder('notes')
+		// 		.select([].concat(U, T, N))
+		// 		.leftJoin('notes.user', 'user')
+		// 		.leftJoin('notes.tag', 'tag')
+		// 		.orderBy({ 'notes.sort': 'DESC', 'notes.createTime': 'DESC' })
+		// 		.where('notes.id IN (:id)', { id: netes.map(k => k.id) })
+		// 		.getMany()
+		// }
+		return { len, notes }
 	}
 
 	//获取笔记详情
@@ -176,6 +180,7 @@ export class NotesService {
 				.createQueryBuilder('notes')
 				.update({
 					title: params.title,
+					description: params.description,
 					picUrl: params.picUrl,
 					content: params.content,
 					html: params.html,
