@@ -23,6 +23,7 @@ export class ArticleEntity {
 
 	@Column({
 		nullable: false,
+		type: 'text',
 		comment: '描述'
 	})
 	description: string

@@ -22,6 +22,7 @@ export class ProjectEntity {
 	title: string
 
 	@Column({
+		type: 'text',
 		nullable: false,
 		comment: '描述'
 	})
