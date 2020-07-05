@@ -35,6 +35,7 @@ export const article = [
 	'reading',
 	'status',
 	'sort',
+	'star',
 	'createTime',
 	'user',
 	'tag'

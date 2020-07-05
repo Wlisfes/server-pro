@@ -61,6 +61,12 @@ export class ArticleEntity {
 	reading: number
 
 	@Column({
+		comment: '点赞数',
+		default: () => 0
+	})
+	star: number
+
+	@Column({
 		default: () => 1,
 		nullable: false,
 		comment: '状态'

@@ -98,17 +98,6 @@ export class ArticleService {
 			.take(limit)
 			.getMany()
 
-		// if (tag !== undefined && tag !== null && article.length > 0) {
-		// 	const QB = await this.articleModel
-		// 		.createQueryBuilder('article')
-		// 		.select([].concat(U, T, A))
-		// 		.leftJoin('article.user', 'user')
-		// 		.leftJoin('article.tag', 'tag')
-		// 		.orderBy({ 'article.sort': 'DESC', 'article.createTime': 'DESC' })
-		// 		.where('article.id IN (:id)', { id: article.map(k => k.id) })
-		// 		.getMany()
-		// }
-
 		return { len, article }
 	}
 
